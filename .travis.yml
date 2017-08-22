@@ -1,0 +1,23 @@
+language: python
+
+python:
+  - "3.5.2"
+
+# command to install dependencies
+install: "pip install -r requirements.txt"
+
+before_install:
+    - pip install pytest-cov
+    - pip install coveralls
+
+# command to run tests
+script: pytest
+
+after_success:
+    - coveralls
+
+deploy:
+  provider: heroku
+  app: andela-flask-api
+  api_key:
+    secure: "1e9f74ec-b530-4a13-8f18-46c668e018f7"
