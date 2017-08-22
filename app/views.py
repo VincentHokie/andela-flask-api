@@ -29,7 +29,7 @@ app.config["SQLALCHEMY_DATABASE_URI"] = 'postgresql://%(user)s:\
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 
 # make wft extension consider cross-site request forgery
-app.config["WTF_CSRF_ENABLED"] = True
+app.config["WTF_CSRF_ENABLED"] = False
 
 # required when the above config is enabled, this will be used to
 # generate a scrf token..should be a string that cant be easily
