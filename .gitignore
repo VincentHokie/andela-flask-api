@@ -36,3 +36,8 @@ pip-selfcheck.json
 # sass
 .sass-cache/
 *.css.map
+
+# migration files
+migrations/
+share/
+
