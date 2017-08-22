@@ -58,15 +58,38 @@ def verify_password(username_or_token, password):
     return True
 
 
-@app.route("/auth/register", methods=['GET'])
+@app.route("/auth/register", methods=['POST'])
 def register():
     if request.method == "POST":
         form = SignUpForm()
         if form.validate_on_submit():
-            return render_template("index.html",
-                               title='Home')
+
+            if form.password.data != form.password2.data:
+                take_back = {"error": "Your passwords don't match!"}
+
+                response = jsonify(take_back)
+                response.status_code = 200
+                return response
+
+            user = User(
+                form.email.data,
+                form.username.data,
+                form.password.data
+            )
+            user.save()
+            take_back = {"success": True}
+
+            response = jsonify(take_back)
+            response.status_code = 201
+            return response
+
         else:
-            return {"error" : ""}
+            take_back = {"error" : form.errors }
+
+            response = jsonify(take_back)
+            response.status_code = 200
+            return response
+
 
 @app.route("/auth/login", methods=['POST'])
 def login():
