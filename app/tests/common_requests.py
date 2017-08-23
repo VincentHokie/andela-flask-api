@@ -1,5 +1,6 @@
 
 import unittest
+from base64 import b64encode
 
 class CommonRequests(unittest.TestCase):
 
