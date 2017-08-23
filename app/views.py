@@ -1,9 +1,11 @@
 
 import os
 from flask import Flask
-from flask import render_template, request, jsonify, g
+from flask import render_template, request, jsonify, session, json
 from models import db, User, ShoppingListItem, ShoppingList
 from forms import LoginForm, SignUpForm, ShoppingListForm, ShoppingListItemForm
+
+import requests
 
 from flask_httpauth import HTTPBasicAuth
 auth = HTTPBasicAuth()
