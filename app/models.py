@@ -98,15 +98,25 @@ class ShoppingList(db.Model):
         }
 
     @staticmethod
-    def get_all(q, limit):
+    def get_all(user_id, q, limit):
         if q is not None and ( limit is None or not isinstance(limit, int) ):
-            return ShoppingList.query.filter(ShoppingList.name.like("%"+q.strip()+"%")).all()
+            return ShoppingList.query\
+                .filter(ShoppingList.name.like("%"+q.strip()+"%")) \
+                .filter_by(user_id=user_id) \
+                .all()
         elif q is not None and ( limit is not None and isinstance(limit, int) ):
-            return ShoppingList.query.filter(ShoppingList.name.like("%" + q.strip() + "%")).limit(limit)
+            return ShoppingList.query\
+                .filter(ShoppingList.name.like("%" + q.strip() + "%")) \
+                .filter_by(user_id=user_id)\
+                .limit(limit)
         elif q is None and ( limit is not None and isinstance(limit, int) ):
-            return ShoppingList.query.limit(limit)
+            return ShoppingList.query \
+                .filter_by(user_id=user_id) \
+                .limit(limit)
         else:
-            return ShoppingList.query.all()
+            return ShoppingList.query \
+                .filter_by(user_id=user_id) \
+                .all()
 
     def delete(self):
         db.session.delete(self)
