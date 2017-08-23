@@ -151,8 +151,37 @@ class ShoppingListItem(db.Model):
         db.session.commit()
 
     @staticmethod
-    def get_all():
-        return ShoppingListItem.query.all()
+    def get_all(list_id, q, limit):
+        if q is not None and ( limit is None or not isinstance(limit, int) ):
+            return ShoppingListItem.query\
+                .filter(ShoppingListItem.name.like("%"+q.strip()+"%")) \
+                .filter_by(list_id=list_id) \
+                .all()
+        elif q is not None and ( limit is not None and isinstance(limit, int) ):
+            return ShoppingListItem.query\
+                .filter(ShoppingListItem.name.like("%" + q.strip() + "%")) \
+                .filter_by(list_id=list_id) \
+                .limit(limit)
+        elif q is None and ( limit is not None and isinstance(limit, int) ):
+            return ShoppingListItem.query \
+                .filter_by(list_id=list_id) \
+                .limit(limit)
+        else:
+            return ShoppingListItem.query \
+                .filter_by(list_id=list_id) \
+                .all()
+
+
+    @property
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {
+            'item_id': self.item_id,
+            'list_id': self.list_id,
+            'name': self.name,
+            'date': dump_datetime(self.date),
+            'amount': self.amount,
+        }
 
     def delete(self):
         db.session.delete(self)
