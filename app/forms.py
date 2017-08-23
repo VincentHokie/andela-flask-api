@@ -23,4 +23,4 @@ class ShoppingListForm(FlaskForm):
 
 class ShoppingListItemForm(FlaskForm):
     name = StringField('name', validators=[DataRequired()])
-    amount = StringField('name', validators=[DataRequired()])
+    amount = IntegerField('name', validators=[DataRequired()])
