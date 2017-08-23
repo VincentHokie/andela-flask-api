@@ -99,10 +99,25 @@ def login():
     if request.method == "POST":
         form = LoginForm()
         if form.validate_on_submit():
-            return render_template("index.html",
-                               title='Home')
+            user = User.query.filter_by(username=form.username.data).first()
+
+            take_back = {"success": "You have successfully logged in"}
+
+            if not user or not user.verify_password(form.password.data):
+                take_back = {"error": "Login failed! Your credentials don't match our records"}
+            else:
+                session["user"] = user.user_id
+
+            response = jsonify(take_back)
+            response.status_code = 200
+            return response
+
         else:
-            return {"error" : ""}
+            take_back = {"error": form.errors}
+
+            response = jsonify(take_back)
+            response.status_code = 200
+            return response
 
 @app.route("/auth/logout", methods=['POST'])
 def logout():
