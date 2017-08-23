@@ -11,6 +11,12 @@ db = SQLAlchemy()
 from datetime import datetime
 
 
+def dump_datetime(value):
+    """Deserialize datetime object into string form for JSON processing."""
+    if value is None:
+        return None
+    return [value.strftime("%Y-%m-%d"), value.strftime("%H:%M:%S")]
+
 # Create our database model
 class User(db.Model):
     """This class represents the User table."""
