@@ -199,10 +199,19 @@ def shopping_list_id(id):
 
     elif request.method == "DELETE":
 
+        lists = ShoppingList.query.filter_by(list_id=id, user_id=session["user"]).first()
 
-        return render_template("index.html",
-                               title='Home')
+        if lists is not None:
+            lists.delete()
 
+            response = jsonify({"success": "Shopping list delete successful!"})
+            response.status_code = 202
+            return response
+
+        else:
+            response = jsonify({"error": "Shopping list with id: " + id + " not found!"})
+            response.status_code = 404
+            return response
 
 
 @app.route("/shoppinglists/<id>/items", methods=['POST'])
