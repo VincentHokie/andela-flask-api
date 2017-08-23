@@ -226,6 +226,31 @@ def shopping_list_items(id):
             response.status_code = 500
             return response
 
+        form = ShoppingListItemForm()
+
+        if form.validate_on_submit():
+
+            if ShoppingList.query.filter_by(list_id=id, user_id=session["user"]).first() is None:
+                response = jsonify({"error": "Shopping list id: " + id + " is not found!"})
+                response.status_code = 404
+                return response
+
+            list = ShoppingListItem(form.name.data, id, form.amount.data)
+            list.save()
+
+            list = ShoppingListItem.query\
+                .filter_by(name=form.name.data, list_id=id, amount=form.amount.data).first()
+
+            response = jsonify( list.serialize )
+            response.status_code = 201
+            return response
+
+        else:
+            response = jsonify({"error": form.errors})
+            response.status_code = 200
+            return response
+
+
 @app.route("/shoppinglists/<id>/items/<item_id>", methods=['PUT', 'DELETE'])
 @auth.login_required
 def shopping_list_item_update(id, item_id):
