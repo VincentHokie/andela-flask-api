@@ -269,17 +269,51 @@ def shopping_list_item_update(id, item_id):
         response.status_code = 500
         return response
 
-    if request.method == "PUT":
-        admin = ShoppingListItem.query.filter_by(username='admin').first()
-        admin.email = 'my_new_email@example.com'
-        db.session.commit()
+    if ShoppingList.query.filter_by(list_id=id, user_id=session["user"]).first() is None:
+        response = jsonify({"error": "Shopping list with id: " + id + " not found!"})
+        response.status_code = 404
+        return response
 
-        return render_template("index.html",
-                               title='Home')
+    if request.method == "PUT":
+        form = ShoppingListItemForm()
+        if form.validate_on_submit():
+
+            lists = ShoppingListItem.query.filter_by(item_id=item_id, list_id=id).first()
+
+            if lists is not None:
+                lists.name = form.name.data
+                lists.amount = form.amount.data
+                db.session.commit()
+
+                response = jsonify({"success": "Shopping list update successful!"})
+                response.status_code = 200
+                return response
+
+            else:
+                response = jsonify({"error": "Shopping list item with id: " + item_id + " not found!"})
+                response.status_code = 404
+                return response
+
+        else:
+            response = jsonify({"error": form.errors})
+            response.status_code = 200
+            return response
+
     elif request.method == "DELETE":
 
-        return render_template("index.html",
-                               title='Home')
+        lists = ShoppingListItem.query.filter_by(list_id=id, item_id=item_id).first()
+
+        if lists is not None:
+            lists.delete()
+
+            response = jsonify({"success": "Shopping list delete successful!"})
+            response.status_code = 202
+            return response
+
+        else:
+            response = jsonify({"error": "Shopping list item with id: " + item_id + " not found!"})
+            response.status_code = 404
+            return response
 
 
 @app.route('/api/token', methods=['GET'])
