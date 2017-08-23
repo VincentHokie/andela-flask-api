@@ -5,8 +5,6 @@ from app.models import db
 
 from app.tests.common_requests import CommonRequests
 
-from base64 import b64encode
-
 class LoginTestCase(CommonRequests):
     """This class represents the login test case"""
 
@@ -79,13 +77,7 @@ class LoginTestCase(CommonRequests):
 
             login_credentials = {'username': 'vince', "password": "123"}
 
-            headers = {
-                'content-type': 'application/json',
-                'Authorization': 'Basic %s' % b64encode(
-                    bytes(
-                        login_credentials['username']+':'+login_credentials['password']
-                        , "utf-8")).decode("ascii")
-            }
+            headers = self.get_auth_header(login_credentials['username'],login_credentials['password'])
 
             res = client.get('/api/token', headers=headers)
 
