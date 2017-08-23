@@ -164,8 +164,17 @@ def shopping_list_id(id):
 
     if request.method == "GET":
 
-        return render_template("index.html",
-                               title='Home')
+        if ShoppingList.query.filter_by(list_id=id, user_id=session["user"]).first() is None:
+            response = jsonify({"error": "Shopping list id: " + id + " is not found!"})
+            response.status_code = 404
+            return response
+
+        response = jsonify(
+            [i.serialize for i in ShoppingListItem.get_all(id, request.args.get("q"), request.args.get("limit"))]
+        )
+        response.status_code = 200
+        return response
+
     elif request.method == "PUT":
         form = LoginForm()
         if form.validate_on_submit():
