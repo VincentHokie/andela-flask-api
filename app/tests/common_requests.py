@@ -16,40 +16,52 @@ class CommonRequests(unittest.TestCase):
 
     def get_auth_header(self, username, password):
         return {
-            'content-type': 'application/json',
+            'Content-Type': 'application/json',
             'Authorization': 'Basic %s' % b64encode(
                 bytes(username + ':' + password, "utf-8")).decode("ascii")
         }
 
     # crud on a shopping list
-    def get_all_shopping_list(self, client):
-        return client.get('/shoppinglists')
+    def get_all_shopping_list(self, client, credentials):
+        return client.get('/shoppinglists',
+                          headers=self.get_auth_header(credentials["username"], credentials['password']))
 
-    def create_shopping_list(self, client,  shopping_list):
-        return client.post('/shoppinglists', data=shopping_list)
+    def create_shopping_list(self, client,  shopping_list, credentials):
+        return client.post('/shoppinglists', data=shopping_list,
+                           headers=self.get_auth_header(credentials["username"], credentials['password']))
 
-    def update_shopping_list(self, client,  shopping_list, list_id):
+    def update_shopping_list(self, client,  shopping_list, list_id, credentials):
+        headers=self.get_auth_header(credentials["username"], credentials['password'])
+        headers["Content-Type"] = 'application/x-www-form-urlencoded'
         return client.put('/shoppinglists/'+list_id,
                                  data=shopping_list,
-                                 headers={'Content-Type': 'application/x-www-form-urlencoded'})
+                                 headers=headers)
 
-    def delete_shopping_list(self, client, list_id):
+    def delete_shopping_list(self, client, list_id, credentials):
+        headers = self.get_auth_header(credentials["username"], credentials['password'])
+        headers["Content-Type"] = 'application/x-www-form-urlencoded'
         return client.delete('/shoppinglists/'+list_id,
-                                    headers={'Content-Type': 'application/x-www-form-urlencoded'})
+                                    headers=headers)
 
 
     # crud on a shopping list items
-    def get_items_under_shopping_list(self, client, list_id):
-        return client.get('/shoppinglists/'+list_id)
+    def get_items_under_shopping_list(self, client, list_id, credentials):
+        return client.get('/shoppinglists/'+list_id,
+                           headers=self.get_auth_header(credentials["username"], credentials['password']))
 
-    def create_shopping_list_item(self, client, shopping_list_item, list_id):
-        return client.post('/shoppinglists/'+list_id+'/items', data=shopping_list_item)
+    def create_shopping_list_item(self, client, shopping_list_item, list_id, credentials):
+        return client.post('/shoppinglists/'+list_id+'/items', data=shopping_list_item,
+                           headers=self.get_auth_header(credentials["username"], credentials['password']))
 
-    def update_shopping_list_item(self, client, shopping_list_item, list_id, item_id):
+    def update_shopping_list_item(self, client, shopping_list_item, list_id, item_id, credentials):
+        headers = self.get_auth_header(credentials["username"], credentials['password'])
+        headers["Content-Type"] = 'application/x-www-form-urlencoded'
         return client.put('/shoppinglists/'+list_id+'/items'+item_id,
                                  data=shopping_list_item,
-                                 headers={'Content-Type': 'application/x-www-form-urlencoded'})
+                                 headers=headers)
 
-    def delete_shopping_list_item(self, client, list_id, item_id):
+    def delete_shopping_list_item(self, client, list_id, item_id, credentials):
+        headers = self.get_auth_header(credentials["username"], credentials['password'])
+        headers["Content-Type"] = 'application/x-www-form-urlencoded'
         return client.delete('/shoppinglists/'+list_id+'/items'+item_id,
-                                    headers={'Content-Type': 'application/x-www-form-urlencoded'})
+                                    headers=headers)
