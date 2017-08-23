@@ -1,20 +1,28 @@
 
-import unittest
-import os
-import json
-
+from flask import json
 from app.views import app, is_testing
 from app.models import db
 
 from app.tests.common_requests import CommonRequests
+
+from base64 import b64encode
 
 class LoginTestCase(CommonRequests):
     """This class represents the login test case"""
 
     def setUp(self):
         """Define test variables and initialize app."""
-        is_testing()
         self.app = app
+        POSTGRES = {
+            'user': 'vince',
+            'pw': 'vince',
+            'db': 'test_db',
+            'host': 'localhost',
+            'port': '5432',
+        }
+
+        app.config["SQLALCHEMY_DATABASE_URI"] = 'postgresql://%(user)s:%(pw)s@%(host)s:%(port)s/%(db)s' % POSTGRES
+
         self.client = self.app.test_client
 
         self.sign_up_credentials = {'username': 'vince', "email": "vincenthokie@gmail.com", "password": "123",
@@ -28,37 +36,62 @@ class LoginTestCase(CommonRequests):
     def test_login(self):
         """Test API can create a user (POST request)"""
 
-        self.sign_up(self.sign_up_credentials)
+        with app.test_client() as client:
+            self.sign_up(client, self.sign_up_credentials)
 
-        login_credentials = {'username': 'vince', "password": "123"}
-        res = self.login(login_credentials)
+            login_credentials = {'username': 'vince', "password": "123"}
+            res = self.login(client, login_credentials)
 
-        self.assertEqual(res.status_code, 200)
-        self.assertIn('token', res.data)
+            self.assertEqual(res.status_code, 200)
+            self.assertIn("success", json.loads(res.data))
+
 
     def test_login_password_required(self):
         """Test API can notice password is required (POST request)."""
 
-        self.sign_up(self.sign_up_credentials)
+        with app.test_client() as client:
+            self.sign_up(client, self.sign_up_credentials)
 
-        login_credentials = {'username': 'vince', "password": ""}
-        res = self.login(login_credentials)
+            login_credentials = {'username': 'vince', "password": ""}
+            res = self.login(client, login_credentials)
 
-        self.assertEqual(res.status_code, 200)
-        self.assertNotIn('token', res.data)
-        self.assertIn("error", res.data)
+            self.assertEqual(res.status_code, 200)
+            self.assertIn("error", json.loads(res.data))
+
 
     def test_login_username_required(self):
         """Test API can notice username is required (POST request)."""
 
-        self.sign_up(self.sign_up_credentials)
+        with app.test_client() as client:
+            self.sign_up(client, self.sign_up_credentials)
 
-        login_credentials = {'username': '', "password": "123"}
-        res = self.login(login_credentials)
+            login_credentials = {'username': '', "password": "123"}
+            res = self.login(client, login_credentials)
 
-        self.assertEqual(res.status_code, 200)
-        self.assertNotIn('token', res.data)
-        self.assertIn("error", res.data)
+            self.assertEqual(res.status_code, 200)
+            self.assertIn("error", json.loads(res.data))
+
+    def test_token_generate(self):
+        """Test API can create a token if logged in user requests it (POST request)"""
+
+        with app.test_client() as client:
+            self.sign_up(client, self.sign_up_credentials)
+
+            login_credentials = {'username': 'vince', "password": "123"}
+
+            headers = {
+                'content-type': 'application/json',
+                'Authorization': 'Basic %s' % b64encode(
+                    bytes(
+                        login_credentials['username']+':'+login_credentials['password']
+                        , "utf-8")).decode("ascii")
+            }
+
+            res = client.get('/api/token', headers=headers)
+
+            self.assertEqual(res.status_code, 200)
+            self.assertIn("token", json.loads(res.data))
+
 
     def tearDown(self):
         """teardown all initialized variables."""
