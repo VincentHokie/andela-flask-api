@@ -154,7 +154,14 @@ def shopping_lists():
 
 @app.route("/shoppinglists/<id>", methods=['GET', 'PUT', 'DELETE'])
 @auth.login_required
-def shopping_list_id():
+def shopping_list_id(id):
+    try:
+        int(id)
+    except:
+        response = jsonify({"error": "Shopping list id: " + id + " is not a valid id!"})
+        response.status_code = 500
+        return response
+
     if request.method == "GET":
 
         return render_template("index.html",
@@ -182,15 +189,34 @@ def shopping_list_id():
 
 @app.route("/shoppinglists/<id>/items", methods=['POST'])
 @auth.login_required
-def shopping_list_items():
+def shopping_list_items(id):
     if request.method == "POST":
 
-        return render_template("index.html",
-                               title='Home')
+        try:
+            int(id)
+        except:
+            response = jsonify({"error": "Shopping list id: " + id + " is not a valid id!"})
+            response.status_code = 500
+            return response
 
 @app.route("/shoppinglists/<id>/items/<item_id>", methods=['PUT', 'DELETE'])
 @auth.login_required
-def shopping_list_item_update():
+def shopping_list_item_update(id, item_id):
+
+    try:
+        int(id)
+    except:
+        response = jsonify({"error": "Shopping list id: " + id + " is not a valid id!"})
+        response.status_code = 500
+        return response
+
+    try:
+        int(item_id)
+    except:
+        response = jsonify({"error": "Shopping list item id: " + item_id + " is not a valid id!"})
+        response.status_code = 500
+        return response
+
     if request.method == "PUT":
         admin = ShoppingListItem.query.filter_by(username='admin').first()
         admin.email = 'my_new_email@example.com'
