@@ -88,6 +88,15 @@ class ShoppingList(db.Model):
         db.session.add(self)
         db.session.commit()
 
+    @property
+    def serialize(self):
+        """Return object data in easily serializeable format"""
+        return {
+            'list_id': self.list_id,
+            'name': self.name,
+            'date': dump_datetime(self.date)
+        }
+
     @staticmethod
     def get_all():
         return ShoppingList.query.all()
