@@ -56,7 +56,7 @@ def verify_password(username_or_token, password):
         user = User.query.filter_by(username = username_or_token).first()
         if not user or not user.verify_password(password):
             return False
-    g.user = user
+    session["user"] = user.user_id
     return True
 
 
@@ -64,6 +64,7 @@ def verify_password(username_or_token, password):
 def register():
     if request.method == "POST":
         form = SignUpForm()
+
         if form.validate_on_submit():
 
             if form.password.data != form.password2.data:
@@ -86,7 +87,7 @@ def register():
             return response
 
         else:
-            take_back = {"error" : form.errors }
+            take_back = {"error": form.errors }
 
             response = jsonify(take_back)
             response.status_code = 200
