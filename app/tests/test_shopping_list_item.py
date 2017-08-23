@@ -1,4 +1,6 @@
 
+from flask import json
+
 from app.views import app, is_testing
 from app.models import db, ShoppingListItem, ShoppingList
 from datetime import datetime
@@ -10,8 +12,17 @@ class ShoppingListItemTestCase(CommonRequests):
 
     def setUp(self):
         """Define test variables and initialize app."""
-        is_testing()
         self.app = app
+        POSTGRES = {
+            'user': 'vince',
+            'pw': 'vince',
+            'db': 'test_db',
+            'host': 'localhost',
+            'port': '5432',
+        }
+
+        app.config["SQLALCHEMY_DATABASE_URI"] = 'postgresql://%(user)s:%(pw)s@%(host)s:%(port)s/%(db)s' % POSTGRES
+
         self.client = self.app.test_client
         self.sign_up_credentials = {'username': 'vince', "email": "vincenthokie@gmail.com", "password": "123",
                                     "password2": "123"}
@@ -26,101 +37,107 @@ class ShoppingListItemTestCase(CommonRequests):
     def test_shopping_list_item_creation(self):
         """Test API can create a shopping list (POST request)"""
 
-        self.sign_up(self.sign_up_credentials)
-        self.login(self.login_credentials)
-        self.create_shopping_list(self.shopping_list)
-        the_list = ShoppingList.query.filter_by(name=self.shopping_list["name"]).first()
+        with app.test_client() as client:
+            self.sign_up(client, self.sign_up_credentials)
+            self.login(client, self.login_credentials)
+            res = self.create_shopping_list(client, self.shopping_list, self.login_credentials)
+            the_list = json.loads(res.data)
 
-        shopping_list_item = {'name': 'List item'}
-        res = self.create_shopping_list_item(shopping_list_item, the_list.list_id
-                                             )
-        the_list = ShoppingListItem.query.filter_by(name=shopping_list_item["name"]).first()
+            shopping_list_item = {'name': 'List item', "amount" : 1000}
+            result = self.create_shopping_list_item(client, shopping_list_item, the_list['list_id'], self.login_credentials)
 
-        self.assertEqual(res.status_code, 201)
-        self.assertEqual(the_list.name, shopping_list_item["name"])
-        self.assertGreater(datetime.now(), the_list.date)
+            self.assertEqual(result.status_code, 201)
 
     def test_shopping_list_name_required(self):
         """Test API can create a shopping list (POST request)"""
 
-        self.sign_up(self.sign_up_credentials)
-        self.login(self.login_credentials)
-        self.create_shopping_list(self.shopping_list)
-        the_list = ShoppingList.query.filter_by(name=self.shopping_list["name"]).first()
+        with app.test_client() as client:
+            self.sign_up(client, self.sign_up_credentials)
+            self.login(client, self.login_credentials)
+            res = self.create_shopping_list(client, self.shopping_list, self.login_credentials)
+            the_list = json.loads(res.data)
 
-        shopping_list_item = {'name': '', "amount" : ""}
-        res = self.create_shopping_list_item(shopping_list_item, the_list.list_id)
+            shopping_list_item = {'name': '', "amount" : 1000}
+            result = self.create_shopping_list_item(client, shopping_list_item, the_list['list_id'], self.login_credentials)
 
-        self.assertEqual(res.status_code, 200)
-        self.assertIn("error", res.data)
-
+            self.assertEqual(result.status_code, 200)
+            self.assertIn("error", json.loads(result.data))
 
     def test_shopping_list_amount_required(self):
         """Test API can create a shopping list (POST request)"""
 
-        self.sign_up(self.sign_up_credentials)
-        self.login(self.login_credentials)
-        self.create_shopping_list(self.shopping_list)
-        the_list = ShoppingList.query.filter_by(name=self.shopping_list["name"]).first()
+        with app.test_client() as client:
+            self.sign_up(client, self.sign_up_credentials)
+            self.login(client, self.login_credentials)
+            res = self.create_shopping_list(client, self.shopping_list, self.login_credentials)
+            the_list = json.loads(res.data)
 
-        shopping_list_item = {'name': 'List Item', "amount" : ""}
-        res = self.create_shopping_list_item(shopping_list_item, the_list.list_id)
+            shopping_list_item = {'name': 'List item', "amount" : ""}
+            result = self.create_shopping_list_item(client, shopping_list_item, the_list['list_id'], self.login_credentials)
 
-        self.assertEqual(res.status_code, 200)
-        self.assertIn("error", res.data)
-
+            self.assertEqual(result.status_code, 200)
+            self.assertIn("error", json.loads(result.data))
 
     def test_api_can_get_all_shopping_lists(self):
         """Test API can get shopping lists (GET request)."""
 
-        self.sign_up(self.sign_up_credentials)
-        self.login(self.login_credentials)
-        self.create_shopping_list(self.shopping_list)
-        the_list = ShoppingList.query.filter_by(name=self.shopping_list["name"]).first()
+        with app.test_client() as client:
+            self.sign_up(client, self.sign_up_credentials)
+            self.login(client, self.login_credentials)
+            res = self.create_shopping_list(client, self.shopping_list, self.login_credentials)
+            the_list = json.loads(res.data)
 
-        res = self.get_items_under_shopping_list(the_list.list_id)
-        self.assertEqual(res.status_code, 200)
+            res = self.get_items_under_shopping_list(client, the_list['list_id'], self.login_credentials)
+            self.assertEqual(res.status_code, 200)
 
     def test_api_can_update_shopping_list(self):
         """Test API can get a single bucketlist by using it's id."""
 
-        self.sign_up(self.sign_up_credentials)
-        self.login(self.login_credentials)
-        self.create_shopping_list(self.shopping_list)
-        the_list = ShoppingList.query.filter_by(name=self.shopping_list["name"]).first()
+        with app.test_client() as client:
+            self.sign_up(client, self.sign_up_credentials)
+            self.login(client, self.login_credentials)
+            res = self.create_shopping_list(client, self.shopping_list, self.login_credentials)
+            the_list = json.loads(res.data)
 
-        shopping_list_item = {'name': 'vince', "amount": 10000 }
-        shopping_list_item_updated = {'name': 'vince123', "amount": 2000}
+            shopping_list_item = {'name': 'vince', "amount": 10000}
+            shopping_list_item_updated = {'name': 'vince123', "amount": 2000}
 
-        self.create_shopping_list_item(shopping_list_item, the_list.list_id)
-        the_list_item = ShoppingListItem.query.filter_by(name=shopping_list_item["name"]).first()
+            the_list_item = self.create_shopping_list_item(client, shopping_list_item, the_list['list_id'], self.login_credentials)
+            the_list_item = json.loads(the_list_item.data)
 
-        rv = self.update_shopping_list(shopping_list_item_updated, the_list.list_id)
+            rv = self.update_shopping_list_item(client, shopping_list_item_updated, the_list['list_id'], the_list_item['item_id'],  self.login_credentials)
 
-        the_list = ShoppingListItem.query.filter_by(list_id=the_list.list_id).first()
+            the_list = ShoppingListItem.query.filter_by(list_id=the_list['list_id']).first()
+            the_list = the_list.serialize
 
-        self.assertEqual(rv.status_code, 200)
-        self.assertEqual(the_list.name, the_list_item.name)
-        self.assertEqual(the_list.amount, the_list_item.amount)
+            self.assertEqual(rv.status_code, 200)
+            self.assertIn("success", json.loads(rv.data))
+            self.assertEqual(the_list['name'], shopping_list_item_updated['name'])
+            self.assertEqual(the_list['amount'], shopping_list_item_updated['amount'])
+
 
     def test_api_can_delete_shopping_list(self):
         """Test API can get a single bucketlist by using it's id."""
 
-        self.sign_up(self.sign_up_credentials)
-        self.login(self.login_credentials)
-        self.create_shopping_list(self.shopping_list)
-        the_list = ShoppingList.query.filter_by(name=self.shopping_list["name"]).first()
 
-        shopping_list_item = {'name': 'vince'}
-        self.create_shopping_list(shopping_list_item)
+        with app.test_client() as client:
+            self.sign_up(client, self.sign_up_credentials)
+            self.login(client, self.login_credentials)
+            res = self.create_shopping_list(client, self.shopping_list, self.login_credentials)
+            the_list = json.loads(res.data)
 
-        the_list_item = ShoppingListItem.query.filter_by(name=shopping_list_item["name"]).first()
-        result = self.delete_shopping_list_item(the_list.list_id, the_list_item.item_id)
+            shopping_list_item = {'name': 'vince', "amount": 10000}
+            the_list_item = self.create_shopping_list_item(client, shopping_list_item, the_list['list_id'], self.login_credentials)
+            the_list_item = json.loads(the_list_item.data)
 
-        count = db.session.query(ShoppingListItem).filter(list_id=the_list.list_id).count()
+            the_list = ShoppingListItem.query.filter_by(list_id=the_list['list_id']).first()
+            the_list = the_list.serialize
 
-        self.assertEqual(result.status_code, 200)
-        self.assertEqual(0, count)
+            result = self.delete_shopping_list_item(client, the_list['list_id'], the_list_item['item_id'], self.login_credentials)
+
+            self.assertEqual(result.status_code, 202)
+            self.assertEqual(None, ShoppingListItem.query.filter_by(item_id=the_list_item["item_id"]).first())
+
 
     def tearDown(self):
         """teardown all initialized variables."""
