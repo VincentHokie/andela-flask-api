@@ -285,7 +285,9 @@ def shopping_list_item_update(id, item_id):
 @app.route('/api/token', methods=['GET'])
 @auth.login_required
 def get_auth_token():
-    token = g.user.generate_auth_token()
+    user = session["user"]
+    user = User.query.filter_by(user_id=user).first()
+    token = user.generate_auth_token()
     return jsonify({ 'token': token.decode('ascii') })
 
 
