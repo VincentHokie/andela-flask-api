@@ -176,17 +176,26 @@ def shopping_list_id(id):
         return response
 
     elif request.method == "PUT":
-        form = LoginForm()
+        form = ShoppingListForm()
         if form.validate_on_submit():
 
-            admin = ShoppingList.query.filter_by(username='admin').first()
-            admin.email = 'my_new_email@example.com'
-            db.session.commit()
+            lists = ShoppingList.query.filter_by(list_id=id, user_id=session["user"]).first()
 
-            return render_template("index.html",
-                                   title='Home')
+            if lists is not None:
+                lists.name = form.name.data
+                db.session.commit()
+
+                response = jsonify({"success": "Shopping list update successful!"})
+                response.status_code = 200
+                return response
+
+            else:
+                response = jsonify({"error" : "Shopping list with id: "+id+" not found!"})
+                response.status_code = 404
+                return response
+
         else:
-            return {"error": ""}
+            return {"error": form.errors}
 
     elif request.method == "DELETE":
 
