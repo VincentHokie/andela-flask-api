@@ -54,14 +54,10 @@ class CommonRequests(unittest.TestCase):
                            headers=self.get_auth_header(credentials["username"], credentials['password']))
 
     def update_shopping_list_item(self, client, shopping_list_item, list_id, item_id, credentials):
-        headers = self.get_auth_header(credentials["username"], credentials['password'])
-        headers["Content-Type"] = 'application/x-www-form-urlencoded'
-        return client.put('/shoppinglists/'+str(list_id)+'/items'+str(item_id),
+        return client.put('/shoppinglists/'+str(list_id)+'/items/'+str(item_id),
                                  data=shopping_list_item,
-                                 headers=headers)
+                                 headers=self.get_auth_header(credentials["username"], credentials['password']))
 
     def delete_shopping_list_item(self, client, list_id, item_id, credentials):
-        headers = self.get_auth_header(credentials["username"], credentials['password'])
-        headers["Content-Type"] = 'application/x-www-form-urlencoded'
-        return client.delete('/shoppinglists/'+str(list_id)+'/items'+str(item_id),
-                                    headers=headers)
+        return client.delete('/shoppinglists/'+str(list_id)+'/items/'+str(item_id),
+                                    headers=self.get_auth_header(credentials["username"], credentials['password']))
