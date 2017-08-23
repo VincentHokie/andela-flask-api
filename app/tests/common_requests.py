@@ -33,35 +33,35 @@ class CommonRequests(unittest.TestCase):
     def update_shopping_list(self, client,  shopping_list, list_id, credentials):
         headers=self.get_auth_header(credentials["username"], credentials['password'])
         headers["Content-Type"] = 'application/x-www-form-urlencoded'
-        return client.put('/shoppinglists/'+list_id,
+        return client.put('/shoppinglists/'+str(list_id),
                                  data=shopping_list,
                                  headers=headers)
 
     def delete_shopping_list(self, client, list_id, credentials):
         headers = self.get_auth_header(credentials["username"], credentials['password'])
         headers["Content-Type"] = 'application/x-www-form-urlencoded'
-        return client.delete('/shoppinglists/'+list_id,
+        return client.delete('/shoppinglists/'+str(list_id),
                                     headers=headers)
 
 
     # crud on a shopping list items
     def get_items_under_shopping_list(self, client, list_id, credentials):
-        return client.get('/shoppinglists/'+list_id,
+        return client.get('/shoppinglists/'+str(list_id),
                            headers=self.get_auth_header(credentials["username"], credentials['password']))
 
     def create_shopping_list_item(self, client, shopping_list_item, list_id, credentials):
-        return client.post('/shoppinglists/'+list_id+'/items', data=shopping_list_item,
+        return client.post('/shoppinglists/'+str(list_id)+'/items', data=shopping_list_item,
                            headers=self.get_auth_header(credentials["username"], credentials['password']))
 
     def update_shopping_list_item(self, client, shopping_list_item, list_id, item_id, credentials):
         headers = self.get_auth_header(credentials["username"], credentials['password'])
         headers["Content-Type"] = 'application/x-www-form-urlencoded'
-        return client.put('/shoppinglists/'+list_id+'/items'+item_id,
+        return client.put('/shoppinglists/'+str(list_id)+'/items'+str(item_id),
                                  data=shopping_list_item,
                                  headers=headers)
 
     def delete_shopping_list_item(self, client, list_id, item_id, credentials):
         headers = self.get_auth_header(credentials["username"], credentials['password'])
         headers["Content-Type"] = 'application/x-www-form-urlencoded'
-        return client.delete('/shoppinglists/'+list_id+'/items'+item_id,
+        return client.delete('/shoppinglists/'+str(list_id)+'/items'+str(item_id),
                                     headers=headers)
