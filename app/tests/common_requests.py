@@ -13,6 +13,12 @@ class CommonRequests(unittest.TestCase):
     def logout(self, client):
         return client.get('/auth/logout')
 
+    def get_auth_header(self, username, password):
+        return {
+            'content-type': 'application/json',
+            'Authorization': 'Basic %s' % b64encode(
+                bytes(username + ':' + password, "utf-8")).decode("ascii")
+        }
 
     # crud on a shopping list
     def get_all_shopping_list(self, client):
