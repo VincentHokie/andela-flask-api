@@ -1,4 +1,6 @@
 
+from flask import json
+
 from app.views import app, is_testing
 from app.models import db, ShoppingList
 from datetime import datetime
@@ -10,8 +12,17 @@ class ShoppingListTestCase(CommonRequests):
 
     def setUp(self):
         """Define test variables and initialize app."""
-        is_testing()
         self.app = app
+        POSTGRES = {
+            'user': 'vince',
+            'pw': 'vince',
+            'db': 'test_db',
+            'host': 'localhost',
+            'port': '5432',
+        }
+
+        app.config["SQLALCHEMY_DATABASE_URI"] = 'postgresql://%(user)s:%(pw)s@%(host)s:%(port)s/%(db)s' % POSTGRES
+
         self.client = self.app.test_client
         self.sign_up_credentials = {'username': 'vince', "email": "vincenthokie@gmail.com", "password": "123",
                                     "password2": "123"}
@@ -25,73 +36,91 @@ class ShoppingListTestCase(CommonRequests):
     def test_shopping_list_creation(self):
         """Test API can create a shopping list (POST request)"""
 
-        self.sign_up(self.sign_up_credentials)
-        self.login(self.login_credentials)
+        with app.test_client() as client:
+            self.sign_up(client, self.sign_up_credentials)
+            self.login(client, self.login_credentials)
 
-        shopping_list = {'name': 'vince'}
-        res = self.create_shopping_list(shopping_list)
-        the_list = ShoppingList.query.filter_by(name=shopping_list["name"]).first()
+            shopping_list = {'name': 'vince'}
+            res = self.create_shopping_list(client, shopping_list, self.login_credentials)
+            print(res.data)
+            back_data = json.loads(res.data)
 
-        self.assertEqual(res.status_code, 201)
-        self.assertEqual(the_list.name, shopping_list["name"])
-        self.assertGreater(datetime.now(), the_list.date)
+            self.assertEqual(res.status_code, 201)
+            self.assertEqual(back_data['name'], shopping_list["name"])
+            # self.assertGreater(
+            #    datetime.now().strftime("%Y-%b-%d %H:%M:%-S"),
+            #    datetime.strptime(back_data['date'][0]+" "+back_data['date'][1], "%Y-%b-%d %H:%M:%-S")
+            # )
+
+
 
     def test_shopping_list_name_required(self):
         """Test API can create a shopping list (POST request)"""
 
-        self.sign_up(self.sign_up_credentials)
-        self.login(self.login_credentials)
+        with app.test_client() as client:
+            self.sign_up(client, self.sign_up_credentials)
+            self.login(client, self.login_credentials)
 
-        shopping_list = {'name': ''}
-        res = self.create_shopping_list(shopping_list)
+            shopping_list = {'name': ''}
+            res = self.create_shopping_list(client, shopping_list, self.login_credentials)
+            back_data = json.loads(res.data)
 
-        self.assertEqual(res.status_code, 200)
-        self.assertIn("error", res.data)
+            self.assertEqual(res.status_code, 200)
+            self.assertIn("error", back_data)
+
+
 
     def test_api_can_get_all_shopping_lists(self):
         """Test API can get shopping lists (GET request)."""
 
-        self.sign_up(self.sign_up_credentials)
-        self.login(self.login_credentials)
+        with app.test_client() as client:
+            self.sign_up(client, self.sign_up_credentials)
+            self.login(client, self.login_credentials)
 
-        res = self.get_all_shopping_list()
-        self.assertEqual(res.status_code, 200)
+            shopping_list = {'name': ''}
+            self.create_shopping_list(client, shopping_list, self.login_credentials)
+
+            res = self.get_all_shopping_list(client, self.login_credentials)
+
+            self.assertEqual(res.status_code, 200)
+
+
+
 
     def test_api_can_update_shopping_list(self):
         """Test API can get a single bucketlist by using it's id."""
 
-        self.sign_up(self.sign_up_credentials)
-        self.login(self.login_credentials)
+        with app.test_client() as client:
+            self.sign_up(client, self.sign_up_credentials)
+            self.login(client, self.login_credentials)
 
-        shopping_list = {'name': 'vince'}
-        shopping_list_updated = {'name': 'vince123'}
+            shopping_list = {'name': 'vince'}
+            shopping_list_updated = {'name': 'vince123'}
+            res = self.create_shopping_list(client, shopping_list, self.login_credentials)
+            the_list = json.loads(res.data)
 
-        self.create_shopping_list(shopping_list)
-        the_list = ShoppingList.query.filter_by(name=shopping_list["name"]).first()
+            res = self.update_shopping_list(client, shopping_list_updated, the_list['list_id'], self.login_credentials)
+            the_list = json.loads(res.data)
 
-        rv = self.update_shopping_list(shopping_list_updated, the_list.list_id)
+            self.assertEqual(res.status_code, 200)
+            self.assertIn("success", the_list)
 
-        the_list = ShoppingList.query.filter_by(list_id=the_list.list_id).first()
-
-        self.assertEqual(rv.status_code, 200)
-        self.assertEqual(shopping_list_updated["name"], the_list.name)
 
     def test_api_can_delete_shopping_list(self):
         """Test API can get a single bucketlist by using it's id."""
 
-        self.sign_up(self.sign_up_credentials)
-        self.login(self.login_credentials)
+        with app.test_client() as client:
+            self.sign_up(client, self.sign_up_credentials)
+            self.login(client, self.login_credentials)
 
-        shopping_list = {'name': 'vince'}
-        self.create_shopping_list(shopping_list)
+            shopping_list = {'name': 'vince'}
+            res = self.create_shopping_list(client, shopping_list, self.login_credentials)
+            the_list = json.loads(res.data)
 
-        the_list = ShoppingList.query.filter_by(name=shopping_list["name"]).first()
-        result = self.delete_shopping_list(the_list.list_id)
+            result = self.delete_shopping_list(client, the_list['list_id'], self.login_credentials)
 
-        count = db.session.query(ShoppingList).filter(list_id=the_list.list_id).count()
-
-        self.assertEqual(result.status_code, 200)
-        self.assertEqual(0, count)
+            self.assertEqual(result.status_code, 202)
+            self.assertIn("success", json.loads(result.data))
 
     def tearDown(self):
         """teardown all initialized variables."""
