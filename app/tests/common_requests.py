@@ -16,7 +16,7 @@ class CommonRequests(unittest.TestCase):
 
     def get_auth_header(self, username, password):
         return {
-            'Content-Type': 'application/json',
+            'Content-Type': 'application/x-www-form-urlencoded',
             'Authorization': 'Basic %s' % b64encode(
                 bytes(username + ':' + password, "utf-8")).decode("ascii")
         }
