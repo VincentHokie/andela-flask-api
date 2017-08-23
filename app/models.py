@@ -48,15 +48,15 @@ class User(db.Model):
         return pwd_context.verify(password, self.password)
 
     def generate_auth_token(self, expiration=600):
-        s = Serializer(app.config['SECRET_KEY'], expires_in=expiration)
-        return s.dumps({'id': self.id})
+        s = Serializer("youll-never-know-what-it-is-coz-its-secret", expires_in=expiration)
+        return s.dumps({'id': self.user_id})
 
     def __repr__(self):
         return '<E-mail %r>' % self.email
 
     @staticmethod
     def verify_auth_token(token):
-        s = Serializer(app.config['SECRET_KEY'])
+        s = Serializer("youll-never-know-what-it-is-coz-its-secret")
         try:
             data = s.loads(token)
         except SignatureExpired:
