@@ -11,7 +11,7 @@ before_install:
     - pip install coveralls
 
 # command to run tests
-script: pytest app/tests
+# script: pytest app/tests
 
 after_success:
     - coveralls
