@@ -5,10 +5,13 @@ from flask import render_template, request, jsonify, session, json
 from models import db, User, ShoppingListItem, ShoppingList
 from forms import LoginForm, SignUpForm, ShoppingListForm, ShoppingListItemForm
 
+from flask_heroku import Heroku
+
 from flask_httpauth import HTTPBasicAuth
 auth = HTTPBasicAuth()
 
 app = Flask(__name__)
+heroku = Heroku(app)
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -139,16 +142,31 @@ def reset_password():
 @auth.login_required
 def shopping_lists():
     if request.method == "POST":
-        form = ShoppingList()
+        form = ShoppingListForm()
         if form.validate_on_submit():
-            return render_template("index.html",
-                                   title='Home')
+            list = ShoppingList(form.name.data, session["user"])
+            list.save()
+
+            list = ShoppingList.query.filter_by(name=form.name.data, user_id=session["user"]).first()
+            response = jsonify( list.serialize )
+            response.status_code = 201
+            return response
+
         else:
-            return {"error": ""}
+            response = jsonify({"error": form.errors})
+            response.status_code = 200
+            return response
+
     elif request.method == "GET":
 
-        return render_template("index.html",
-                               title='Home')
+        response = jsonify(
+            [i.serialize for i in ShoppingList.get_all(
+                session["user"],
+                request.args.get("q"),
+                request.args.get("limit"))])
+
+        response.status_code = 200
+        return response
 
 @app.route("/shoppinglists/<id>", methods=['GET', 'PUT', 'DELETE'])
 @auth.login_required
