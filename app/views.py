@@ -349,7 +349,7 @@ def shopping_list_id(id):
             lists.delete()
         except:
             response = jsonify({"error": "Something went wrong with your delete please try again"})
-            response.status_code = 202
+            response.status_code = 200
             return response
 
         # if all went well, send back a success message
