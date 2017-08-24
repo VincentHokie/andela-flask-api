@@ -58,11 +58,8 @@ ADMINS = ['your-gmail-username@gmail.com']
 db.init_app(app)
 mail = Mail(app)
 
-def is_testing():
-    POSTGRES["db"] = 'test_db'
-    app.config["TESTING"] = True
 
-
+# helper function for sending user emails
 def send_email(subject, recipients, text_body):
     msg = Message(subject, recipients=recipients)
     msg.body = text_body
@@ -71,8 +68,9 @@ def send_email(subject, recipients, text_body):
 
 
 
+# function used to verify whether username/password or token provided are valid
 @auth.verify_password
-def verify_password(username_or_token, password):
+def verify_password(username_or_token, password=None):
     # first try to authenticate by token
     user = User.verify_auth_token(username_or_token)
     if not user:
@@ -86,36 +84,43 @@ def verify_password(username_or_token, password):
 
 @app.route("/auth/register", methods=['POST'])
 def register():
-    if request.method == "POST":
-        form = SignUpForm()
 
-        if form.validate_on_submit():
+    form = SignUpForm()
+    # the form has been properly filled in
+    if form.validate_on_submit():
 
-            if form.password.data != form.password2.data:
-                take_back = {"error": "Your passwords don't match!"}
-
-                response = jsonify(take_back)
-                response.status_code = 200
-                return response
-
-            user = User(
-                form.email.data,
-                form.username.data,
-                form.password.data
-            )
-            user.save()
-            take_back = {"success": True}
-
-            response = jsonify(take_back)
-            response.status_code = 201
-            return response
-
-        else:
-            take_back = {"error": form.errors }
+        if form.password.data != form.password2.data:
+            take_back = {"error": "Your passwords don't match!"}
 
             response = jsonify(take_back)
             response.status_code = 200
             return response
+
+        user = User(
+            form.email.data,
+            form.username.data,
+            form.password.data
+        )
+
+        # try and save the user, if anything goes wrong..send back an error message
+        try:
+            user.save()
+        except:
+            response = jsonify({"error" : "Ensure you don't already have an account and try again"})
+            response.status_code = 200
+            return response
+
+        # if were here, the save worked..return a success message
+        take_back = {"success": "Sign up successful, login to continue!"}
+        response = jsonify(take_back)
+        response.status_code = 201
+        return response
+
+    # the form was not properly filled
+    else:
+        response = jsonify({"error": form.errors })
+        response.status_code = 200
+        return response
 
 
 @app.route("/auth/login", methods=['POST'])
@@ -130,7 +135,8 @@ def login():
             if not user or not user.verify_password(form.password.data):
                 take_back = {"error": "Login failed! Your credentials don't match our records"}
             else:
-                session["user"] = user.user_id
+                token = user.generate_auth_token()
+                take_back['token'] =token.decode('ascii')
 
             response = jsonify(take_back)
             response.status_code = 200
@@ -142,6 +148,7 @@ def login():
             response = jsonify(take_back)
             response.status_code = 200
             return response
+
 
 @app.route("/auth/logout", methods=['POST'])
 def logout():
@@ -255,24 +262,34 @@ def reset_password(token=None):
 @app.route("/shoppinglists", methods=['GET', 'POST'])
 @auth.login_required
 def shopping_lists():
+
+    # were adding a shopping list
     if request.method == "POST":
         form = ShoppingListForm()
+
+        # the form was properly filled
         if form.validate_on_submit():
+
+            # create the list
             list = ShoppingList(form.name.data, session["user"])
             list.save()
 
+            # retrieve the list and send it back to the user
             list = ShoppingList.query.filter_by(name=form.name.data, user_id=session["user"]).first()
             response = jsonify( list.serialize )
             response.status_code = 201
             return response
 
+        # the form was not properly filled, return an error message
         else:
             response = jsonify({"error": form.errors})
             response.status_code = 200
             return response
 
+    # we want to see all the shopping lists
     elif request.method == "GET":
 
+        # get all the lists and send them to the user
         response = jsonify(
             [i.serialize for i in ShoppingList.get_all(
                 session["user"],
@@ -285,6 +302,8 @@ def shopping_lists():
 @app.route("/shoppinglists/<id>", methods=['GET', 'PUT', 'DELETE'])
 @auth.login_required
 def shopping_list_id(id):
+
+    # ensure id is a valid integer
     try:
         int(id)
     except:
@@ -292,65 +311,70 @@ def shopping_list_id(id):
         response.status_code = 500
         return response
 
+    # ensure our list actually exists
+    lists = ShoppingList.query.filter_by(list_id=id, user_id=session["user"]).first()
+    if lists is None:
+        response = jsonify({"error": "Shopping list with id: " + id + " is not found!"})
+        response.status_code = 404
+        return response
+
+    # we want all the items under the list with the given id
     if request.method == "GET":
 
-        if ShoppingList.query.filter_by(list_id=id, user_id=session["user"]).first() is None:
-            response = jsonify({"error": "Shopping list id: " + id + " is not found!"})
-            response.status_code = 404
-            return response
-
+        # retrieve and send back the needed information
         response = jsonify(
             [i.serialize for i in ShoppingListItem.get_all(id, request.args.get("q"), request.args.get("limit"))]
         )
         response.status_code = 200
         return response
 
+    # were updating a list
     elif request.method == "PUT":
         form = ShoppingListForm()
+
+        # the form was properly filled
         if form.validate_on_submit():
 
-            lists = ShoppingList.query.filter_by(list_id=id, user_id=session["user"]).first()
+            # update the list
+            lists.name = form.name.data
+            db.session.commit()
 
-            if lists is not None:
-                lists.name = form.name.data
-                db.session.commit()
+            # send the user a meaningful response
+            response = jsonify({"success": "Shopping list update successful!"})
+            response.status_code = 200
+            return response
 
-                response = jsonify({"success": "Shopping list update successful!"})
-                response.status_code = 200
-                return response
-
-            else:
-                response = jsonify({"error" : "Shopping list with id: "+id+" not found!"})
-                response.status_code = 404
-                return response
-
+        # the form was not properly filled
         else:
             response = jsonify({"error": form.errors})
             response.status_code = 200
             return response
 
+    # were deleting a shopping list
     elif request.method == "DELETE":
 
-        lists = ShoppingList.query.filter_by(list_id=id, user_id=session["user"]).first()
-
-        if lists is not None:
+        # delete the list, otherwise return an error
+        try:
             lists.delete()
-
-            response = jsonify({"success": "Shopping list delete successful!"})
+        except:
+            response = jsonify({"error": "Something went wrong with your delete please try again"})
             response.status_code = 202
             return response
 
-        else:
-            response = jsonify({"error": "Shopping list with id: " + id + " not found!"})
-            response.status_code = 404
-            return response
+        # if all went well, send back a success message
+        response = jsonify({"success": "Shopping list delete successful!"})
+        response.status_code = 202
+        return response
 
 
 @app.route("/shoppinglists/<id>/items", methods=['POST'])
 @auth.login_required
 def shopping_list_items(id):
+
+    # were adding a new item
     if request.method == "POST":
 
+        # ensure the provided shopping list is a valid integer
         try:
             int(id)
         except:
@@ -359,17 +383,20 @@ def shopping_list_items(id):
             return response
 
         form = ShoppingListItemForm()
-
+        # the submitted form is of proper format
         if form.validate_on_submit():
 
+            # the shopping list does not exist
             if ShoppingList.query.filter_by(list_id=id, user_id=session["user"]).first() is None:
                 response = jsonify({"error": "Shopping list id: " + id + " is not found!"})
                 response.status_code = 404
                 return response
 
+            # the shopping list exists, create an item object and save it
             list = ShoppingListItem(form.name.data, id, form.amount.data)
             list.save()
 
+            # get the added item and return it to the user
             list = ShoppingListItem.query\
                 .filter_by(name=form.name.data, list_id=id, amount=form.amount.data).first()
 
@@ -377,6 +404,7 @@ def shopping_list_items(id):
             response.status_code = 201
             return response
 
+        # there were form errors, return them to the user
         else:
             response = jsonify({"error": form.errors})
             response.status_code = 200
@@ -387,6 +415,7 @@ def shopping_list_items(id):
 @auth.login_required
 def shopping_list_item_update(id, item_id):
 
+    # check if the shopping list id is indeed a valid integer
     try:
         int(id)
     except:
@@ -394,6 +423,7 @@ def shopping_list_item_update(id, item_id):
         response.status_code = 500
         return response
 
+    # check if the shopping list item id is indeed a valid integer
     try:
         int(item_id)
     except:
@@ -401,17 +431,20 @@ def shopping_list_item_update(id, item_id):
         response.status_code = 500
         return response
 
+    # ensure the shopping list in question exists
     if ShoppingList.query.filter_by(list_id=id, user_id=session["user"]).first() is None:
         response = jsonify({"error": "Shopping list with id: " + id + " not found!"})
         response.status_code = 404
         return response
 
+    # were updating a shopping list item
     if request.method == "PUT":
         form = ShoppingListItemForm()
         if form.validate_on_submit():
 
             lists = ShoppingListItem.query.filter_by(item_id=item_id, list_id=id).first()
 
+            # the item exists
             if lists is not None:
                 lists.name = form.name.data
                 lists.amount = form.amount.data
@@ -421,20 +454,24 @@ def shopping_list_item_update(id, item_id):
                 response.status_code = 200
                 return response
 
+            # the item id provided is not valid
             else:
                 response = jsonify({"error": "Shopping list item with id: " + item_id + " not found!"})
                 response.status_code = 404
                 return response
 
+        # the form submitted had some validation errors
         else:
             response = jsonify({"error": form.errors})
             response.status_code = 200
             return response
 
+    # were deleting a shopping list item
     elif request.method == "DELETE":
 
         lists = ShoppingListItem.query.filter_by(list_id=id, item_id=item_id).first()
 
+        # the item exists
         if lists is not None:
             lists.delete()
 
@@ -442,12 +479,14 @@ def shopping_list_item_update(id, item_id):
             response.status_code = 202
             return response
 
+        # the item id provided is not valid
         else:
             response = jsonify({"error": "Shopping list item with id: " + item_id + " not found!"})
             response.status_code = 404
             return response
 
 
+# route that allows a user get a valid token if theirs expires conveniently
 @app.route('/api/token', methods=['GET'])
 @auth.login_required
 def get_auth_token():
