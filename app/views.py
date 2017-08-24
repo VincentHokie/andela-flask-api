@@ -428,28 +428,26 @@ def shopping_list_item_update(id, item_id):
         response.status_code = 404
         return response
 
+    # ensure the shopping list item in question exists
+    lists = ShoppingListItem.query.filter_by(item_id=item_id, list_id=id).first()
+    if lists is None:
+        response = jsonify({"error": "Shopping list item with id: " + item_id + " not found!"})
+        response.status_code = 404
+        return response
+
+
     # were updating a shopping list item
     if request.method == "PUT":
         form = ShoppingListItemForm()
         if form.validate_on_submit():
 
-            lists = ShoppingListItem.query.filter_by(item_id=item_id, list_id=id).first()
+            lists.name = form.name.data
+            lists.amount = form.amount.data
+            db.session.commit()
 
-            # the item exists
-            if lists is not None:
-                lists.name = form.name.data
-                lists.amount = form.amount.data
-                db.session.commit()
-
-                response = jsonify({"success": "Shopping list update successful!"})
-                response.status_code = 200
-                return response
-
-            # the item id provided is not valid
-            else:
-                response = jsonify({"error": "Shopping list item with id: " + item_id + " not found!"})
-                response.status_code = 404
-                return response
+            response = jsonify({"success": "Shopping list update successful!"})
+            response.status_code = 200
+            return response
 
         # the form submitted had some validation errors
         else:
