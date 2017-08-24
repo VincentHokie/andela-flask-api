@@ -1,11 +1,15 @@
 
 import os
 from flask import Flask
-from flask import render_template, request, jsonify, session, json
-from .models import db, User, ShoppingListItem, ShoppingList
-from .forms import LoginForm, SignUpForm, ShoppingListForm, ShoppingListItemForm
+from flask import render_template, request, jsonify, session, url_for
+from models import db, User, ShoppingListItem, ShoppingList
+from forms import LoginForm, SignUpForm, ShoppingListForm, ShoppingListItemForm, EmailForm, PasswordResetForm
+
+from itsdangerous import (TimedJSONWebSignatureSerializer
+                          as Serializer, BadSignature, SignatureExpired)
 
 from flask_heroku import Heroku
+from flask_mail import Mail, Message
 
 from flask_httpauth import HTTPBasicAuth
 auth = HTTPBasicAuth()
@@ -39,12 +43,31 @@ app.config["WTF_CSRF_ENABLED"] = False
 # guessed in production
 app.config["SECRET_KEY"] = 'youll-never-know-what-it-is-coz-its-secret'
 
+# email server
+app.config["MAIL_SERVER"] = 'smtp.googlemail.com'
+app.config["MAIL_PORT"] = 465
+app.config["MAIL_USE_TLS"] = False
+app.config["MAIL_USE_SSL"] = True
+app.config["MAIL_USERNAME"] = "andelatestmail"
+app.config["MAIL_PASSWORD"] = "andelatestmail1"
+app.config["MAIL_DEFAULT_SENDER"] = "andelatestmail@gmail.com"
+
+# administrator list
+ADMINS = ['your-gmail-username@gmail.com']
+
 db.init_app(app)
+mail = Mail(app)
 
 def is_testing():
     POSTGRES["db"] = 'test_db'
     app.config["TESTING"] = True
 
+
+def send_email(subject, recipients, text_body):
+    msg = Message(subject, recipients=recipients)
+    msg.body = text_body
+    #msg.html = html_body
+    mail.send(msg)
 
 
 
@@ -127,12 +150,103 @@ def logout():
         return render_template("index.html",
                                title='Home')
 
-@app.route("/auth/reset-password", methods=['GET', 'POST'])
-def reset_password():
+@app.route('/auth/reset-password', methods=['POST'])
+@app.route("/auth/reset-password/<token>", methods=['POST'])
+def reset_password(token=None):
+
+    # ensure its a post request
     if request.method == "POST":
 
-        return render_template("index.html",
-                               title='Home')
+        # the user is trying to update the password and has submitted the passwords
+        if token is not None:
+
+            s = Serializer(app.config['SECRET_KEY'])
+
+            # check if the token is a valid one and return a useful message
+            try:
+                data = s.loads(token)
+            except SignatureExpired:
+               # valid token, but expired
+               response = jsonify({"error": "Your link expired, request another and use that!"})
+               response.status_code = 401
+               return response
+            except BadSignature:
+                # invalid token
+                response = jsonify({"error": "Nice try.."})
+                response.status_code = 404
+                return response
+
+            # if were here, we've fount that the token is valid
+            form = PasswordResetForm()
+            email = data['email']
+
+            # the passwords have been properly filled in the form
+            if form.validate_on_submit():
+
+                # ensure the user from the token exists
+                user = User.query.filter_by(email=email).first()
+
+                # user doesnt exist for some reason
+                if user is None:
+                    response = jsonify({"error": "You're not in our pool of users!"})
+                    response.status_code = 404
+                    return response
+
+                # user exists and we can update their password
+                user.password = user.hash_password(form.password.data)
+                db.session.commit()
+
+                # send a success message back
+                response = jsonify(
+                    {"succes": "Your password has been successfully reset, you can use it to log in now"})
+                response.status_code = 200
+                return response
+
+            # the form wasnt properly submitted, return error messages
+            else:
+                response = jsonify({"error": form.errors})
+                response.status_code = 200
+                return response
+
+        # there is no token, so we should be recieving the usre email
+        else:
+
+            form = EmailForm()
+
+            # the email has been properly submitted
+            if form.validate_on_submit():
+
+                # retrieve user and check if they exist
+                user = User.query.filter_by(email=form.email.data).first()
+
+                # user does not exist
+                if user is None:
+                    response = jsonify({"error": "You're not in our pool of users!"})
+                    response.status_code = 404
+                    return response
+
+                # user exists, make a token from the secret key and a dictionary of the users email
+                s = Serializer(app.config['SECRET_KEY'], expires_in=600)
+                tok = s.dumps({'email': form.email.data})
+
+                # create a url and send it in the email
+                password_reset_url = url_for('reset_password', token=tok, _external=True)
+                email_body = "Please follow this link to reset your password\n\n"+password_reset_url+"\n\n " \
+                                "If you're not the one who requested this, please ignore this and contact the administrator" \
+                                " about this."
+
+                send_email('Password Reset Requested', [form.email.data], )
+
+                # return a success message
+                response = jsonify({"succes": "An email has been sent to you with a link you can use to reset your password"})
+                response.status_code = 200
+                return response
+
+            # the form was not properly submitted, return error messages
+            else:
+                response = jsonify({"error": form.errors})
+                response.status_code = 200
+                return response
 
 
 
