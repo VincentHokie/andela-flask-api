@@ -77,7 +77,7 @@ class ShoppingList(db.Model):
     list_id = db.Column(db.Integer, primary_key = True)
     name = db.Column(db.String(140), nullable=False)
     date = db.Column(db.DateTime, nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.user_id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.user_id', ondelete='CASCADE'), nullable=False)
 
     def __init__(self, name, user_id):
         self.name = name
@@ -137,7 +137,7 @@ class ShoppingListItem(db.Model):
     date = db.Column(db.DateTime, nullable=False)
     bought = db.Column(db.Integer, nullable=False)
     amount = db.Column(db.Integer, nullable=False)
-    list_id = db.Column(db.Integer, db.ForeignKey('shopping_list.list_id'), nullable=False)
+    list_id = db.Column(db.Integer, db.ForeignKey('shopping_list.list_id', ondelete='CASCADE'), nullable=False)
 
     def __init__(self, name, list_id, amount):
         self.name = name
