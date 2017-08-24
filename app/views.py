@@ -460,23 +460,21 @@ def shopping_list_item_update(id, item_id):
 
         lists = ShoppingListItem.query.filter_by(list_id=id, item_id=item_id).first()
 
-        # the item exists
-        if lists is not None:
+        # delete the list item, otherwise return an error
+        try:
             lists.delete()
-
-            response = jsonify({"success": "Shopping list delete successful!"})
-            response.status_code = 202
+        except:
+            response = jsonify({"error": "Something went wrong with your delete please try again"})
+            response.status_code = 200
             return response
 
-        # the item id provided is not valid
-        else:
-            response = jsonify({"error": "Shopping list item with id: " + item_id + " not found!"})
-            response.status_code = 404
-            return response
+        response = jsonify({"success": "Shopping list delete successful!"})
+        response.status_code = 202
+        return response
 
 
 # route that allows a user get a valid token if theirs expires conveniently
-@app.route('/api/token', methods=['GET'])
+@app.route('/api/token', methods=['POST'])
 @auth.login_required
 def get_auth_token():
     user = session["user"]
