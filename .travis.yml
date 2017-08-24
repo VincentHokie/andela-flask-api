@@ -10,11 +10,17 @@ before_install:
     - pip install pytest-cov
     - pip install coveralls
 
+services:
+  - postgresql
+
 # command to run tests
-# script: pytest app/tests
+ script: pytest app/tests
 
 after_success:
     - coveralls
+
+before_script:
+  - psql -c 'create database test_db;' -U postgres
 
 deploy:
   provider: heroku
