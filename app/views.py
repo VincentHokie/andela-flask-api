@@ -89,13 +89,6 @@ def register():
     # the form has been properly filled in
     if form.validate_on_submit():
 
-        if form.password.data != form.password2.data:
-            take_back = {"error": "Your passwords don't match!"}
-
-            response = jsonify(take_back)
-            response.status_code = 200
-            return response
-
         user = User(
             form.email.data,
             form.username.data,
