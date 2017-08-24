@@ -193,7 +193,9 @@ def shopping_list_id(id):
                 return response
 
         else:
-            return {"error": form.errors}
+            response = jsonify({"error": form.errors})
+            response.status_code = 200
+            return response
 
     elif request.method == "DELETE":
 
