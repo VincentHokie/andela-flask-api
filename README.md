@@ -21,10 +21,8 @@ Simply follow the following steps..
 ### TravisCI
 [![Build Status](https://travis-ci.org/VincentHokie/andela-flask-api-app.svg?branch=master)](https://travis-ci.org/VincentHokie/andela-flask-api)
 
-
 ### Coveralls
 [![Coverage Status](https://coveralls.io/repos/github/VincentHokie/andela-flask-api/badge.svg?branch=master)](https://coveralls.io/github/VincentHokie/andela-flask-api?branch=master)
-
 
 ### Code Climate
 [![Code Climate](https://codeclimate.com/github/VincentHokie/andela-flask-api.svg)](https://codeclimate.com/github/VincentHokie/andela-flask-api)
