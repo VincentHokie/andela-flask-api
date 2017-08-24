@@ -136,9 +136,7 @@ def login():
             return response
 
         else:
-            take_back = {"error": form.errors}
-
-            response = jsonify(take_back)
+            response = jsonify({"error": form.errors})
             response.status_code = 200
             return response
 
