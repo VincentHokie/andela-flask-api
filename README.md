@@ -84,7 +84,7 @@ The following routes are accessible publicly i.e. you don't need to log in.
     Reset password endpoint.<br>
     The body must contain a JSON object that defines `password` and `password_confirm` fields.<br>
     On success a status code 200 is returned. The body of the response contains a JSON object with a success message. You will be able to login with your new details after this.<br>
-    On failure status code
+    On failure status code<br>
       - 404 (bad request) is returned if the token used does not exists.<br>
       - 401 (Unauthorized) is returned if the token is used after 10 minutes beyond which its invalid.<br>
       - 200 is returned. The body of the response contains a JSON object with an error message..<br>
@@ -99,7 +99,7 @@ The following routes are not accessible publicly i.e. you need to log in and use
     Add a new shopping list.<br>
     The body must contain a JSON object that defines a `name` field.<br>
     On success a status code 201 is returned. The body of the response contains a JSON object with the newly added list.<br>
-    On failure status code
+    On failure status code<br>
       - 200 is returned with a JSON object with an error message.<br>
       - 401 (unauthorized) is returned if the user is not logged in or the token is not sent with the request.
 
@@ -114,7 +114,7 @@ The following routes are not accessible publicly i.e. you need to log in and use
 
     Get all shopping list items under list with id : <id> .<br>
     On success a status code 200 is returned. The body of the response contains a JSON object with the items under the specified list.<br>
-    On failure status code
+    On failure status code<br>
       - 404 (bad request) is returned if the id provided does not belong to any existing list.<br>
       - 401 (unauthorized) is returned if the user is not logged in or the token is not sent with the request.<br>
       - 500 is returned if the id is not a valid integer.<br>
@@ -126,7 +126,7 @@ The following routes are not accessible publicly i.e. you need to log in and use
     Update shopping list with id : <id> .<br>
     The body must contain a JSON object that defines a `name` field.<br>
     On success a status code 201 is returned. The body of the response contains a JSON object with a success attribute.<br>
-    On failure status code
+    On failure status code<br>
       - 404 (bad request) is returned if the id provided does not belong to any existing list.<br>
       - 401 (unauthorized) is returned if the user is not logged in or the token is not sent with the request.<br>
       - 500 is returned if the id is not a valid integer.<br>
@@ -137,7 +137,7 @@ The following routes are not accessible publicly i.e. you need to log in and use
 
     Delete shopping list with id : <id> .<br>
     On success a status code 202 is returned. The body of the response contains a JSON object with a success attribute.<br>
-    On failure status code
+    On failure status code<br>
       - 404 (bad request) is returned if the id provided does not belong to any existing list.<br>
       - 401 (unauthorized) is returned if the user is not logged in or the token is not sent with the request.<br>
       - 500 is returned if the id is not a valid integer.<br>
@@ -151,7 +151,7 @@ The following routes are not accessible publicly i.e. you need to log in and use
     Add a new shopping list item.<br>
     The body must contain a JSON object that defines `name` and `amount` fields.<br>
     On success a status code 201 is returned. The body of the response contains a JSON object with the newly added shopping list item.<br>
-    On failure status code
+    On failure status code<br>
       - 404 (bad request) is returned if the id provided does not belong to any existing list.<br>
       - 401 (unauthorized) is returned if the user is not logged in or the token is not sent with the request.<br>
       - 500 is returned if the id is not a valid integer.<br>
@@ -165,7 +165,7 @@ The following routes are not accessible publicly i.e. you need to log in and use
     Update a shopping list item.<br>
     The body must contain a JSON object that defines `name` and `amount` fields.<br>
     On success a status code 200 is returned. The body of the response contains a JSON object with a success attribute.<br>
-    On failure status code
+    On failure status code<br>
       - 404 (bad request) is returned if the id and item_id provided does not belong to any existing list or item respectively.<br>
       - 401 (unauthorized) is returned if the user is not logged in or the token is not sent with the request.<br>
       - 500 is returned if the id or item_id is not a valid integer.<br>
@@ -175,7 +175,7 @@ The following routes are not accessible publicly i.e. you need to log in and use
 
     Register a new user.<br>
     On success a status code 202 is returned. The body of the response contains a JSON object with a success property.<br>
-    On failure status code
+    On failure status code<br>
       - 404 (bad request) is returned if the id or item_id provided does not belong to any existing list or item respectively.<br>
       - 401 (unauthorized) is returned if the user is not logged in or the token is not sent with the request.<br>
       - 500 is returned if the id is not a valid integer.<br>
@@ -185,8 +185,8 @@ The following routes are not accessible publicly i.e. you need to log in and use
  - POST **/api/token**
 
     Request a new authentication token.<br>
-    On success a status code 20o is returned. The body of the response contains a JSON object with the newly added user. A `Location` header contains the URI of the new user.<br>
-    On failure status code
+    On success a status code 200 is returned. The body of the response contains a JSON object with the token as a property.<br>
+    On failure status code.<br>
       - 401 (unauthorized) is returned if the user is not logged in or the token is not sent with the request.<br>
 
 
