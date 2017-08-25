@@ -4,6 +4,18 @@ from base64 import b64encode
 
 class CommonRequests(unittest.TestCase):
 
+
+    def define_db_connections(self, app):
+        POSTGRES = {
+            'user': 'vince',
+            'pw': 'vince',
+            'db': 'test_db',
+            'host': 'localhost',
+            'port': '5432',
+        }
+
+        app.config["SQLALCHEMY_DATABASE_URI"] = 'postgresql://%(user)s:%(pw)s@%(host)s:%(port)s/%(db)s' % POSTGRES
+
     # authentication methods
     def login(self, client,  login_credentials):
         return client.post('/auth/login', data=login_credentials)

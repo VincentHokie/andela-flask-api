@@ -11,15 +11,7 @@ class LoginTestCase(CommonRequests):
     def setUp(self):
         """Define test variables and initialize app."""
         self.app = app
-        POSTGRES = {
-            'user': 'postgres',
-            'pw': '',
-            'db': 'testdb',
-            'host': 'localhost',
-            'port': '5432',
-        }
-
-        app.config["SQLALCHEMY_DATABASE_URI"] = 'postgresql://%(user)s:%(pw)s@%(host)s:%(port)s/%(db)s' % POSTGRES
+        self.define_db_connections(self.app)
 
         self.client = self.app.test_client
 
@@ -79,7 +71,7 @@ class LoginTestCase(CommonRequests):
 
             headers = self.get_auth_header(login_credentials['username'],login_credentials['password'])
 
-            res = client.get('/api/token', headers=headers)
+            res = client.post('/api/token', headers=headers)
 
             self.assertEqual(res.status_code, 200)
             self.assertIn("token", json.loads(res.data))

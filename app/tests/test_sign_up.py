@@ -15,16 +15,7 @@ class SignUpTestCase(CommonRequests):
     def setUp(self):
         """Define test variables and initialize app."""
         self.app = app
-
-        POSTGRES = {
-            'user': 'postgres',
-            'pw': '',
-            'db': 'testdb',
-            'host': 'localhost',
-            'port': '5432',
-        }
-
-        app.config["SQLALCHEMY_DATABASE_URI"] = 'postgresql://%(user)s:%(pw)s@%(host)s:%(port)s/%(db)s' % POSTGRES
+        self.define_db_connections(self.app)
 
         self.client = self.app.test_client
 
@@ -49,7 +40,7 @@ class SignUpTestCase(CommonRequests):
     def test_sign_up_password_confirmation(self):
         """Test API can notice incorrect password confirmation (POST request)"""
 
-        sign_up_credentials = {'username': 'vince2', "email": "vincenthokie@gmail.com", "password": "123",
+        sign_up_credentials = {'username': 'vince2', "email": "vincenthokiee@gmail.com", "password": "123",
                                "password2": "1233"}
 
         with app.test_client() as client:
@@ -90,7 +81,7 @@ class SignUpTestCase(CommonRequests):
     def test_sign_up_username_required(self):
         """Test API can notice username is required (GET request)."""
 
-        sign_up_credentials = {"username" : "", "email": "vincenthokie@gmail.com", "password": "123",
+        sign_up_credentials = {"username" : "", "email": "vincenthokie1@gmail.com", "password": "123",
                                "password2": "123"}
 
         with app.test_client() as client:

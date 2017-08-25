@@ -8,16 +8,6 @@ class ProtectedRoutesTestCase(unittest.TestCase):
     def setUp(self):
         """Define test variables and initialize app."""
         self.app = app
-        POSTGRES = {
-            'user': 'postgres',
-            'pw': '',
-            'db': 'testdb',
-            'host': 'localhost',
-            'port': '5432',
-        }
-
-        app.config["SQLALCHEMY_DATABASE_URI"] = 'postgresql://%(user)s:%(pw)s@%(host)s:%(port)s/%(db)s' % POSTGRES
-
         self.client = self.app.test_client
 
     def test_create_shopping_list(self):
