@@ -1,6 +1,6 @@
 
 import unittest
-from app.views import app, is_testing
+from app.views import app
 
 class ProtectedRoutesTestCase(unittest.TestCase):
     """This class represents the sign up test case"""

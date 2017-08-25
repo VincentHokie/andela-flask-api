@@ -1,7 +1,7 @@
 
 from flask import json
 
-from app.views import app, is_testing
+from app.views import app
 from app.models import db, ShoppingListItem, ShoppingList
 from datetime import datetime
 from app.tests.common_requests import CommonRequests
