@@ -2,12 +2,15 @@
 import unittest
 from app.views import app
 
-class ProtectedRoutesTestCase(unittest.TestCase):
+from app.tests.common_requests import CommonRequests
+
+class ProtectedRoutesTestCase(CommonRequests):
     """This class represents the sign up test case"""
 
     def setUp(self):
         """Define test variables and initialize app."""
         self.app = app
+        self.define_db_connections(self.app)
         self.client = self.app.test_client
 
     def test_create_shopping_list(self):
