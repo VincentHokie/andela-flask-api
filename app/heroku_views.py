@@ -2,8 +2,8 @@
 import os
 from flask import Flask
 from flask import render_template, request, jsonify, session, url_for
-from .models import db, User, ShoppingListItem, ShoppingList
-from .forms import LoginForm, SignUpForm, ShoppingListForm, ShoppingListItemForm, EmailForm, PasswordResetForm
+from models import db, User, ShoppingListItem, ShoppingList
+from forms import LoginForm, SignUpForm, ShoppingListForm, ShoppingListItemForm, EmailForm, PasswordResetForm
 
 from itsdangerous import (TimedJSONWebSignatureSerializer
                           as Serializer, BadSignature, SignatureExpired)
