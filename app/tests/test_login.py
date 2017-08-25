@@ -12,8 +12,8 @@ class LoginTestCase(CommonRequests):
         """Define test variables and initialize app."""
         self.app = app
         POSTGRES = {
-            'user': 'vince',
-            'pw': 'vince',
+            'user': 'postgres',
+            'pw': '',
             'db': 'testdb',
             'host': 'localhost',
             'port': '5432',

@@ -21,8 +21,8 @@ app.config["DEBUG"] = True
 app.config["CSRF_ENABLED"] = True
 
 POSTGRES = {
-    'user': 'vince',
-    'pw': 'vince',
+    'user': 'postgres',
+    'pw': '',
     'db': 'andela-flask-api',
     'host': 'localhost',
     'port': '5432',

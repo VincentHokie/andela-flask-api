@@ -17,8 +17,8 @@ class SignUpTestCase(CommonRequests):
         self.app = app
 
         POSTGRES = {
-            'user': 'vince',
-            'pw': 'vince',
+            'user': 'postgres',
+            'pw': '',
             'db': 'testdb',
             'host': 'localhost',
             'port': '5432',
