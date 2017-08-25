@@ -9,7 +9,7 @@ class CommonRequests(unittest.TestCase):
         POSTGRES = {
             'user': 'postgres',
             'pw': '',
-            'db': 'test_db',
+            'db': 'testdb',
             'host': 'localhost',
             'port': '5432',
         }
