@@ -7,7 +7,6 @@ class ProtectedRoutesTestCase(unittest.TestCase):
 
     def setUp(self):
         """Define test variables and initialize app."""
-        is_testing()
         self.app = app
         self.client = self.app.test_client
 

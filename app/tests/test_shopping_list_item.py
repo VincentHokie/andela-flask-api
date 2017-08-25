@@ -16,7 +16,7 @@ class ShoppingListItemTestCase(CommonRequests):
         POSTGRES = {
             'user': 'vince',
             'pw': 'vince',
-            'db': 'test_db',
+            'db': 'testdb',
             'host': 'localhost',
             'port': '5432',
         }
