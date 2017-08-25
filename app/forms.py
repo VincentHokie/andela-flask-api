@@ -13,8 +13,8 @@ class LoginForm(FlaskForm):
 class SignUpForm(FlaskForm):
     username = StringField('username', validators=[DataRequired()])
     email = StringField('email', validators=[DataRequired(), Email()])
-    password = PasswordField('password', validators=[DataRequired(), EqualTo('password')])
-    password2 = PasswordField('password2', validators=[DataRequired(), EqualTo('password2')])
+    password = PasswordField('password', validators=[DataRequired(), EqualTo('password2')])
+    password2 = PasswordField('password2', validators=[DataRequired(), EqualTo('password')])
 
 
 class ShoppingListForm(FlaskForm):
