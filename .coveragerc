@@ -1,0 +1,2 @@
+[run]
+omit = app/heroku_views.py
