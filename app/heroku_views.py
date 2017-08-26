@@ -28,7 +28,7 @@ POSTGRES = {
     'port': '5432',
 }
 
-if os.environ.get("DATABASE_URL") is None:
+if os.environ.get("HEROKU_POSTGRESQL_CRIMSON_URL") is None:
     app.config["SQLALCHEMY_DATABASE_URI"] = 'postgresql://%(user)s:\
         %(pw)s@%(host)s:%(port)s/%(db)s' % POSTGRES
 else:
