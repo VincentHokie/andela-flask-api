@@ -1,7 +1,13 @@
-# Andela Shopping List AP
+# Andela Shopping List API
 ====================================
 
 The andela shopping list api that allows users plan shopping experiences.
+
+
+Heroku deployment URL
+--------------------
+
+https://andela-flask-api.herokuapp.com/
 
 
 Python Dependancy
@@ -195,7 +201,7 @@ The following routes are not accessible publicly i.e. you need to log in and use
 [![Build Status](https://travis-ci.org/VincentHokie/andela-flask-api-app.svg?branch=master)](https://travis-ci.org/VincentHokie/andela-flask-api)
 
 ### Coveralls
-[![Coverage Status](https://coveralls.io/repos/github/VincentHokie/andela-flask-api.svg?branch=master)](https://coveralls.io/github/VincentHokie/andela-flask-api?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/VincentHokie/andela-flask-api/badge.svg?branch=master)](https://coveralls.io/github/VincentHokie/andela-flask-api?branch=master)
 
 ### Code Climate
 [![Code Climate](https://codeclimate.com/github/VincentHokie/andela-flask-api.svg)](https://codeclimate.com/github/VincentHokie/andela-flask-api)
