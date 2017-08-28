@@ -31,14 +31,14 @@ class ProtectedRoutesTestCase(CommonRequests):
         """Test API wont submit if user is not authorized (GET request)"""
 
         with app.test_client() as client:
-            res = self.get_all_shopping_list(self, client, self.credentials)
+            res = self.get_all_shopping_list(client, self.credentials)
             self.assertEqual(res.status_code, 401)
 
     def test_retrieve_shopping_list_items(self):
         """Test API wont retirve resources if user is not authorized (GET request)"""
 
         with app.test_client() as client:
-            res = self.get_items_under_shopping_list(self, client, 1, self.credentials)
+            res = self.get_items_under_shopping_list(client, 1, self.credentials)
             self.assertEqual(res.status_code, 401)
 
     def test_update_shopping_list(self):
