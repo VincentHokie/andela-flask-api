@@ -16,7 +16,7 @@ class ProtectedRoutesTestCase(CommonRequests):
         """Test API wont submit if user is not authorized (POST request)"""
 
         with app.test_client() as client:
-            res = client.post('/shoppinglists')
+            res = self.create_shopping_list(client, {}, {"username":"", "password":""})
             self.assertEqual(res.status_code, 401)
 
     def test_retrieve_shopping_list(self):
