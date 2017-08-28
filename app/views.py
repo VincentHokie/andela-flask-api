@@ -235,7 +235,7 @@ def reset_password(token=None):
                                 "If you're not the one who requested this, please ignore this and contact the administrator" \
                                 " about this."
 
-                send_email('Password Reset Requested', [form.email.data], )
+                send_email('Password Reset Requested', [form.email.data], email_body)
 
                 # return a success message
                 response = jsonify({"succes": "An email has been sent to you with a link you can use to reset your password"})
