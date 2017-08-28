@@ -12,7 +12,7 @@ class ProtectedRoutesTestCase(CommonRequests):
         self.app = app
         self.define_db_connections(self.app)
         self.client = self.app.test_client
-        self.credentials = {"username":"", "password":""}
+        self.credentials = {"username": "a", "password": "a"}
 
     def test_create_shopping_list(self):
         """Test API wont submit if user is not authorized (POST request)"""
