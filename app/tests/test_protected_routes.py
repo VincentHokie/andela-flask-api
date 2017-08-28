@@ -1,6 +1,7 @@
 
 import unittest
 from app.views import app
+from app.models import db
 
 from app.tests.common_requests import CommonRequests
 
@@ -13,6 +14,11 @@ class ProtectedRoutesTestCase(CommonRequests):
         self.define_db_connections(self.app)
         self.client = self.app.test_client
         self.credentials = {"username": "a", "password": "a"}
+
+        # binds the app to the current context
+        with self.app.app_context():
+            # create all tables
+            db.create_all()
 
     def test_create_shopping_list(self):
         """Test API wont submit if user is not authorized (POST request)"""
