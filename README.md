@@ -198,7 +198,7 @@ The following routes are not accessible publicly i.e. you need to log in and use
 
 
 ### TravisCI
-[![Build Status](https://travis-ci.org/VincentHokie/andela-flask-api-app.svg?branch=master)](https://travis-ci.org/VincentHokie/andela-flask-api)
+[![Build Status](https://travis-ci.org/VincentHokie/andela-flask-api.svg?branch=master)](https://travis-ci.org/VincentHokie/andela-flask-api)
 
 ### Coveralls
 [![Coverage Status](https://coveralls.io/repos/github/VincentHokie/andela-flask-api/badge.svg?branch=master)](https://coveralls.io/github/VincentHokie/andela-flask-api?branch=master)
