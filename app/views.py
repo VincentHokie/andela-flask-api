@@ -89,6 +89,20 @@ def check_valid_list_id(list_id):
         response.status_code = 500
         return response
 
+
+def check_valid_item_id(item_id):
+    try:
+        int(item_id)
+    except:
+        response = jsonify(
+            {
+                "error":
+                    "Shopping list item id: " + item_id + " is not a valid id!"
+            })
+        response.status_code = 500
+        return response
+
+
 # function used to verify whether username/password or token provided are valid
 @auth.verify_password
 def verify_password(username_or_token, password=None):
@@ -517,16 +531,9 @@ def shopping_list_item_update(id, item_id):
         return is_valid
 
     # check if the shopping list item id is indeed a valid integer
-    try:
-        int(item_id)
-    except:
-        response = jsonify(
-            {
-                "error":
-                    "Shopping list item id: " + item_id + " is not a valid id!"
-            })
-        response.status_code = 500
-        return response
+    is_valid = check_valid_item_id(item_id)
+    if is_valid is not None:
+        return is_valid
 
     # ensure the shopping list in question exists
     if ShoppingList.query.filter_by(
