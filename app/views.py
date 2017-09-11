@@ -5,10 +5,12 @@ from flask import render_template, request, jsonify, session, url_for
 
 try:
     from .models import db, User, ShoppingListItem, ShoppingList
-    from .forms import LoginForm, SignUpForm, ShoppingListForm, ShoppingListItemForm, EmailForm, PasswordResetForm
+    from .forms import LoginForm, SignUpForm, ShoppingListForm, \
+        ShoppingListItemForm, EmailForm, PasswordResetForm
 except ImportError:
     from models import db, User, ShoppingListItem, ShoppingList
-    from forms import LoginForm, SignUpForm, ShoppingListForm, ShoppingListItemForm, EmailForm, PasswordResetForm
+    from forms import LoginForm, SignUpForm, ShoppingListForm, \
+        ShoppingListItemForm, EmailForm, PasswordResetForm
 
 from itsdangerous import (TimedJSONWebSignatureSerializer
                           as Serializer, BadSignature, SignatureExpired)
@@ -37,7 +39,8 @@ if os.environ.get("HEROKU_POSTGRESQL_CRIMSON_URL") is None:
     app.config["SQLALCHEMY_DATABASE_URI"] = 'postgresql://%(user)s:\
         %(pw)s@%(host)s:%(port)s/%(db)s' % POSTGRES
 else:
-    app.config["SQLALCHEMY_DATABASE_URI"] = os.environ['HEROKU_POSTGRESQL_CRIMSON_URL']
+    app.config["SQLALCHEMY_DATABASE_URI"] = \
+        os.environ['HEROKU_POSTGRESQL_CRIMSON_URL']
 
 
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
@@ -102,11 +105,16 @@ def register():
             form.password.data
         )
 
-        # try and save the user, if anything goes wrong..send back an error message
+        # try and save the user, if anything goes wrong..
+        # send back an error message
         try:
             user.save()
         except:
-            response = jsonify({"error" : "Ensure you don't already have an account and try again"})
+            response = jsonify(
+                {
+                    "error" :
+                    "Ensure you don't already have an account and try again"
+                })
             response.status_code = 200
             return response
 
@@ -133,7 +141,10 @@ def login():
             take_back = {"success": "You have successfully logged in"}
 
             if not user or not user.verify_password(form.password.data):
-                take_back = {"error": "Login failed! Your credentials don't match our records"}
+                take_back = {
+                    "error":
+                    "Login failed! Your credentials don't match our records"
+                }
             else:
                 token = user.generate_auth_token()
                 take_back['token'] =token.decode('ascii')
@@ -162,7 +173,8 @@ def reset_password(token=None):
     # ensure its a post request
     if request.method == "POST":
 
-        # the user is trying to update the password and has submitted the passwords
+        # the user is trying to update the password and
+        # has submitted the passwords
         if token is not None:
 
             s = Serializer(app.config['SECRET_KEY'])
@@ -172,7 +184,11 @@ def reset_password(token=None):
                 data = s.loads(token)
             except SignatureExpired:
                # valid token, but expired
-               response = jsonify({"error": "Your link expired, request another and use that!"})
+               response = jsonify(
+                   {
+                       "error":
+                        "Your link expired, request another and use that!"
+                   })
                response.status_code = 401
                return response
             except BadSignature:
@@ -193,7 +209,11 @@ def reset_password(token=None):
 
                 # user doesnt exist for some reason
                 if user is None:
-                    response = jsonify({"error": "You're not in our pool of users!"})
+                    response = jsonify(
+                        {
+                            "error":
+                            "You're not in our pool of users!"
+                        })
                     response.status_code = 404
                     return response
 
@@ -203,7 +223,11 @@ def reset_password(token=None):
 
                 # send a success message back
                 response = jsonify(
-                    {"succes": "Your password has been successfully reset, you can use it to log in now"})
+                    {
+                        "succes":
+                        "Your password has been successfully reset,"
+                            " you can use it to log in now"
+                    })
                 response.status_code = 200
                 return response
 
@@ -226,24 +250,39 @@ def reset_password(token=None):
 
                 # user does not exist
                 if user is None:
-                    response = jsonify({"error": "You're not in our pool of users!"})
+                    response = jsonify(
+                        {
+                            "error":
+                            "You're not in our pool of users!"
+                        })
                     response.status_code = 404
                     return response
 
-                # user exists, make a token from the secret key and a dictionary of the users email
+                # user exists, make a token from the secret key and
+                # a dictionary of the users email
                 s = Serializer(app.config['SECRET_KEY'], expires_in=600)
                 tok = s.dumps({'email': form.email.data})
 
                 # create a url and send it in the email
-                password_reset_url = "https://andela-react-client.herokuapp.com/password-reset/"+tok
-                email_body = "Please follow this link to reset your password\n\n"+password_reset_url+"\n\n " \
-                                "If you're not the one who requested this, please ignore this and contact the administrator" \
-                                " about this."
+                password_reset_url = \
+                    "https://andela-react-client.herokuapp.com/" \
+                    "password-reset/"+tok
 
-                send_email('Password Reset Requested', [form.email.data], email_body)
+                email_body = "Please follow this link to reset your " \
+                             "password\n\n"+password_reset_url+"\n\n If you're " \
+                             "not the one who requested this, please ignore " \
+                             "this and contact the administrator about this."
+
+                send_email(
+                    'Password Reset Requested', [form.email.data], email_body)
 
                 # return a success message
-                response = jsonify({"success": "An email has been sent to you with a link you can use to reset your password"})
+                response = jsonify(
+                    {
+                        "success":
+                        "An email has been sent to you with a link you "
+                            "can use to reset your password"
+                    })
                 response.status_code = 200
                 return response
 
@@ -273,7 +312,8 @@ def shopping_lists():
             list.save()
 
             # retrieve the list and send it back to the user
-            list = ShoppingList.query.filter_by(name=form.name.data, user_id=session["user"]).first()
+            list = ShoppingList.query.filter_by(
+                name=form.name.data, user_id=session["user"]).first()
             response = jsonify( list.serialize )
             response.status_code = 201
             return response
@@ -305,14 +345,23 @@ def shopping_list_id(id):
     try:
         int(id)
     except:
-        response = jsonify({"error": "Shopping list id: " + id + " is not a valid id!"})
+        response = jsonify(
+            {
+                "error":
+                "Shopping list id: " + id + " is not a valid id!"
+            })
         response.status_code = 500
         return response
 
     # ensure our list actually exists
-    lists = ShoppingList.query.filter_by(list_id=id, user_id=session["user"]).first()
+    lists = ShoppingList.query.filter_by(
+        list_id=id, user_id=session["user"]).first()
     if lists is None:
-        response = jsonify({"error": "Shopping list with id: " + id + " is not found!"})
+        response = jsonify(
+            {
+                "error":
+                "Shopping list with id: " + id + " is not found!"
+            })
         response.status_code = 404
         return response
 
@@ -320,9 +369,10 @@ def shopping_list_id(id):
     if request.method == "GET":
 
         # retrieve and send back the needed information
-        response = jsonify(
-            [i.serialize for i in ShoppingListItem.get_all(id, request.args.get("q"), request.args.get("limit"))]
-        )
+        response = jsonify([
+            i.serialize for i in ShoppingListItem.get_all(
+                id, request.args.get("q"), request.args.get("limit"))
+            ])
         response.status_code = 200
         return response
 
@@ -355,7 +405,11 @@ def shopping_list_id(id):
         try:
             lists.delete()
         except:
-            response = jsonify({"error": "Something went wrong with your delete please try again"})
+            response = jsonify(
+                {
+                    "error":
+                    "Something went wrong with your delete please try again"
+                })
             response.status_code = 200
             return response
 
@@ -376,7 +430,11 @@ def shopping_list_items(id):
         try:
             int(id)
         except:
-            response = jsonify({"error": "Shopping list id: " + id + " is not a valid id!"})
+            response = jsonify(
+                {
+                    "error":
+                    "Shopping list id: " + id + " is not a valid id!"
+                })
             response.status_code = 500
             return response
 
@@ -386,7 +444,11 @@ def shopping_list_items(id):
 
             # the shopping list does not exist
             if ShoppingList.query.filter_by(list_id=id, user_id=session["user"]).first() is None:
-                response = jsonify({"error": "Shopping list id: " + id + " is not found!"})
+                response = jsonify(
+                    {
+                        "error":
+                        "Shopping list id: " + id + " is not found!"
+                    })
                 response.status_code = 404
                 return response
 
@@ -395,8 +457,9 @@ def shopping_list_items(id):
             list.save()
 
             # get the added item and return it to the user
-            list = ShoppingListItem.query\
-                .filter_by(name=form.name.data, list_id=id, amount=form.amount.data).first()
+            list = ShoppingListItem.query.filter_by(
+                name=form.name.data, list_id=id, amount=form.amount.data
+            ).first()
 
             response = jsonify( list.serialize )
             response.status_code = 201
@@ -417,7 +480,11 @@ def shopping_list_item_update(id, item_id):
     try:
         int(id)
     except:
-        response = jsonify({"error": "Shopping list id: " + id + " is not a valid id!"})
+        response = jsonify(
+            {
+                "error":
+                "Shopping list id: " + id + " is not a valid id!"
+            })
         response.status_code = 500
         return response
 
@@ -425,20 +492,34 @@ def shopping_list_item_update(id, item_id):
     try:
         int(item_id)
     except:
-        response = jsonify({"error": "Shopping list item id: " + item_id + " is not a valid id!"})
+        response = jsonify(
+            {
+                "error":
+                "Shopping list item id: " + item_id + " is not a valid id!"
+            })
         response.status_code = 500
         return response
 
     # ensure the shopping list in question exists
-    if ShoppingList.query.filter_by(list_id=id, user_id=session["user"]).first() is None:
-        response = jsonify({"error": "Shopping list with id: " + id + " not found!"})
+    if ShoppingList.query.filter_by(
+            list_id=id, user_id=session["user"]).first() is None:
+        response = jsonify(
+            {
+                "error":
+                "Shopping list with id: " + id + " not found!"
+            })
         response.status_code = 404
         return response
 
     # ensure the shopping list item in question exists
-    lists = ShoppingListItem.query.filter_by(item_id=item_id, list_id=id).first()
+    lists = ShoppingListItem.query.filter_by(
+        item_id=item_id, list_id=id).first()
     if lists is None:
-        response = jsonify({"error": "Shopping list item with id: " + item_id + " not found!"})
+        response = jsonify(
+            {
+                "error":
+                "Shopping list item with id: " + item_id + " not found!"
+            })
         response.status_code = 404
         return response
 
@@ -465,13 +546,18 @@ def shopping_list_item_update(id, item_id):
     # were deleting a shopping list item
     elif request.method == "DELETE":
 
-        lists = ShoppingListItem.query.filter_by(list_id=id, item_id=item_id).first()
+        lists = ShoppingListItem.query.filter_by(
+            list_id=id, item_id=item_id).first()
 
         # delete the list item, otherwise return an error
         try:
             lists.delete()
         except:
-            response = jsonify({"error": "Something went wrong with your delete please try again"})
+            response = jsonify(
+                {
+                    "error":
+                    "Something went wrong with your delete please try again"
+                })
             response.status_code = 200
             return response
 
