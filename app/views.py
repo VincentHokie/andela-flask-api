@@ -243,7 +243,7 @@ def reset_password(token=None):
                 send_email('Password Reset Requested', [form.email.data], email_body)
 
                 # return a success message
-                response = jsonify({"succes": "An email has been sent to you with a link you can use to reset your password"})
+                response = jsonify({"success": "An email has been sent to you with a link you can use to reset your password"})
                 response.status_code = 200
                 return response
 
