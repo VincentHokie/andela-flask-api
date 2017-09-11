@@ -105,6 +105,18 @@ def check_valid_item_id(item_id):
 
     return None
 
+
+def check_list_exists(list_id, user_id=session["user"]):
+    if ShoppingList.query.filter_by(list_id=list_id,
+                                    user_id=user_id).first() is None:
+        response = jsonify(
+            {
+                "error":
+                    "Shopping list with id: " + list_id + " is not found!"
+            })
+        response.status_code = 404
+        return response
+
 # function used to verify whether username/password or token provided are valid
 @auth.verify_password
 def verify_password(username_or_token, password=None):
@@ -412,16 +424,13 @@ def shopping_list_id(id):
         return is_valid
 
     # ensure our list actually exists
+    lists = check_list_exists(id)
+    if lists is not None:
+        return lists
+
+    # reinitialize the list for use lower in the function
     lists = ShoppingList.query.filter_by(
         list_id=id, user_id=session["user"]).first()
-    if lists is None:
-        response = jsonify(
-            {
-                "error":
-                    "Shopping list with id: " + id + " is not found!"
-            })
-        response.status_code = 404
-        return response
 
     # we want all the items under the list with the given id
     if request.method == "GET":
@@ -494,14 +503,9 @@ def shopping_list_items(id):
         if form.validate_on_submit():
 
             # the shopping list does not exist
-            if ShoppingList.query.filter_by(list_id=id, user_id=session["user"]).first() is None:
-                response = jsonify(
-                    {
-                        "error":
-                            "Shopping list id: " + id + " is not found!"
-                    })
-                response.status_code = 404
-                return response
+            lists = check_list_exists(id)
+            if lists is not None:
+                return lists
 
             # the shopping list exists, create an item object and save it
             list = ShoppingListItem(form.name.data, id, form.amount.data)
@@ -538,15 +542,9 @@ def shopping_list_item_update(id, item_id):
         return is_valid
 
     # ensure the shopping list in question exists
-    if ShoppingList.query.filter_by(
-            list_id=id, user_id=session["user"]).first() is None:
-        response = jsonify(
-            {
-                "error":
-                    "Shopping list with id: " + id + " not found!"
-            })
-        response.status_code = 404
-        return response
+    lists = check_list_exists(id)
+    if lists is not None:
+        return lists
 
     # ensure the shopping list item in question exists
     lists = ShoppingListItem.query.filter_by(
