@@ -106,14 +106,9 @@ def check_valid_item_id(item_id):
     return None
 
 
-def check_list_exists(list_id, user_id=session["user"]):
+def check_list_exists(the_list, list_id):
 
-    returned = None
-    with app.app_context():
-        returned = ShoppingList.query.filter_by(list_id=list_id,
-                                    user_id=user_id).first()
-
-    if returned is None:
+    if the_list is None:
         response = jsonify(
             {
                 "error":
@@ -122,7 +117,7 @@ def check_list_exists(list_id, user_id=session["user"]):
         response.status_code = 404
         return response
 
-    return None
+    return the_list
 
 # function used to verify whether username/password or token provided are valid
 @auth.verify_password
@@ -431,13 +426,10 @@ def shopping_list_id(id):
         return is_valid
 
     # ensure our list actually exists
-    lists = check_list_exists(id)
-    if lists is not None:
+    lists = check_list_exists(ShoppingList.query.filter_by(
+        list_id=id, user_id=session["user"]).first(), id)
+    if not isinstance(lists, ShoppingList):
         return lists
-
-    # reinitialize the list for use lower in the function
-    lists = ShoppingList.query.filter_by(
-        list_id=id, user_id=session["user"]).first()
 
     # we want all the items under the list with the given id
     if request.method == "GET":
@@ -510,8 +502,9 @@ def shopping_list_items(id):
         if form.validate_on_submit():
 
             # the shopping list does not exist
-            lists = check_list_exists(id)
-            if lists is not None:
+            lists = check_list_exists(ShoppingList.query.filter_by(
+                list_id=id, user_id=session["user"]).first(), id)
+            if not isinstance(lists, ShoppingList):
                 return lists
 
             # the shopping list exists, create an item object and save it
@@ -549,8 +542,9 @@ def shopping_list_item_update(id, item_id):
         return is_valid
 
     # ensure the shopping list in question exists
-    lists = check_list_exists(id)
-    if lists is not None:
+    lists = check_list_exists(ShoppingList.query.filter_by(
+        list_id=id, user_id=session["user"]).first(), id)
+    if not isinstance(lists, ShoppingList):
         return lists
 
     # ensure the shopping list item in question exists
