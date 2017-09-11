@@ -35,10 +35,11 @@ class ProtectedRoutesTestCase(CommonRequests):
             self.assertEqual(res.status_code, 401)
 
     def test_retrieve_shopping_list_items(self):
-        """Test API wont retirve resources if user is not authorized (GET request)"""
+        """Test API wont retirve resources if user is not authorized (GET )"""
 
         with app.test_client() as client:
-            res = self.get_items_under_shopping_list(client, 1, self.credentials)
+            res = self.get_items_under_shopping_list(
+                client, 1, self.credentials)
             self.assertEqual(res.status_code, 401)
 
     def test_update_shopping_list(self):
@@ -55,21 +56,20 @@ class ProtectedRoutesTestCase(CommonRequests):
             res = self.delete_shopping_list(client, 1, self.credentials)
             self.assertEqual(res.status_code, 401)
 
-
-
-
     def test_create_shopping_list_item(self):
         """Test API wont submit if user is not authorized (POST request)"""
 
         with app.test_client() as client:
-            res = self.create_shopping_list_item(client, {}, 1, self.credentials)
+            res = self.create_shopping_list_item(
+                client, {}, 1, self.credentials)
             self.assertEqual(res.status_code, 401)
 
     def test_update_shopping_list_item(self):
         """Test API wont submit if user is not authorized (PUT request)"""
 
         with app.test_client() as client:
-            res = self.update_shopping_list_item(client, {}, 1, 1, self.credentials)
+            res = self.update_shopping_list_item(
+                client, {}, 1, 1, self.credentials)
             self.assertEqual(res.status_code, 401)
 
     def test_delete_shopping_list_item(self):
