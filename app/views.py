@@ -111,6 +111,19 @@ def register():
             form.password.data
         )
 
+        # ensure the username is unique, otherwise return an error
+        if User.query.filter_by(username=form.username.data).first() is not None:
+            response = jsonify(
+                {
+                    "error":
+                        {
+                            "username": ["This username is not unique, please "
+                                         "select another"]
+                        }
+                })
+            response.status_code = 200
+            return response
+
         # try and save the user, if anything goes wrong..
         # send back an error message
         try:
