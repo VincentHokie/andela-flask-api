@@ -101,7 +101,7 @@ def check_valid_item_id(item_id):
                     "Shopping list item id: " + item_id + " is not a valid id!"
             })
         response.status_code = 500
-    return response
+        return response
 
     return None
 
