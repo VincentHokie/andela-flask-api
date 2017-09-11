@@ -85,7 +85,7 @@ def verify_password(username_or_token, password=None):
     user = User.verify_auth_token(username_or_token)
     if not user:
         # try to authenticate with username/password
-        user = User.query.filter_by(username = username_or_token).first()
+        user = User.query.filter_by(username=username_or_token).first()
         if not user or not user.verify_password(password):
             return False
     session["user"] = user.user_id
@@ -144,8 +144,8 @@ def register():
         except:
             response = jsonify(
                 {
-                    "error" :
-                    "Ensure you don't already have an account and try again"
+                    "error":
+                        "Something went wrong, please try again"
                 })
             response.status_code = 200
             return response
@@ -179,7 +179,7 @@ def login():
                 }
             else:
                 token = user.generate_auth_token()
-                take_back['token'] =token.decode('ascii')
+                take_back['token'] = token.decode('ascii')
 
             response = jsonify(take_back)
             response.status_code = 200
@@ -194,9 +194,7 @@ def login():
 @app.route("/auth/logout", methods=['POST'])
 def logout():
     if request.method == "POST":
-
-        return render_template("index.html",
-                               title='Home')
+        return render_template("index.html", title='Home')
 
 @app.route('/auth/reset-password', methods=['POST'])
 @app.route("/auth/reset-password/<token>", methods=['POST'])
@@ -215,14 +213,14 @@ def reset_password(token=None):
             try:
                 data = s.loads(token)
             except SignatureExpired:
-               # valid token, but expired
-               response = jsonify(
-                   {
-                       "error":
+                # valid token, but expired
+                response = jsonify(
+                    {
+                        "error":
                         "Your link expired, request another and use that!"
-                   })
-               response.status_code = 401
-               return response
+                    })
+                response.status_code = 401
+                return response
             except BadSignature:
                 # invalid token
                 response = jsonify({"error": "Nice try.."})
@@ -244,7 +242,7 @@ def reset_password(token=None):
                     response = jsonify(
                         {
                             "error":
-                            "You're not in our pool of users!"
+                                "You're not in our pool of users!"
                         })
                     response.status_code = 404
                     return response
@@ -256,8 +254,8 @@ def reset_password(token=None):
                 # send a success message back
                 response = jsonify(
                     {
-                        "succes":
-                        "Your password has been successfully reset,"
+                        "success":
+                            "Your password has been successfully reset,"
                             " you can use it to log in now"
                     })
                 response.status_code = 200
@@ -269,7 +267,7 @@ def reset_password(token=None):
                 response.status_code = 200
                 return response
 
-        # there is no token, so we should be recieving the usre email
+        # there is no token, so we should be receiving the user email
         else:
 
             form = EmailForm()
@@ -285,7 +283,7 @@ def reset_password(token=None):
                     response = jsonify(
                         {
                             "error":
-                            "You're not in our pool of users!"
+                                "You're not in our pool of users!"
                         })
                     response.status_code = 404
                     return response
@@ -312,7 +310,7 @@ def reset_password(token=None):
                 response = jsonify(
                     {
                         "success":
-                        "An email has been sent to you with a link you "
+                            "An email has been sent to you with a link you "
                             "can use to reset your password"
                     })
                 response.status_code = 200
@@ -380,7 +378,7 @@ def shopping_list_id(id):
         response = jsonify(
             {
                 "error":
-                "Shopping list id: " + id + " is not a valid id!"
+                    "Shopping list id: " + id + " is not a valid id!"
             })
         response.status_code = 500
         return response
@@ -392,7 +390,7 @@ def shopping_list_id(id):
         response = jsonify(
             {
                 "error":
-                "Shopping list with id: " + id + " is not found!"
+                    "Shopping list with id: " + id + " is not found!"
             })
         response.status_code = 404
         return response
@@ -402,9 +400,9 @@ def shopping_list_id(id):
 
         # retrieve and send back the needed information
         response = jsonify([
-            i.serialize for i in ShoppingListItem.get_all(
+                               i.serialize for i in ShoppingListItem.get_all(
                 id, request.args.get("q"), request.args.get("limit"))
-            ])
+                               ])
         response.status_code = 200
         return response
 
@@ -440,7 +438,7 @@ def shopping_list_id(id):
             response = jsonify(
                 {
                     "error":
-                    "Something went wrong with your delete please try again"
+                        "Something went wrong with your delete please try again"
                 })
             response.status_code = 200
             return response
@@ -465,7 +463,7 @@ def shopping_list_items(id):
             response = jsonify(
                 {
                     "error":
-                    "Shopping list id: " + id + " is not a valid id!"
+                        "Shopping list id: " + id + " is not a valid id!"
                 })
             response.status_code = 500
             return response
@@ -479,7 +477,7 @@ def shopping_list_items(id):
                 response = jsonify(
                     {
                         "error":
-                        "Shopping list id: " + id + " is not found!"
+                            "Shopping list id: " + id + " is not found!"
                     })
                 response.status_code = 404
                 return response
@@ -515,7 +513,7 @@ def shopping_list_item_update(id, item_id):
         response = jsonify(
             {
                 "error":
-                "Shopping list id: " + id + " is not a valid id!"
+                    "Shopping list id: " + id + " is not a valid id!"
             })
         response.status_code = 500
         return response
@@ -527,7 +525,7 @@ def shopping_list_item_update(id, item_id):
         response = jsonify(
             {
                 "error":
-                "Shopping list item id: " + item_id + " is not a valid id!"
+                    "Shopping list item id: " + item_id + " is not a valid id!"
             })
         response.status_code = 500
         return response
@@ -538,7 +536,7 @@ def shopping_list_item_update(id, item_id):
         response = jsonify(
             {
                 "error":
-                "Shopping list with id: " + id + " not found!"
+                    "Shopping list with id: " + id + " not found!"
             })
         response.status_code = 404
         return response
@@ -550,11 +548,10 @@ def shopping_list_item_update(id, item_id):
         response = jsonify(
             {
                 "error":
-                "Shopping list item with id: " + item_id + " not found!"
+                    "Shopping list item with id: " + item_id + " not found!"
             })
         response.status_code = 404
         return response
-
 
     # were updating a shopping list item
     if request.method == "PUT":
@@ -588,7 +585,7 @@ def shopping_list_item_update(id, item_id):
             response = jsonify(
                 {
                     "error":
-                    "Something went wrong with your delete please try again"
+                        "Something went wrong with your delete please try again"
                 })
             response.status_code = 200
             return response
