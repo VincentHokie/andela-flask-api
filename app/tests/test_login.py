@@ -15,8 +15,11 @@ class LoginTestCase(CommonRequests):
 
         self.client = self.app.test_client
 
-        self.sign_up_credentials = {'username': 'vince', "email": "vincenthokie@gmail.com", "password": "123",
-                               "password2": "123"}
+        self.sign_up_credentials = {
+            'username': 'vince',
+            "email": "vincenthokie@gmail.com",
+            "password": "123",
+            "password2": "123"}
 
         # binds the app to the current context
         with self.app.app_context():
@@ -35,7 +38,6 @@ class LoginTestCase(CommonRequests):
             self.assertEqual(res.status_code, 200)
             self.assertIn("success", json.loads(res.data))
 
-
     def test_login_password_required(self):
         """Test API can notice password is required (POST request)."""
 
@@ -47,7 +49,6 @@ class LoginTestCase(CommonRequests):
 
             self.assertEqual(res.status_code, 200)
             self.assertIn("error", json.loads(res.data))
-
 
     def test_login_username_required(self):
         """Test API can notice username is required (POST request)."""
@@ -62,20 +63,21 @@ class LoginTestCase(CommonRequests):
             self.assertIn("error", json.loads(res.data))
 
     def test_token_generate(self):
-        """Test API can create a token if logged in user requests it (POST request)"""
+        """Test API can create a token if logged in
+        user requests it (POST request)"""
 
         with app.test_client() as client:
             self.sign_up(client, self.sign_up_credentials)
 
             login_credentials = {'username': 'vince', "password": "123"}
 
-            headers = self.get_auth_header(login_credentials['username'],login_credentials['password'])
+            headers = self.get_auth_header(
+                login_credentials['username'],login_credentials['password'])
 
             res = client.post('/api/token', headers=headers)
 
             self.assertEqual(res.status_code, 200)
             self.assertIn("token", json.loads(res.data))
-
 
     def tearDown(self):
         """teardown all initialized variables."""
