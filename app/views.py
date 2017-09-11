@@ -124,6 +124,19 @@ def register():
             response.status_code = 200
             return response
 
+        # ensure the email is unique, otherwise return an error
+        if User.query.filter_by(email=form.email.data).first() is not None:
+            response = jsonify(
+                {
+                    "error":
+                        {
+                            "email": ["This email is not unique, please "
+                                         "select another"]
+                        }
+                })
+            response.status_code = 200
+            return response
+
         # try and save the user, if anything goes wrong..
         # send back an error message
         try:
