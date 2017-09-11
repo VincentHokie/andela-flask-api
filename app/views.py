@@ -89,6 +89,7 @@ def check_valid_list_id(list_id):
         response.status_code = 500
         return response
 
+    return None
 
 def check_valid_item_id(item_id):
     try:
@@ -102,6 +103,7 @@ def check_valid_item_id(item_id):
         response.status_code = 500
         return response
 
+    return None
 
 # function used to verify whether username/password or token provided are valid
 @auth.verify_password
