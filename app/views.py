@@ -419,14 +419,15 @@ def shopping_lists():
 def shopping_list_id(id):
 
     # ensure id is a valid integer
-    is_valid = check_valid_list_id(id)
-    if is_valid is not None:
-        return is_valid
+    with app.app_context():
+        is_valid = check_valid_list_id(id)
+        if is_valid is not None:
+            return is_valid
 
-    # ensure our list actually exists
-    lists = check_list_exists(id)
-    if lists is not None:
-        return lists
+        # ensure our list actually exists
+        lists = check_list_exists(id)
+        if lists is not None:
+            return lists
 
     # reinitialize the list for use lower in the function
     lists = ShoppingList.query.filter_by(
@@ -494,18 +495,20 @@ def shopping_list_items(id):
     if request.method == "POST":
 
         # ensure the provided shopping list is a valid integer
-        is_valid = check_valid_list_id(id)
-        if is_valid is not None:
-            return is_valid
+        with app.app_context():
+            is_valid = check_valid_list_id(id)
+            if is_valid is not None:
+                return is_valid
 
         form = ShoppingListItemForm()
         # the submitted form is of proper format
         if form.validate_on_submit():
 
             # the shopping list does not exist
-            lists = check_list_exists(id)
-            if lists is not None:
-                return lists
+            with app.app_context():
+                lists = check_list_exists(id)
+                if lists is not None:
+                    return lists
 
             # the shopping list exists, create an item object and save it
             list = ShoppingListItem(form.name.data, id, form.amount.data)
@@ -531,20 +534,21 @@ def shopping_list_items(id):
 @auth.login_required
 def shopping_list_item_update(id, item_id):
 
-    # check if the shopping list id is indeed a valid integer
-    is_valid = check_valid_list_id(id)
-    if is_valid is not None:
-        return is_valid
+    with app.app_context():
+        # check if the shopping list id is indeed a valid integer
+        is_valid = check_valid_list_id(id)
+        if is_valid is not None:
+            return is_valid
 
-    # check if the shopping list item id is indeed a valid integer
-    is_valid = check_valid_item_id(item_id)
-    if is_valid is not None:
-        return is_valid
+        # check if the shopping list item id is indeed a valid integer
+        is_valid = check_valid_item_id(item_id)
+        if is_valid is not None:
+            return is_valid
 
-    # ensure the shopping list in question exists
-    lists = check_list_exists(id)
-    if lists is not None:
-        return lists
+        # ensure the shopping list in question exists
+        lists = check_list_exists(id)
+        if lists is not None:
+            return lists
 
     # ensure the shopping list item in question exists
     lists = ShoppingListItem.query.filter_by(
