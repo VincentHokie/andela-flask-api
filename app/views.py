@@ -77,6 +77,17 @@ def send_email(subject, recipients, text_body, html_body=None):
     mail.send(msg)
 
 
+def check_valid_list_id(list_id):
+    try:
+        int(list_id)
+    except:
+        response = jsonify(
+            {
+                "error":
+                    "Shopping list id: " + list_id + " is not a valid id!"
+            })
+        response.status_code = 500
+        return response
 
 # function used to verify whether username/password or token provided are valid
 @auth.verify_password
@@ -380,16 +391,9 @@ def shopping_lists():
 def shopping_list_id(id):
 
     # ensure id is a valid integer
-    try:
-        int(id)
-    except:
-        response = jsonify(
-            {
-                "error":
-                    "Shopping list id: " + id + " is not a valid id!"
-            })
-        response.status_code = 500
-        return response
+    is_valid = check_valid_list_id(id)
+    if is_valid is not None:
+        return is_valid
 
     # ensure our list actually exists
     lists = ShoppingList.query.filter_by(
@@ -465,16 +469,9 @@ def shopping_list_items(id):
     if request.method == "POST":
 
         # ensure the provided shopping list is a valid integer
-        try:
-            int(id)
-        except:
-            response = jsonify(
-                {
-                    "error":
-                        "Shopping list id: " + id + " is not a valid id!"
-                })
-            response.status_code = 500
-            return response
+        is_valid = check_valid_list_id(id)
+        if is_valid is not None:
+            return is_valid
 
         form = ShoppingListItemForm()
         # the submitted form is of proper format
@@ -515,16 +512,9 @@ def shopping_list_items(id):
 def shopping_list_item_update(id, item_id):
 
     # check if the shopping list id is indeed a valid integer
-    try:
-        int(id)
-    except:
-        response = jsonify(
-            {
-                "error":
-                    "Shopping list id: " + id + " is not a valid id!"
-            })
-        response.status_code = 500
-        return response
+    is_valid = check_valid_list_id(id)
+    if is_valid is not None:
+        return is_valid
 
     # check if the shopping list item id is indeed a valid integer
     try:
