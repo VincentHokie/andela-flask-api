@@ -78,44 +78,47 @@ def send_email(subject, recipients, text_body, html_body=None):
 
 
 def check_valid_list_id(list_id):
-    try:
-        int(list_id)
-    except:
-        response = jsonify(
-            {
-                "error":
-                    "Shopping list id: " + list_id + " is not a valid id!"
-            })
-        response.status_code = 500
-        return response
+    with app.app_context():
+        try:
+            int(list_id)
+        except:
+            response = jsonify(
+                {
+                    "error":
+                        "Shopping list id: " + list_id + " is not a valid id!"
+                })
+            response.status_code = 500
+            return response
 
-    return None
+        return None
 
 def check_valid_item_id(item_id):
-    try:
-        int(item_id)
-    except:
-        response = jsonify(
-            {
-                "error":
-                    "Shopping list item id: " + item_id + " is not a valid id!"
-            })
-        response.status_code = 500
-        return response
+    with app.app_context():
+        try:
+            int(item_id)
+        except:
+            response = jsonify(
+                {
+                    "error":
+                        "Shopping list item id: " + item_id + " is not a valid id!"
+                })
+            response.status_code = 500
+            return response
 
-    return None
+        return None
 
 
 def check_list_exists(list_id, user_id=session["user"]):
-    if ShoppingList.query.filter_by(list_id=list_id,
-                                    user_id=user_id).first() is None:
-        response = jsonify(
-            {
-                "error":
-                    "Shopping list with id: " + list_id + " is not found!"
-            })
-        response.status_code = 404
-        return response
+    with app.app_context():
+        if ShoppingList.query.filter_by(list_id=list_id,
+                                        user_id=user_id).first() is None:
+            response = jsonify(
+                {
+                    "error":
+                        "Shopping list with id: " + list_id + " is not found!"
+                })
+            response.status_code = 404
+            return response
 
 # function used to verify whether username/password or token provided are valid
 @auth.verify_password
@@ -419,15 +422,14 @@ def shopping_lists():
 def shopping_list_id(id):
 
     # ensure id is a valid integer
-    with app.app_context():
-        is_valid = check_valid_list_id(id)
-        if is_valid is not None:
-            return is_valid
+    is_valid = check_valid_list_id(id)
+    if is_valid is not None:
+        return is_valid
 
-        # ensure our list actually exists
-        lists = check_list_exists(id)
-        if lists is not None:
-            return lists
+    # ensure our list actually exists
+    lists = check_list_exists(id)
+    if lists is not None:
+        return lists
 
     # reinitialize the list for use lower in the function
     lists = ShoppingList.query.filter_by(
@@ -495,20 +497,18 @@ def shopping_list_items(id):
     if request.method == "POST":
 
         # ensure the provided shopping list is a valid integer
-        with app.app_context():
-            is_valid = check_valid_list_id(id)
-            if is_valid is not None:
-                return is_valid
+        is_valid = check_valid_list_id(id)
+        if is_valid is not None:
+            return is_valid
 
         form = ShoppingListItemForm()
         # the submitted form is of proper format
         if form.validate_on_submit():
 
             # the shopping list does not exist
-            with app.app_context():
-                lists = check_list_exists(id)
-                if lists is not None:
-                    return lists
+            lists = check_list_exists(id)
+            if lists is not None:
+                return lists
 
             # the shopping list exists, create an item object and save it
             list = ShoppingListItem(form.name.data, id, form.amount.data)
@@ -534,21 +534,20 @@ def shopping_list_items(id):
 @auth.login_required
 def shopping_list_item_update(id, item_id):
 
-    with app.app_context():
-        # check if the shopping list id is indeed a valid integer
-        is_valid = check_valid_list_id(id)
-        if is_valid is not None:
-            return is_valid
+    # check if the shopping list id is indeed a valid integer
+    is_valid = check_valid_list_id(id)
+    if is_valid is not None:
+        return is_valid
 
-        # check if the shopping list item id is indeed a valid integer
-        is_valid = check_valid_item_id(item_id)
-        if is_valid is not None:
-            return is_valid
+    # check if the shopping list item id is indeed a valid integer
+    is_valid = check_valid_item_id(item_id)
+    if is_valid is not None:
+        return is_valid
 
-        # ensure the shopping list in question exists
-        lists = check_list_exists(id)
-        if lists is not None:
-            return lists
+    # ensure the shopping list in question exists
+    lists = check_list_exists(id)
+    if lists is not None:
+        return lists
 
     # ensure the shopping list item in question exists
     lists = ShoppingListItem.query.filter_by(
