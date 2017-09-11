@@ -81,13 +81,12 @@ def check_valid_list_id(list_id):
     try:
         int(list_id)
     except:
-        with app.app_context():
-            response = jsonify(
-                {
-                    "error":
-                        "Shopping list id: " + list_id + " is not a valid id!"
-                })
-            response.status_code = 500
+        response = jsonify(
+            {
+                "error":
+                    "Shopping list id: " + list_id + " is not a valid id!"
+            })
+        response.status_code = 500
         return response
 
     return None
@@ -96,28 +95,31 @@ def check_valid_item_id(item_id):
     try:
         int(item_id)
     except:
-        with app.app_context():
-            response = jsonify(
-                {
-                    "error":
-                        "Shopping list item id: " + item_id + " is not a valid id!"
-                })
-            response.status_code = 500
-        return response
+        response = jsonify(
+            {
+                "error":
+                    "Shopping list item id: " + item_id + " is not a valid id!"
+            })
+        response.status_code = 500
+    return response
 
     return None
 
 
 def check_list_exists(list_id, user_id=session["user"]):
-    if ShoppingList.query.filter_by(list_id=list_id,
-                                    user_id=user_id).first() is None:
-        with app.app_context():
-            response = jsonify(
-                {
-                    "error":
-                        "Shopping list with id: " + list_id + " is not found!"
-                })
-            response.status_code = 404
+
+    returned = None
+    with app.app_context():
+        returned = ShoppingList.query.filter_by(list_id=list_id,
+                                    user_id=user_id).first()
+
+    if returned is None:
+        response = jsonify(
+            {
+                "error":
+                    "Shopping list with id: " + list_id + " is not found!"
+            })
+        response.status_code = 404
         return response
 
     return None
