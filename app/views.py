@@ -235,7 +235,7 @@ def reset_password(token=None):
                 tok = s.dumps({'email': form.email.data})
 
                 # create a url and send it in the email
-                password_reset_url = url_for('reset_password', token=tok, _external=True)
+                password_reset_url = "https://andela-react-client.herokuapp.com/password-reset/"+tok
                 email_body = "Please follow this link to reset your password\n\n"+password_reset_url+"\n\n " \
                                 "If you're not the one who requested this, please ignore this and contact the administrator" \
                                 " about this."
