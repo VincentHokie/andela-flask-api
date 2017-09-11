@@ -91,6 +91,12 @@ def verify_password(username_or_token, password=None):
     session["user"] = user.user_id
     return True
 
+# decorator used to allow cross origin requests
+@app.after_request
+def apply_cross_origin_header(response):
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    return response
+
 
 @app.route("/auth/register", methods=['POST'])
 def register():
