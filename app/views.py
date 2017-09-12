@@ -170,7 +170,7 @@ def apply_cross_origin_header(response):
 @app.before_request
 def check_token_validity():
     # if a token is sent our way, make sure its valid
-    if "Authorization" in request.headers:
+    if "Authorization" in request.headers and "user" in session:
         user = User.query.filter_by(user_id=session["user"]).first()
         if user is not None:
             b64auth = base64.b64decode(
