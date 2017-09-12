@@ -99,24 +99,15 @@ class ShoppingList(db.Model):
 
     @staticmethod
     def get_all(user_id, q, limit):
-        if q is not None and ( limit is None or not isinstance(limit, int) ):
-            return ShoppingList.query\
-                .filter(ShoppingList.name.like("%"+q.strip()+"%")) \
-                .filter_by(user_id=user_id) \
-                .all()
-        elif q is not None and ( limit is not None and isinstance(limit, int) ):
-            return ShoppingList.query\
-                .filter(ShoppingList.name.like("%" + q.strip() + "%")) \
-                .filter_by(user_id=user_id)\
-                .limit(limit)
-        elif q is None and ( limit is not None and isinstance(limit, int) ):
-            return ShoppingList.query \
-                .filter_by(user_id=user_id) \
-                .limit(limit)
-        else:
-            return ShoppingList.query \
-                .filter_by(user_id=user_id) \
-                .all()
+        query = ShoppingList.query.filter_by(user_id=user_id)
+
+        if q is not None:
+            query = query.filter(ShoppingList.name.like("%"+q.strip()+"%"))
+
+        if limit is not None and isinstance(limit, int):
+            return query.limit(limit)
+
+        return query.all()
 
     def delete(self):
         db.session.delete(self)
@@ -152,24 +143,16 @@ class ShoppingListItem(db.Model):
 
     @staticmethod
     def get_all(list_id, q, limit):
-        if q is not None and ( limit is None or not isinstance(limit, int) ):
-            return ShoppingListItem.query\
-                .filter(ShoppingListItem.name.like("%"+q.strip()+"%")) \
-                .filter_by(list_id=list_id) \
-                .all()
-        elif q is not None and ( limit is not None and isinstance(limit, int) ):
-            return ShoppingListItem.query\
-                .filter(ShoppingListItem.name.like("%" + q.strip() + "%")) \
-                .filter_by(list_id=list_id) \
-                .limit(limit)
-        elif q is None and ( limit is not None and isinstance(limit, int) ):
-            return ShoppingListItem.query \
-                .filter_by(list_id=list_id) \
-                .limit(limit)
-        else:
-            return ShoppingListItem.query \
-                .filter_by(list_id=list_id) \
-                .all()
+
+        query = ShoppingListItem.query.filter_by(list_id=list_id)
+
+        if q is not None:
+            query = query.filter(ShoppingListItem.name.like("%"+q.strip()+"%"))
+
+        if limit is not None and isinstance(limit, int):
+            return query.limit(limit)
+
+        return query.all()
 
     @staticmethod
     def get_all_despite_list(user_id):
