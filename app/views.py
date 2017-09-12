@@ -461,11 +461,11 @@ def all_shopping_list_items():
         if is_valid is not None:
             return is_valid
 
-        q = db.session.query(ShoppingListItem)
-        q = q.join(ShoppingListItem.list_id)
-        q = q.filter(ShoppingList.user_id == session["user"])
-        q = q.filter(ShoppingListItem.item_id == item_id)
-        gotten_item = q.first()
+        gotten_item = ShoppingListItem.query\
+            .join(ShoppingListItem.list_id)\
+            .filter(ShoppingList.user_id == session["user"])\
+            .filter(ShoppingListItem.item_id == item_id)\
+            .first()
 
         gotten_item = check_item_exists(gotten_item, id)
         if not isinstance(gotten_item, ShoppingListItem):

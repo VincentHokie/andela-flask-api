@@ -173,9 +173,9 @@ class ShoppingListItem(db.Model):
 
     @staticmethod
     def get_all_despite_list(user_id):
-        q = db.session.query(ShoppingListItem)
-        q = q.join(ShoppingListItem.list_id)
-        q = q.filter(ShoppingList.user_id == user_id)
+        q = ShoppingListItem.query\
+            .join(ShoppingListItem.list_id)\
+            .filter(ShoppingList.user_id == user_id)
         return q.all()
 
     @property
