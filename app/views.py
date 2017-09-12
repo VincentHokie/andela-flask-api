@@ -358,7 +358,7 @@ def reset_password(token=None):
                 # create a url and send it in the email
                 password_reset_url = \
                     "https://andela-react-client.herokuapp.com/" \
-                    "password-reset/"+str(tok)
+                    "password-reset/"+str(tok.decode("utf-8"))
 
                 email_body = "Please follow this link to reset your " \
                              "password\n\n"+password_reset_url+"\n\n If you're " \
