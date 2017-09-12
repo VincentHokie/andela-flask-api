@@ -154,7 +154,8 @@ def apply_cross_origin_header(response):
                                                        "POST,PUT"
     response.headers["Access-Control-Allow-Headers"] = "Access-Control-Allow-" \
         "Headers, Origin,Accept, X-Requested-With, Content-Type, " \
-        "Access-Control-Request-Method, Access-Control-Request-Headers"
+        "Access-Control-Request-Method, Access-Control-Request-Headers," \
+        "Access-Control-Allow-Origin"
 
     return response
 
