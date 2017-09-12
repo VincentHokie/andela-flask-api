@@ -58,12 +58,12 @@ class User(db.Model):
     def invalidate_token(self):
         """nullify token fields"""
         self.token = None
-        self.save()
+        db.session.commit()
 
     def save_token(self, token):
         """nullify token fields"""
         self.token = token
-        self.save()
+        db.session.commit()
 
     def __repr__(self):
         return '<E-mail %r>' % self.email
