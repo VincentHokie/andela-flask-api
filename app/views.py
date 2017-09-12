@@ -146,6 +146,11 @@ def verify_password(username_or_token, password=None):
         user = User.query.filter_by(username=username_or_token).first()
         if not user or not user.verify_password(password):
             return False
+
+    if user.token != username_or_token:
+        user.invalidate_token()
+        return False
+
     session["user"] = user.user_id
     return True
 
@@ -164,25 +169,6 @@ def apply_cross_origin_header(response):
         "Access-Control-Allow-Origin, Authorization"
 
     return response
-
-
-# decorator used to check token validity
-@app.before_request
-def check_token_validity():
-    # if a token is sent our way, make sure its valid
-    if "Authorization" in request.headers and "user" in session:
-        user = User.query.filter_by(user_id=session["user"]).first()
-        if user is not None:
-            b64auth = base64.b64decode(
-                request.headers["Authorization"].strip("Basic "))
-            b64auth = b64auth.split(":")
-
-            # token sent does not match what is in user table, invalidate
-            # token and send bogus auth values
-            if b64auth[0] != user.token:
-                user.invalidate_token()
-                request.headers["Authorization"] = "Basic" \
-                    " %s" % base64.b64encode("username:password")
 
 
 @app.route("/auth/register", methods=['POST'])
