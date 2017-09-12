@@ -105,7 +105,6 @@ def check_valid_item_id(item_id):
 
     return None
 
-
 def check_list_exists(the_list, list_id):
 
     if the_list is None:
@@ -118,6 +117,19 @@ def check_list_exists(the_list, list_id):
         return response
 
     return the_list
+
+def check_item_exists(the_item, item_id):
+
+    if the_item is None:
+        response = jsonify(
+            {
+                "error":
+                    "Shopping list item with id: " + item_id + " not found!"
+            })
+        response.status_code = 404
+        return response
+
+    return the_item
 
 # function used to verify whether username/password or token provided are valid
 @auth.verify_password
@@ -142,7 +154,8 @@ def apply_cross_origin_header(response):
                                                        "POST,PUT"
     response.headers["Access-Control-Allow-Headers"] = "Access-Control-Allow-" \
         "Headers, Origin,Accept, X-Requested-With, Content-Type, " \
-        "Access-Control-Request-Method, Access-Control-Request-Headers"
+        "Access-Control-Request-Method, Access-Control-Request-Headers," \
+        "Access-Control-Allow-Origin"
 
     return response
 
@@ -393,7 +406,7 @@ def shopping_lists():
             # retrieve the list and send it back to the user
             list = ShoppingList.query.filter_by(
                 name=form.name.data, user_id=session["user"]).first()
-            response = jsonify( list.serialize )
+            response = jsonify(list.serialize)
             response.status_code = 201
             return response
 
@@ -406,15 +419,72 @@ def shopping_lists():
     # we want to see all the shopping lists
     elif request.method == "GET":
 
-        # get all the lists and send them to the user
-        response = jsonify(
-            [i.serialize for i in ShoppingList.get_all(
-                session["user"],
-                request.args.get("q"),
-                request.args.get("limit"))])
+        list_id = request.args.get("list_id")
+        if list_id is not None:
+
+            # ensure id is a valid integer
+            is_valid = check_valid_list_id(list_id)
+            if is_valid is not None:
+                return is_valid
+
+            gotten_list = ShoppingList.query.filter_by(
+                list_id=list_id, user_id=session["user"]).first()
+
+            gotten_list = check_list_exists(gotten_list, id)
+            if not isinstance(gotten_list, ShoppingList):
+                return gotten_list
+
+            # get the list requested for only
+            response = jsonify(gotten_list.serialize)
+
+        else:
+            # get all the lists and send them to the user
+            response = jsonify(
+                [i.serialize for i in ShoppingList.get_all(
+                    session["user"],
+                    request.args.get("q"),
+                    request.args.get("limit"))])
 
         response.status_code = 200
         return response
+
+
+@app.route("/shoppinglists/items", methods=['GET'])
+@auth.login_required
+def all_shopping_list_items():
+
+    item_id = request.args.get("item_id")
+    if item_id is not None:
+
+        # ensure id is a valid integer
+        is_valid = check_valid_item_id(item_id)
+        if is_valid is not None:
+            return is_valid
+
+        q = db.session.query(ShoppingListItem)
+        q = q.join(ShoppingListItem.list_id)
+        q = q.filter(ShoppingList.user_id == session["user"])
+        q = q.filter(ShoppingListItem.item_id == item_id)
+        gotten_item = q.first()
+
+        gotten_item = check_item_exists(gotten_item, id)
+        if not isinstance(gotten_item, ShoppingListItem):
+            return gotten_item
+
+        # get the list requested for only
+        response = jsonify(gotten_item.serialize)
+
+    else:
+        # get all the list items and send them to the user
+        response = jsonify(
+            [
+                i.serialize for i in ShoppingListItem.
+                get_all_despite_list(session["user"])
+        ])
+
+    response.status_code = 200
+    return response
+
 
 @app.route("/shoppinglists/<id>", methods=['GET', 'PUT', 'DELETE'])
 @auth.login_required
@@ -550,14 +620,10 @@ def shopping_list_item_update(id, item_id):
     # ensure the shopping list item in question exists
     lists = ShoppingListItem.query.filter_by(
         item_id=item_id, list_id=id).first()
-    if lists is None:
-        response = jsonify(
-            {
-                "error":
-                    "Shopping list item with id: " + item_id + " not found!"
-            })
-        response.status_code = 404
-        return response
+
+    lists = check_item_exists(lists, id)
+    if not isinstance(lists, ShoppingListItem):
+        return lists
 
     # were updating a shopping list item
     if request.method == "PUT":
