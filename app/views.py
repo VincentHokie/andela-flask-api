@@ -275,7 +275,13 @@ def login():
 @app.route("/auth/logout", methods=['POST'])
 def logout():
     if request.method == "POST":
-        return render_template("index.html", title='Home')
+        user = User.query.filter_by(user_id=session["user"]).first()
+        if user is not None:
+            user.invalidate_token()
+            response = jsonify({"success": "You have successfully logged out!"})
+            response.status_code = 200
+            return response
+
 
 @app.route('/auth/reset-password', methods=['POST'])
 @app.route("/auth/reset-password/<token>", methods=['POST'])
