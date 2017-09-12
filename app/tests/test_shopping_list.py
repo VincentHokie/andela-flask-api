@@ -33,7 +33,9 @@ class ShoppingListTestCase(CommonRequests):
 
         with app.test_client() as client:
             self.sign_up(client, self.sign_up_credentials)
-            self.login(client, self.login_credentials)
+            login_details = self.login(client, self.login_credentials)
+            token = json.loads(login_details)
+            self.login_credentials["username"] = token["token"]
 
             shopping_list = {'name': 'vince'}
             res = self.create_shopping_list(
@@ -54,7 +56,10 @@ class ShoppingListTestCase(CommonRequests):
 
         with app.test_client() as client:
             self.sign_up(client, self.sign_up_credentials)
-            self.login(client, self.login_credentials)
+            self.login_credentials["username"] = "vince"
+            login_details = self.login(client, self.login_credentials)
+            token = json.loads(login_details)
+            self.login_credentials["username"] = token["token"]
 
             shopping_list = {'name': ''}
             res = self.create_shopping_list(
@@ -69,7 +74,10 @@ class ShoppingListTestCase(CommonRequests):
 
         with app.test_client() as client:
             self.sign_up(client, self.sign_up_credentials)
-            self.login(client, self.login_credentials)
+            self.login_credentials["username"] = "vince"
+            login_details = self.login(client, self.login_credentials)
+            token = json.loads(login_details)
+            self.login_credentials["username"] = token["token"]
 
             shopping_list = {'name': ''}
             self.create_shopping_list(
@@ -84,7 +92,10 @@ class ShoppingListTestCase(CommonRequests):
 
         with app.test_client() as client:
             self.sign_up(client, self.sign_up_credentials)
-            self.login(client, self.login_credentials)
+            self.login_credentials["username"] = "vince"
+            login_details = self.login(client, self.login_credentials)
+            token = json.loads(login_details)
+            self.login_credentials["username"] = token["token"]
 
             shopping_list = {'name': 'vince'}
             shopping_list_updated = {'name': 'vince123'}
@@ -105,7 +116,10 @@ class ShoppingListTestCase(CommonRequests):
 
         with app.test_client() as client:
             self.sign_up(client, self.sign_up_credentials)
-            self.login(client, self.login_credentials)
+            self.login_credentials["username"] = "vince"
+            login_details = self.login(client, self.login_credentials)
+            token = json.loads(login_details)
+            self.login_credentials["username"] = token["token"]
 
             shopping_list = {'name': 'vince'}
             res = self.create_shopping_list(

@@ -17,6 +17,7 @@ def dump_datetime(value):
         return None
     return [value.strftime("%Y-%m-%d"), value.strftime("%H:%M:%S")]
 
+
 # Create our database model
 class User(db.Model):
     """This class represents the User table."""
@@ -26,7 +27,9 @@ class User(db.Model):
     user_id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(120), unique=True, nullable=False)
     email = db.Column(db.String(120), index=True, unique=True, nullable=False)
-    password = db.Column(db.String(255), index=True, unique=False, nullable=False)
+    password = db.Column(
+        db.String(255), index=True, unique=False, nullable=False)
+    token = db.Column(db.String(255), nullable=True)
 
     def __init__(self, email, username, password):
         self.email = email
@@ -47,9 +50,20 @@ class User(db.Model):
     def verify_password(self, password):
         return pwd_context.verify(password, self.password)
 
-    def generate_auth_token(self, expiration=600):
-        s = Serializer("youll-never-know-what-it-is-coz-its-secret", expires_in=expiration)
+    def generate_auth_token(self, expiration=10800):
+        s = Serializer(
+            "youll-never-know-what-it-is-coz-its-secret", expires_in=expiration)
         return s.dumps({'id': self.user_id})
+
+    def invalidate_token(self):
+        """nullify token fields"""
+        self.token = None
+        db.session.commit()
+
+    def save_token(self, token):
+        """nullify token fields"""
+        self.token = token
+        db.session.commit()
 
     def __repr__(self):
         return '<E-mail %r>' % self.email
@@ -67,17 +81,16 @@ class User(db.Model):
         return user
 
 
-
-
 class ShoppingList(db.Model):
     """This class represents the ShoppingList table."""
 
     __tablename__ = "shopping_list"
 
-    list_id = db.Column(db.Integer, primary_key = True)
+    list_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(140), nullable=False)
     date = db.Column(db.DateTime, nullable=False)
-    user_id = db.Column(db.Integer, db.ForeignKey('user.user_id', ondelete='CASCADE'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey(
+        'user.user_id', ondelete='CASCADE'), nullable=False)
 
     def __init__(self, name, user_id):
         self.name = name
@@ -99,32 +112,22 @@ class ShoppingList(db.Model):
 
     @staticmethod
     def get_all(user_id, q, limit):
-        if q is not None and ( limit is None or not isinstance(limit, int) ):
-            return ShoppingList.query\
-                .filter(ShoppingList.name.like("%"+q.strip()+"%")) \
-                .filter_by(user_id=user_id) \
-                .all()
-        elif q is not None and ( limit is not None and isinstance(limit, int) ):
-            return ShoppingList.query\
-                .filter(ShoppingList.name.like("%" + q.strip() + "%")) \
-                .filter_by(user_id=user_id)\
-                .limit(limit)
-        elif q is None and ( limit is not None and isinstance(limit, int) ):
-            return ShoppingList.query \
-                .filter_by(user_id=user_id) \
-                .limit(limit)
-        else:
-            return ShoppingList.query \
-                .filter_by(user_id=user_id) \
-                .all()
+        query = ShoppingList.query.filter_by(user_id=user_id)
+
+        if q is not None:
+            query = query.filter(ShoppingList.name.like("%"+q.strip()+"%"))
+
+        if limit is not None and isinstance(limit, int):
+            return query.limit(limit)
+
+        return query.all()
 
     def delete(self):
         db.session.delete(self)
         db.session.commit()
 
     def __repr__(self):
-        return '<List Name %r>' % (self.name)
-
+        return '<List Name %r>' % self.name
 
 
 class ShoppingListItem(db.Model):
@@ -132,12 +135,13 @@ class ShoppingListItem(db.Model):
 
     __tablename__ = "shopping_list_item"
 
-    item_id = db.Column(db.Integer, primary_key = True)
+    item_id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(140), nullable=False)
     date = db.Column(db.DateTime, nullable=False)
     bought = db.Column(db.Integer, nullable=False)
     amount = db.Column(db.Integer, nullable=False)
-    list_id = db.Column(db.Integer, db.ForeignKey('shopping_list.list_id', ondelete='CASCADE'), nullable=False)
+    list_id = db.Column(db.Integer, db.ForeignKey(
+        'shopping_list.list_id', ondelete='CASCADE'), nullable=False)
 
     def __init__(self, name, list_id, amount):
         self.name = name
@@ -152,24 +156,16 @@ class ShoppingListItem(db.Model):
 
     @staticmethod
     def get_all(list_id, q, limit):
-        if q is not None and ( limit is None or not isinstance(limit, int) ):
-            return ShoppingListItem.query\
-                .filter(ShoppingListItem.name.like("%"+q.strip()+"%")) \
-                .filter_by(list_id=list_id) \
-                .all()
-        elif q is not None and ( limit is not None and isinstance(limit, int) ):
-            return ShoppingListItem.query\
-                .filter(ShoppingListItem.name.like("%" + q.strip() + "%")) \
-                .filter_by(list_id=list_id) \
-                .limit(limit)
-        elif q is None and ( limit is not None and isinstance(limit, int) ):
-            return ShoppingListItem.query \
-                .filter_by(list_id=list_id) \
-                .limit(limit)
-        else:
-            return ShoppingListItem.query \
-                .filter_by(list_id=list_id) \
-                .all()
+
+        query = ShoppingListItem.query.filter_by(list_id=list_id)
+
+        if q is not None:
+            query = query.filter(ShoppingListItem.name.like("%"+q.strip()+"%"))
+
+        if limit is not None and isinstance(limit, int):
+            return query.limit(limit)
+
+        return query.all()
 
     @staticmethod
     def get_all_despite_list(user_id):
@@ -194,4 +190,4 @@ class ShoppingListItem(db.Model):
         db.session.commit()
 
     def __repr__(self):
-        return '<Item Name %r>' % (self.name)
+        return '<Item Name %r>' % self.name
