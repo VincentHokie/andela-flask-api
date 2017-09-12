@@ -261,6 +261,7 @@ def login():
             else:
                 token = user.generate_auth_token()
                 take_back['token'] = token.decode('ascii')
+                user.save_token(token.decode('ascii'))
 
             response = jsonify(take_back)
             response.status_code = 200
