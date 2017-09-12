@@ -258,6 +258,7 @@ def login():
                 token = user.generate_auth_token()
                 take_back['token'] = token.decode('ascii')
                 user.save_token(token.decode('ascii'))
+                session["user"] = user.user_id
 
             response = jsonify(take_back)
             response.status_code = 200
