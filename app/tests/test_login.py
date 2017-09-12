@@ -62,23 +62,6 @@ class LoginTestCase(CommonRequests):
             self.assertEqual(res.status_code, 200)
             self.assertIn("error", json.loads(res.data))
 
-    def test_token_generate(self):
-        """Test API can create a token if logged in
-        user requests it (POST request)"""
-
-        with app.test_client() as client:
-            self.sign_up(client, self.sign_up_credentials)
-
-            login_credentials = {'username': 'vince', "password": "123"}
-
-            headers = self.get_auth_header(
-                login_credentials['username'],login_credentials['password'])
-
-            res = client.post('/api/token', headers=headers)
-
-            self.assertEqual(res.status_code, 200)
-            self.assertIn("token", json.loads(res.data))
-
     def tearDown(self):
         """teardown all initialized variables."""
         with self.app.app_context():

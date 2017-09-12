@@ -686,15 +686,5 @@ def shopping_list_item_update(id, item_id):
         return response
 
 
-# route that allows a user get a valid token if theirs expires conveniently
-@app.route('/api/token', methods=['POST'])
-@auth.login_required
-def get_auth_token():
-    user = session["user"]
-    user = User.query.filter_by(user_id=user).first()
-    token = user.generate_auth_token()
-    return jsonify({'token': token.decode('ascii')})
-
-
 if __name__ == '__main__':
     app.run(debug=True)
