@@ -171,6 +171,12 @@ class ShoppingListItem(db.Model):
                 .filter_by(list_id=list_id) \
                 .all()
 
+    @staticmethod
+    def get_all_despite_list(user_id):
+        q = db.session.query(ShoppingListItem)
+        q = q.join(ShoppingListItem.list_id)
+        q = q.filter(ShoppingList.user_id == user_id)
+        return q.all()
 
     @property
     def serialize(self):

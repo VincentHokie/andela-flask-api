@@ -416,6 +416,22 @@ def shopping_lists():
         response.status_code = 200
         return response
 
+
+@app.route("/shoppinglists/items", methods=['GET'])
+@auth.login_required
+def all_shopping_list_items():
+
+    # get all the list items and send them to the user
+    response = jsonify(
+        [
+            i.serialize for i in ShoppingListItem.
+            get_all_despite_list(session["user"])
+    ])
+
+    response.status_code = 200
+    return response
+
+
 @app.route("/shoppinglists/<id>", methods=['GET', 'PUT', 'DELETE'])
 @auth.login_required
 def shopping_list_id(id):
