@@ -119,6 +119,19 @@ def check_list_exists(the_list, list_id):
 
     return the_list
 
+def check_item_exists(the_item, item_id):
+
+    if the_item is None:
+        response = jsonify(
+            {
+                "error":
+                    "Shopping list item with id: " + item_id + " not found!"
+            })
+        response.status_code = 404
+        return response
+
+    return the_item
+
 # function used to verify whether username/password or token provided are valid
 @auth.verify_password
 def verify_password(username_or_token, password=None):
@@ -585,14 +598,10 @@ def shopping_list_item_update(id, item_id):
     # ensure the shopping list item in question exists
     lists = ShoppingListItem.query.filter_by(
         item_id=item_id, list_id=id).first()
-    if lists is None:
-        response = jsonify(
-            {
-                "error":
-                    "Shopping list item with id: " + item_id + " not found!"
-            })
-        response.status_code = 404
-        return response
+
+    lists = check_item_exists(lists, id)
+    if not isinstance(lists, ShoppingListItem):
+        return lists
 
     # were updating a shopping list item
     if request.method == "PUT":
