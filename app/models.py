@@ -55,6 +55,16 @@ class User(db.Model):
             "youll-never-know-what-it-is-coz-its-secret", expires_in=expiration)
         return s.dumps({'id': self.user_id})
 
+    def invalidate_token(self):
+        """nullify token fields"""
+        self.token = None
+        self.save()
+
+    def save_token(self, token):
+        """nullify token fields"""
+        self.token = token
+        self.save()
+
     def __repr__(self):
         return '<E-mail %r>' % self.email
 
