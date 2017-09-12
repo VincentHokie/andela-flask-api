@@ -32,7 +32,11 @@ class ShoppingListItemTestCase(CommonRequests):
 
         with app.test_client() as client:
             self.sign_up(client, self.sign_up_credentials)
-            self.login(client, self.login_credentials)
+            self.login_credentials["username"] = "vince"
+            login_details = self.login(client, self.login_credentials)
+            token = json.loads(login_details)
+            self.login_credentials["username"] = token["token"]
+
             res = self.create_shopping_list(
                 client, self.shopping_list, self.login_credentials)
             the_list = json.loads(res.data)
@@ -49,7 +53,11 @@ class ShoppingListItemTestCase(CommonRequests):
 
         with app.test_client() as client:
             self.sign_up(client, self.sign_up_credentials)
-            self.login(client, self.login_credentials)
+            self.login_credentials["username"] = "vince"
+            login_details = self.login(client, self.login_credentials)
+            token = json.loads(login_details)
+            self.login_credentials["username"] = token["token"]
+
             res = self.create_shopping_list(
                 client, self.shopping_list, self.login_credentials)
             the_list = json.loads(res.data)
@@ -67,7 +75,11 @@ class ShoppingListItemTestCase(CommonRequests):
 
         with app.test_client() as client:
             self.sign_up(client, self.sign_up_credentials)
-            self.login(client, self.login_credentials)
+            self.login_credentials["username"] = "vince"
+            login_details = self.login(client, self.login_credentials)
+            token = json.loads(login_details)
+            self.login_credentials["username"] = token["token"]
+
             res = self.create_shopping_list(
                 client, self.shopping_list, self.login_credentials)
             the_list = json.loads(res.data)
@@ -85,7 +97,11 @@ class ShoppingListItemTestCase(CommonRequests):
 
         with app.test_client() as client:
             self.sign_up(client, self.sign_up_credentials)
-            self.login(client, self.login_credentials)
+            self.login_credentials["username"] = "vince"
+            login_details = self.login(client, self.login_credentials)
+            token = json.loads(login_details)
+            self.login_credentials["username"] = token["token"]
+
             res = self.create_shopping_list(
                 client, self.shopping_list, self.login_credentials)
             the_list = json.loads(res.data)
@@ -99,7 +115,11 @@ class ShoppingListItemTestCase(CommonRequests):
 
         with app.test_client() as client:
             self.sign_up(client, self.sign_up_credentials)
-            self.login(client, self.login_credentials)
+            self.login_credentials["username"] = "vince"
+            login_details = self.login(client, self.login_credentials)
+            token = json.loads(login_details)
+            self.login_credentials["username"] = token["token"]
+
             res = self.create_shopping_list(
                 client, self.shopping_list, self.login_credentials)
             the_list = json.loads(res.data)
@@ -132,7 +152,11 @@ class ShoppingListItemTestCase(CommonRequests):
 
         with app.test_client() as client:
             self.sign_up(client, self.sign_up_credentials)
-            self.login(client, self.login_credentials)
+            self.login_credentials["username"] = "vince"
+            login_details = self.login(client, self.login_credentials)
+            token = json.loads(login_details)
+            self.login_credentials["username"] = token["token"]
+
             res = self.create_shopping_list(
                 client, self.shopping_list, self.login_credentials)
             the_list = json.loads(res.data)
