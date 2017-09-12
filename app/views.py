@@ -271,6 +271,7 @@ def login():
 
 
 @app.route("/auth/logout", methods=['POST'])
+@auth.login_required
 def logout():
     if request.method == "POST":
         user = User.query.filter_by(user_id=session["user"]).first()
