@@ -406,12 +406,31 @@ def shopping_lists():
     # we want to see all the shopping lists
     elif request.method == "GET":
 
-        # get all the lists and send them to the user
-        response = jsonify(
-            [i.serialize for i in ShoppingList.get_all(
-                session["user"],
-                request.args.get("q"),
-                request.args.get("limit"))])
+        list_id = request.args.get("list_id")
+        if list_id is not None:
+
+            # ensure id is a valid integer
+            is_valid = check_valid_list_id(list_id)
+            if is_valid is not None:
+                return is_valid
+
+            gotten_list = ShoppingList.query.filter_by(
+                list_id=list_id, user_id=session["user"]).first()
+
+            gotten_list = check_list_exists(gotten_list, id)
+            if not isinstance(gotten_list, ShoppingList):
+                return gotten_list
+
+            # get the list requested for only
+            response = jsonify( gotten_list.serialize )
+
+        else:
+            # get all the lists and send them to the user
+            response = jsonify(
+                [i.serialize for i in ShoppingList.get_all(
+                    session["user"],
+                    request.args.get("q"),
+                    request.args.get("limit"))])
 
         response.status_code = 200
         return response
