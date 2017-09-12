@@ -276,6 +276,7 @@ def logout():
         user = User.query.filter_by(user_id=session["user"]).first()
         if user is not None:
             user.invalidate_token()
+            session.pop('user', None)
             response = jsonify({"success": "You have successfully logged out!"})
             response.status_code = 200
             return response
