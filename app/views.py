@@ -105,7 +105,6 @@ def check_valid_item_id(item_id):
 
     return None
 
-
 def check_list_exists(the_list, list_id):
 
     if the_list is None:
@@ -406,7 +405,7 @@ def shopping_lists():
             # retrieve the list and send it back to the user
             list = ShoppingList.query.filter_by(
                 name=form.name.data, user_id=session["user"]).first()
-            response = jsonify( list.serialize )
+            response = jsonify(list.serialize)
             response.status_code = 201
             return response
 
@@ -435,7 +434,7 @@ def shopping_lists():
                 return gotten_list
 
             # get the list requested for only
-            response = jsonify( gotten_list.serialize )
+            response = jsonify(gotten_list.serialize)
 
         else:
             # get all the lists and send them to the user
@@ -453,12 +452,34 @@ def shopping_lists():
 @auth.login_required
 def all_shopping_list_items():
 
-    # get all the list items and send them to the user
-    response = jsonify(
-        [
-            i.serialize for i in ShoppingListItem.
-            get_all_despite_list(session["user"])
-    ])
+    item_id = request.args.get("item_id")
+    if item_id is not None:
+
+        # ensure id is a valid integer
+        is_valid = check_valid_item_id(item_id)
+        if is_valid is not None:
+            return is_valid
+
+        q = db.session.query(ShoppingListItem)
+        q = q.join(ShoppingListItem.list_id)
+        q = q.filter(ShoppingList.user_id == session["user"])
+        q = q.filter(ShoppingListItem.item_id == item_id)
+        gotten_item = q.first()
+
+        gotten_item = check_item_exists(gotten_item, id)
+        if not isinstance(gotten_item, ShoppingListItem):
+            return gotten_item
+
+        # get the list requested for only
+        response = jsonify(gotten_item.serialize)
+
+    else:
+        # get all the list items and send them to the user
+        response = jsonify(
+            [
+                i.serialize for i in ShoppingListItem.
+                get_all_despite_list(session["user"])
+        ])
 
     response.status_code = 200
     return response
