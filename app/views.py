@@ -1,5 +1,6 @@
 
 import os
+import base64
 from flask import Flask
 from flask import render_template, request, jsonify, session, url_for
 
@@ -91,6 +92,7 @@ def check_valid_list_id(list_id):
 
     return None
 
+
 def check_valid_item_id(item_id):
     try:
         int(item_id)
@@ -105,6 +107,7 @@ def check_valid_item_id(item_id):
 
     return None
 
+
 def check_list_exists(the_list, list_id):
 
     if the_list is None:
@@ -117,6 +120,7 @@ def check_list_exists(the_list, list_id):
         return response
 
     return the_list
+
 
 def check_item_exists(the_item, item_id):
 
@@ -131,6 +135,7 @@ def check_item_exists(the_item, item_id):
 
     return the_item
 
+
 # function used to verify whether username/password or token provided are valid
 @auth.verify_password
 def verify_password(username_or_token, password=None):
@@ -143,6 +148,7 @@ def verify_password(username_or_token, password=None):
             return False
     session["user"] = user.user_id
     return True
+
 
 # decorator used to allow cross origin requests
 @app.after_request
@@ -193,7 +199,8 @@ def register():
         )
 
         # ensure the username is unique, otherwise return an error
-        if User.query.filter_by(username=form.username.data).first() is not None:
+        if User.query.filter_by(username=form.username.data).first() \
+                is not None:
             response = jsonify(
                 {
                     "error":
@@ -211,8 +218,11 @@ def register():
                 {
                     "error":
                         {
-                            "email": ["This email is not unique, please "
-                                         "select another"]
+                            "email":
+                                [
+                                    "This email is not unique, please "
+                                    "select another"
+                                ]
                         }
                 })
             response.status_code = 200
@@ -239,7 +249,7 @@ def register():
 
     # the form was not properly filled
     else:
-        response = jsonify({"error": form.errors })
+        response = jsonify({"error": form.errors})
         response.status_code = 200
         return response
 
@@ -411,9 +421,6 @@ def reset_password(token=None):
                 return response
 
 
-
-
-
 @app.route("/shoppinglists", methods=['GET', 'POST'])
 @auth.login_required
 def shopping_lists():
@@ -506,7 +513,7 @@ def all_shopping_list_items():
             [
                 i.serialize for i in ShoppingListItem.
                 get_all_despite_list(session["user"])
-        ])
+            ])
 
     response.status_code = 200
     return response
@@ -700,7 +707,7 @@ def get_auth_token():
     user = session["user"]
     user = User.query.filter_by(user_id=user).first()
     token = user.generate_auth_token()
-    return jsonify({ 'token': token.decode('ascii') })
+    return jsonify({'token': token.decode('ascii')})
 
 
 if __name__ == '__main__':
