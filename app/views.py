@@ -462,7 +462,7 @@ def all_shopping_list_items():
             return is_valid
 
         gotten_item = ShoppingListItem.query\
-            .join(ShoppingListItem)\
+            .join(ShoppingList)\
             .filter(ShoppingList.user_id == session["user"])\
             .filter(ShoppingListItem.item_id == item_id)\
             .first()
