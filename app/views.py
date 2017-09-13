@@ -170,6 +170,10 @@ def apply_cross_origin_header(response):
 
     return response
 
+@app.route("/#documentation", methods=['GET'])
+def index():
+    return render_template("index.html")
+
 
 @app.route("/auth/register", methods=['POST'])
 def register():
