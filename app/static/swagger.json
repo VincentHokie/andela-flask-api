@@ -1,0 +1,695 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "description": "This is an API developed to allow the maintaining and tracking of shopping and the huge expenses that go into it.",
+    "version": "1.0.0",
+    "title": "Andela Flask API",
+    "contact": {
+      "email": "you@your-company.com"
+    },
+    "license": {
+      "name": "Apache 2.0",
+      "url": "http://www.apache.org/licenses/LICENSE-2.0.html"
+    }
+  },
+  "tags": [
+    {
+      "name": "authentication",
+      "description": "Operations that affect/perform authentication"
+    },
+    {
+      "name": "shopping list",
+      "description": "Create, Retrieve, Update and Delete operations on shopping lists"
+    },
+    {
+      "name": "shopping list item",
+      "description": "Create, Retrieve, Update and Delete operations on shopping list items"
+    }
+  ],
+  "paths": {
+    "/auth/register": {
+      "post": {
+        "tags": [
+          "authentication"
+        ],
+        "summary": "adds an user object",
+        "operationId": "addUser",
+        "description": "Registers a user to the system",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "registration",
+            "description": "User to be signed up",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Registration"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "an error occured, a json object is returned with an \"error\" field with an error message"
+          },
+          "201": {
+            "description": "user created and a json object returned with created user"
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": [
+          "authentication"
+        ],
+        "summary": "log user into the system",
+        "operationId": "userLogin",
+        "description": "Allows a legitimate user access privileged info",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "login",
+            "description": "User to be logged in",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/Login"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "With json object that has \"success\" and \"token\" attributes signify a successful login request. With json object that has \"error\" attribute signifies a failed login request"
+          }
+        }
+      }
+    },
+    "/auth/logout": {
+      "post": {
+        "tags": [
+          "authentication"
+        ],
+        "summary": "invalidate a users token",
+        "operationId": "logoutUser",
+        "description": "Ensures the token used can no longer be used",
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "user token invalidated"
+          }
+        }
+      }
+    },
+    "/auth/reset-password": {
+      "post": {
+        "tags": [
+          "authentication"
+        ],
+        "summary": "allows user begin password reset process",
+        "operationId": "emailVerification",
+        "description": "Begins passowd reset procedure in case a user has forgotten their password",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "userEmail",
+            "description": "Email address to be verified",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/EmailVerify"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "an email has been sent to the provided email address with t alink that will allow them update their password"
+          },
+          "404": {
+            "description": "something went wrong, a json object is sent back with an error message"
+          }
+        }
+      }
+    },
+    "/auth/reset-password/{token}": {
+      "post": {
+        "tags": [
+          "authentication"
+        ],
+        "summary": "updates a user's password",
+        "operationId": "resetPassword",
+        "description": "Resets a user's password",
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "token",
+            "type": "integer",
+            "required": true,
+            "description": "The token used to verify the validity of the reset password request"
+          },
+          {
+            "in": "body",
+            "name": "newPassword",
+            "description": "The new password of the user",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/PasswordReset"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "with a \"success\" key signifies a successful password reset and an \"error\" key signifies a failed password reset"
+          },
+          "401": {
+            "description": "token has been used past the 10 minute expiry time"
+          },
+          "404": {
+            "description": "the token used is not valid"
+          }
+        }
+      }
+    },
+    "/shoppinglists": {
+      "get": {
+        "tags": [
+          "shopping list"
+        ],
+        "summary": "get all the shopping lists",
+        "operationId": "getShoppingLists",
+        "description": "Gets all the shopping lists belonging to the user",
+        "security": [
+          {
+            "api_key": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "successful retrieval of list objects"
+          },
+          "401": {
+            "description": "you are not authorized to see the lists, you need to log in"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "shopping list"
+        ],
+        "summary": "adds a shopping list",
+        "operationId": "addShoppingList",
+        "description": "Adds a shopping list to the system",
+        "security": [
+          {
+            "api_key": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "shoppingList",
+            "description": "Shopping list to add",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ShoppingList"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "list created, shopping list object returned"
+          },
+          "401": {
+            "description": "unauthorized access to the resources, you need to log in"
+          }
+        }
+      }
+    },
+    "/shoppinglists/{id}": {
+      "get": {
+        "tags": [
+          "shopping list item"
+        ],
+        "summary": "gets all items under shopping list with id = {id}",
+        "operationId": "getShoppingListItems",
+        "description": "Gets all items under shopping list with id = {id}",
+        "security": [
+          {
+            "api_key": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "integer",
+            "required": true,
+            "description": "The id of the shopping list to retrieve"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful retrieval"
+          },
+          "401": {
+            "description": "unauthorized access to the resources, you need to log in"
+          },
+          "404": {
+            "description": "the id provided does not belong to any existing list"
+          },
+          "500": {
+            "description": "id in url is not a valid identifier (not a valid integer)"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "shopping list"
+        ],
+        "summary": "updates a shopping list",
+        "operationId": "updateShoppingList",
+        "description": "Updates a shopping list that exists",
+        "security": [
+          {
+            "api_key": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "integer",
+            "required": true,
+            "description": "The id of the shopping list to update"
+          },
+          {
+            "in": "body",
+            "name": "shoppingList",
+            "description": "Shopping list details to update to",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ShoppingList"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful update"
+          },
+          "401": {
+            "description": "unauthorized access to the resources, you need to log in"
+          },
+          "404": {
+            "description": "the id provided does not belong to any existing list"
+          },
+          "500": {
+            "description": "id in url is not a valid identifier (not a valid integer)"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "shopping list"
+        ],
+        "summary": "deletes a shopping list",
+        "operationId": "deleteShoppingList",
+        "description": "Deletes a shopping list from the system",
+        "security": [
+          {
+            "api_key": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "integer",
+            "required": true,
+            "description": "The id of the shopping list to delete"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful deletion"
+          },
+          "401": {
+            "description": "unauthorized access to the resources, you need to log in"
+          },
+          "404": {
+            "description": "the id provided does not belong to any existing list"
+          },
+          "500": {
+            "description": "id in url is not a valid identifier (not a valid integer)"
+          }
+        }
+      }
+    },
+    "/shoppinglists/{id}/items": {
+      "post": {
+        "tags": [
+          "shopping list item"
+        ],
+        "summary": "adds a shopping list item",
+        "operationId": "addShoppingListItem",
+        "description": "Adds a shopping list item to the system",
+        "security": [
+          {
+            "api_key": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "integer",
+            "required": true,
+            "description": "The id of the shopping list to add an item to"
+          },
+          {
+            "in": "body",
+            "name": "itemObject",
+            "description": "Item object to add",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ShoppingListItem"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "request was properly processed but something went wrong"
+          },
+          "201": {
+            "description": "successful addition, created object in json is returned"
+          },
+          "401": {
+            "description": "unauthorized access to the resources, you need to log in"
+          },
+          "404": {
+            "description": "the id provided does not belong to any existing list"
+          },
+          "500": {
+            "description": "id in url is not a valid identifier (not a valid integer)"
+          }
+        }
+      }
+    },
+    "/shoppinglists/{id}/items/{item_id}": {
+      "put": {
+        "tags": [
+          "shopping list item"
+        ],
+        "summary": "updates an existing shopping list item",
+        "operationId": "updateShoppingListItem",
+        "description": "Updates a shopping ist item",
+        "security": [
+          {
+            "api_key": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "integer",
+            "required": true,
+            "description": "The id of the shopping list the item belongs to"
+          },
+          {
+            "in": "path",
+            "name": "item_id",
+            "type": "integer",
+            "required": true,
+            "description": "The id of the shopping list item to update"
+          },
+          {
+            "in": "body",
+            "name": "itemObject",
+            "description": "Item object to update to",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ShoppingListItem"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful update"
+          },
+          "401": {
+            "description": "unauthorized access to the resources, you need to log in"
+          },
+          "404": {
+            "description": "the id or item_id provided does not belong to any existing list or list item respectively"
+          },
+          "500": {
+            "description": "id or item_id in url is not a valid identifier for a list or list item respectively (not a valid integer)"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "shopping list item"
+        ],
+        "summary": "deletes an existing shopping list item",
+        "operationId": "deleteShoppingListItem",
+        "description": "Deletes an existing shopping list item",
+        "security": [
+          {
+            "api_key": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "id",
+            "type": "integer",
+            "required": true,
+            "description": "The id of the shopping list the item belongs to"
+          },
+          {
+            "in": "path",
+            "name": "item_id",
+            "type": "integer",
+            "required": true,
+            "description": "The id of the shopping list item to delete"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "successful deletion"
+          },
+          "401": {
+            "description": "unauthorized access to the resources, you need to log in"
+          },
+          "404": {
+            "description": "the id or item_id provided does not belong to any existing list or list item respectively"
+          },
+          "500": {
+            "description": "id or item_id in url is not a valid identifier for a list or list item respectively (not a valid integer)"
+          }
+        }
+      }
+    },
+    "/shoppinglists/items": {
+      "get": {
+        "tags": [
+          "shopping list item"
+        ],
+        "summary": "get all the shopping list items",
+        "operationId": "getAllShoppingListItems",
+        "description": "Gets all the shopping list items belonging to the user",
+        "security": [
+          {
+            "api_key": []
+          }
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "responses": {
+          "200": {
+            "description": "successful retrieval of list item objects"
+          },
+          "401": {
+            "description": "you are not authorized to see the lists, you need to log in"
+          }
+        }
+      }
+    }
+  },
+  "securityDefinitions": {
+    "api_key": {
+      "type": "apiKey",
+      "name": "Authorization",
+      "in": "header"
+    }
+  },
+  "definitions": {
+    "Registration": {
+      "type": "object",
+      "required": [
+        "username",
+        "email",
+        "password",
+        "password2"
+      ],
+      "properties": {
+        "username": {
+          "type": "string",
+          "example": "vince112"
+        },
+        "email": {
+          "type": "string",
+          "example": "username@gmail.com"
+        },
+        "password": {
+          "type": "string",
+          "example": "my-really-really-strong-passsword"
+        },
+        "password2": {
+          "type": "string",
+          "example": "my-really-really-strong-passsword"
+        }
+      }
+    },
+    "Login": {
+      "type": "object",
+      "required": [
+        "username",
+        "password"
+      ],
+      "properties": {
+        "username": {
+          "type": "string",
+          "example": "vince112"
+        },
+        "password": {
+          "type": "string",
+          "example": "my-really-really-strong-passsword"
+        }
+      }
+    },
+    "EmailVerify": {
+      "type": "object",
+      "required": [
+        "email"
+      ],
+      "properties": {
+        "email": {
+          "type": "string",
+          "example": "username@gmail.com"
+        }
+      }
+    },
+    "PasswordReset": {
+      "type": "object",
+      "required": [
+        "password",
+        "password_confirm"
+      ],
+      "properties": {
+        "password": {
+          "type": "string",
+          "example": "my-new-really-really-strong-passsword"
+        },
+        "password_confirm": {
+          "type": "string",
+          "example": "my-new-really-really-strong-passsword"
+        }
+      }
+    },
+    "ShoppingList": {
+      "type": "object",
+      "required": [
+        "name"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "example": "Baby Stuff"
+        }
+      }
+    },
+    "ShoppingListItem": {
+      "type": "object",
+      "required": [
+        "name",
+        "amount"
+      ],
+      "properties": {
+        "name": {
+          "type": "string",
+          "example": "Pampers"
+        },
+        "amount": {
+          "type": "integer",
+          "format": "int32",
+          "example": 2000
+        }
+      }
+    }
+  },
+  "host": "andela-flask-api.herokuapp.com",
+  "schemes": [
+    "https"
+  ]
+}
