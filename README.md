@@ -4,6 +4,12 @@
 The andela shopping list api that allows users plan shopping experiences.
 
 
+Documentation
+--------------------
+
+https://andela-flask-api.herokuapp.com/documentation
+
+
 Heroku deployment URL
 --------------------
 
