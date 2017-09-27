@@ -658,6 +658,7 @@ def shopping_list_item_update(id, item_id):
 
             lists.name = form.name.data
             lists.amount = form.amount.data
+
             db.session.commit()
 
             response = jsonify({"success": "Shopping list update successful!"})
@@ -691,6 +692,48 @@ def shopping_list_item_update(id, item_id):
         response = jsonify({"success": "Shopping list delete successful!"})
         response.status_code = 202
         return response
+
+
+@app.route("/shoppinglists/<id>/items/<item_id>/checkbox", methods=['PUT'])
+@auth.login_required
+def shopping_list_item_update(id, item_id):
+
+    # check if the shopping list id is indeed a valid integer
+    is_valid = check_valid_list_id(id)
+    if is_valid is not None:
+        return is_valid
+
+    # check if the shopping list item id is indeed a valid integer
+    is_valid = check_valid_item_id(item_id)
+    if is_valid is not None:
+        return is_valid
+
+    # ensure the shopping list in question exists
+    lists = check_list_exists(ShoppingList.query.filter_by(
+        list_id=id, user_id=session["user"]).first(), id)
+    if not isinstance(lists, ShoppingList):
+        return lists
+
+    # ensure the shopping list item in question exists
+    lists = ShoppingListItem.query.filter_by(
+        item_id=item_id, list_id=id).first()
+
+    lists = check_item_exists(lists, id)
+    if not isinstance(lists, ShoppingListItem):
+        return lists
+
+    # were updating a shopping list item bought status
+    if lists.bought != 1:
+        lists.bought = 1
+    else:
+        lists.bought = 0
+
+	db.session.commit()
+
+	response = jsonify({"success": "Shopping list update successful!"})
+	response.status_code = 200
+	return response
+
 
 
 if __name__ == '__main__':
