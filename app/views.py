@@ -728,11 +728,11 @@ def shopping_list_item_update(id, item_id):
     else:
         lists.bought = 0
 
-	db.session.commit()
+    db.session.commit()
 
-	response = jsonify({"success": "Shopping list update successful!"})
-	response.status_code = 200
-	return response
+    response = jsonify({"success": "Shopping list update successful!"})
+    response.status_code = 200
+    return response
 
 
 
