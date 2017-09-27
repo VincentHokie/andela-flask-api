@@ -183,6 +183,7 @@ class ShoppingListItem(db.Model):
             'name': self.name,
             'date': dump_datetime(self.date),
             'amount': self.amount,
+            'bought': self.bought,
         }
 
     def delete(self):
