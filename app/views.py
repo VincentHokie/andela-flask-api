@@ -696,7 +696,7 @@ def shopping_list_item_update(id, item_id):
 
 @app.route("/shoppinglists/<id>/items/<item_id>/checkbox", methods=['PUT'])
 @auth.login_required
-def shopping_list_item_update(id, item_id):
+def shopping_list_item_bought_update(id, item_id):
 
     # check if the shopping list id is indeed a valid integer
     is_valid = check_valid_list_id(id)
