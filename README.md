@@ -238,13 +238,16 @@ The following routes are not accessible publicly i.e. you need to log in and use
       - 500 is returned if the id is not a valid integer.<br>
       - 200 is returned with a JSON object with an 'errors' attribute.<br>
 
+ - PUT **/shoppinglists/{id}/items/{item_id}/checkbox**
 
- - POST **/api/token**
-
-    Request a new authentication token.<br>
-    On success a status code 200 is returned. The body of the response contains a JSON object with the token as a property.<br>
-    On failure status code.<br>
+    Update a shopping list item bought state.<br>
+    On success a status code 200 is returned. The body of the response contains a JSON object with a success attribute.<br>
+    On failure status code<br>
+      - 404 (bad request) is returned if the id and item_id provided does not belong to any existing list or item respectively.<br>
       - 401 (unauthorized) is returned if the user is not logged in or the token is not sent with the request.<br>
+      - 500 is returned if the id or item_id is not a valid integer.<br>
+      - 200 is returned with a JSON object with an 'errors' attribute.<br>
+      
 
 
 
