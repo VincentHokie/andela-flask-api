@@ -91,7 +91,7 @@ The following routes are accessible publicly i.e. you don't need to log in.
     - This link is invalidated 10 minutes after sending the email.
 
 
-- POST **/auth/reset-password<some-long-identification-token>**
+- POST **/auth/reset-password/{some-long-identification-token}**
 
     Reset password endpoint.<br>
     The body must contain a JSON object that defines `password` and `password_confirm` fields.<br>
@@ -122,7 +122,7 @@ The following routes are not accessible publicly i.e. you need to log in and use
     On failure status code 401 (unauthorized) is returned if the user is not logged in or the token is not sent with the request.<br>
 
 
-- GET **/shoppinglists/<id>**
+- GET **/shoppinglists/{id}**
 
     Get all shopping list items under list with id : <id> .<br>
     On success a status code 200 is returned. The body of the response contains a JSON object with the items under the specified list.<br>
@@ -133,9 +133,9 @@ The following routes are not accessible publicly i.e. you need to log in and use
       - 200 is returned with a JSON object with an 'errors' attribute.<br>
 
 
-- PUT **/shoppinglists/<id>**
+- PUT **/shoppinglists/{id}**
 
-    Update shopping list with id : <id> .<br>
+    Update shopping list with id : **id** .<br>
     The body must contain a JSON object that defines a `name` field.<br>
     On success a status code 201 is returned. The body of the response contains a JSON object with a success attribute.<br>
     On failure status code<br>
@@ -145,9 +145,9 @@ The following routes are not accessible publicly i.e. you need to log in and use
       - 200 is returned with a JSON object with an 'errors' attribute.<br>
 
 
-- DELETE **/shoppinglists/<id>**
+- DELETE **/shoppinglists/{id}**
 
-    Delete shopping list with id : <id> .<br>
+    Delete shopping list with id : **id** .<br>
     On success a status code 202 is returned. The body of the response contains a JSON object with a success attribute.<br>
     On failure status code<br>
       - 404 (bad request) is returned if the id provided does not belong to any existing list.<br>
@@ -158,7 +158,7 @@ The following routes are not accessible publicly i.e. you need to log in and use
 
 
 
-- POST **/shoppinglists/<id>/items/**
+- POST **/shoppinglists/{id}/items/**
 
     Add a new shopping list item.<br>
     The body must contain a JSON object that defines `name` and `amount` fields.<br>
@@ -172,7 +172,7 @@ The following routes are not accessible publicly i.e. you need to log in and use
 
 
 
- - PUT **/shoppinglists/<id>/items/<item_id>**
+ - PUT **/shoppinglists/{id}/items/{item_id}**
 
     Update a shopping list item.<br>
     The body must contain a JSON object that defines `name` and `amount` fields.<br>
@@ -183,7 +183,7 @@ The following routes are not accessible publicly i.e. you need to log in and use
       - 500 is returned if the id or item_id is not a valid integer.<br>
       - 200 is returned with a JSON object with an 'errors' attribute.<br>
 
- - DELETE **/shoppinglists/<id>/items/<item_id>**
+ - DELETE **/shoppinglists/{id}/items/{item_id}**
 
     Register a new user.<br>
     On success a status code 202 is returned. The body of the response contains a JSON object with a success property.<br>
