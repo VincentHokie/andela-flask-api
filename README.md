@@ -163,13 +163,15 @@ The following routes are not accessible publicly i.e. you need to log in and use
 - GET **/shoppinglists**
 
     Get all your shopping lists.<br>
+    An optional **list_id** get parameter can be used to retrieve a particular list<br>
     On success a status code 200 is returned. The body of the response contains a JSON object with all your shopping lists.<br>
     On failure status code 401 (unauthorized) is returned if the user is not logged in or the token is not sent with the request.<br>
 
 
 - GET **/shoppinglists/{id}**
 
-    Get all shopping list items under list with id : <id> .<br>
+    Get all shopping list items under list with id : **id** .<br>
+    An optional **item_id** get parameter can be used to retrieve a particular item <br>
     On success a status code 200 is returned. The body of the response contains a JSON object with the items under the specified list.<br>
     On failure status code<br>
       - 404 (bad request) is returned if the id provided does not belong to any existing list.<br>
