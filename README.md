@@ -36,6 +36,51 @@ If you are on Windows, then use the following commands instead:
     $ virtualenv venv
     $ venv\Scripts\activate
     (venv) $ pip install -r requirements.txt
+    
+Database Setup
+------------
+
+Once installation is complete, we need to set up the postgres database.
+
+**Postgres installation**
+
+Use the OS link that applies to you, if it's not available please go to https://www.google.com
+
+http://www.techrepublic.com/blog/diy-it-guy/diy-a-postgresql-database-server-setup-anyone-can-handle/ [any debian distribution]
+
+https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgresql-on-ubuntu-16-04 [ubuntu 16.04]
+
+https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgresql-on-ubuntu-14-04 [ubuntu 14.04]
+
+https://labkey.org/Documentation/wiki-page.view?name=installPostgreSQLWindows [windows]
+
+https://www.postgresql.org/download/windows/ [official docs windows]
+
+https://www.postgresql.org/download/macosx/ [Mac osx]
+
+If you're more comfortable with a desktop application give this a shot https://www.postgresapp.com
+
+**Database Setup**
+
+To set up the database, please follow this document https://www.codementor.io/devops/tutorial/getting-started-postgresql-server-mac-osx . 
+
+Follow the following instructions to get your database up and running. (Begin from step 3 if postgres is already installed, MacOsX users can use it to both install and set up)
+
+    1. Create role ‘Vince’ with password ‘vince’ (Step 3 A)
+    2. Give this role a privilege of CREATEDB (Step 3 A)
+    3. Create DB with name ‘andela-flask-api’ (Step 3 B)
+
+The following must be done with **ALL** the above steps completed.
+Execute these commands in the order they appear.
+
+\#4 must be run only **once**
+
+    4. python manage.py db init
+    
+\#5 and #6 must be every time you make changes to the application models
+
+    5. python manage.py db migrate
+    6. python manage.py db upgrade
 
 
 Running
