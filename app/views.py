@@ -530,11 +530,31 @@ def shopping_list_id(id):
     # we want all the items under the list with the given id
     if request.method == "GET":
 
-        # retrieve and send back the needed information
-        response = jsonify([
-                               i.serialize for i in ShoppingListItem.get_all(
-                id, request.args.get("q"), request.args.get("limit"))
-                               ])
+        item_id = request.args.get("item_id")
+        if item_id is not None:
+
+            # ensure id is a valid integer
+            is_valid = check_valid_item_id(item_id)
+            if is_valid is not None:
+                return is_valid
+
+            gotten_item = ShoppingListItem.query.filter_by(
+                list_id=id, item_id=item_id).first()
+
+            gotten_item = check_item_exists(gotten_item, id)
+            if not isinstance(gotten_item, ShoppingListItem):
+                return gotten_item
+
+            # get the item requested for only
+            response = jsonify(gotten_item.serialize)
+
+        else:
+            # retrieve and send back the needed information
+            response = jsonify([
+                                   i.serialize for i in ShoppingListItem.get_all(
+                    id, request.args.get("q"), request.args.get("limit"))
+                                   ])
+
         response.status_code = 200
         return response
 
@@ -647,7 +667,7 @@ def shopping_list_item_update(id, item_id):
     lists = ShoppingListItem.query.filter_by(
         item_id=item_id, list_id=id).first()
 
-    lists = check_item_exists(lists, id)
+    lists = check_item_exists(lists, item_id)
     if not isinstance(lists, ShoppingListItem):
         return lists
 
@@ -718,7 +738,7 @@ def shopping_list_item_bought_update(id, item_id):
     lists = ShoppingListItem.query.filter_by(
         item_id=item_id, list_id=id).first()
 
-    lists = check_item_exists(lists, id)
+    lists = check_item_exists(lists, item_id)
     if not isinstance(lists, ShoppingListItem):
         return lists
 
