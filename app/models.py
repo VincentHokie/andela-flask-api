@@ -117,6 +117,11 @@ class ShoppingList(db.Model):
         if q is not None:
             query = query.filter(ShoppingList.name.like("%"+q.strip()+"%"))
 
+        try:
+            limit = int(limit)
+        except:
+            limit = None
+
         if limit is not None and isinstance(limit, int):
             return query.limit(limit)
 
@@ -161,6 +166,11 @@ class ShoppingListItem(db.Model):
 
         if q is not None:
             query = query.filter(ShoppingListItem.name.like("%"+q.strip()+"%"))
+
+        try:
+            limit = int(limit)
+        except:
+            limit = None
 
         if limit is not None and isinstance(limit, int):
             return query.limit(limit)
