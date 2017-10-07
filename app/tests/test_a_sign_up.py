@@ -1,6 +1,7 @@
 
 import unittest
 
+import pytest
 from flask import json
 from app.views import app
 from app.models import db
@@ -12,31 +13,41 @@ from app.tests.common_requests import CommonRequests
 class SignUpTestCase(CommonRequests):
     """This class represents the sign up test case"""
 
-    def setUp(self):
-        """Define test variables and initialize app."""
-        self.app = app
-        self.define_db_connections(self.app)
-
-        self.client = self.app.test_client
-
-        # binds the app to the current context
-        with self.app.app_context():
-            # create all tables
-            db.create_all()
-
+    @pytest.mark.first
     def test_sign_up(self):
         """Test API can create a user (POST request)"""
 
+        with app.test_client() as client:
+            res = self.sign_up(client, self.sign_up_credentials)
+
+            self.assertNotEqual(User.query.filter_by(
+                username=self.sign_up_credentials["username"]).first(), None)
+            self.assertEqual(res.status_code, 201)
+
+    def test_duplicate_username(self):
+        """Test API can create a user (POST request)"""
+
+        with app.test_client() as client:
+            res = self.sign_up(client, self.sign_up_credentials)
+            resp = json.loads(res.data)
+
+            self.assertIn("error", resp)
+            self.assertEqual(res.status_code, 200)
+
+    def test_duplicate_email(self):
+        """Test API can create a user (POST request)"""
+
         sign_up_credentials = {
-            'username': 'vince', "email": "vincenthokie@gmail.com",
+            'username': 'vincex', "email": "vincenthokie@gmail.com",
             "password": "123", "password2": "123"}
 
         with app.test_client() as client:
             res = self.sign_up(client, sign_up_credentials)
+            resp = json.loads(res.data)
+            print( resp )
 
-            self.assertNotEqual(User.query.filter_by(
-                username=sign_up_credentials["username"]).first(), None)
-            self.assertEqual(res.status_code, 201)
+            self.assertIn("error", resp)
+            self.assertEqual(res.status_code, 200)
 
     def test_sign_up_password_confirmation(self):
         """Test API can notice incorrect password confirmation (POST request)"""
@@ -113,8 +124,4 @@ class SignUpTestCase(CommonRequests):
             self.assertIn("error", json.loads(res.data))
 
     def tearDown(self):
-        """teardown all initialized variables."""
-        with self.app.app_context():
-            # drop all tables
-            db.session.remove()
-            db.drop_all()
+        return False

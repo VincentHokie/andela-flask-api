@@ -11,40 +11,21 @@ class ShoppingListItemTestCase(CommonRequests):
     """This class represents the shopping list test case"""
 
     def setUp(self):
-        """Define test variables and initialize app."""
-        self.app = app
-        self.define_db_connections(self.app)
-
-        self.client = self.app.test_client
-        self.sign_up_credentials = {
-            'username': 'vince', "email": "vincenthokie@gmail.com",
-            "password": "123", "password2": "123"}
-        self.login_credentials = {'username': 'vince', "password": "123"}
-        self.shopping_list = {'name': 'ListThing'}
-
-        # binds the app to the current context
-        with self.app.app_context():
-            # create all tables
-            db.create_all()
+        self.set_up_tests()
+        self.set_up_authorized_route()
 
     def test_shopping_list_item_creation(self):
         """Test API can create a shopping list (POST request)"""
 
         with app.test_client() as client:
-            self.sign_up(client, self.sign_up_credentials)
-            self.login_credentials["username"] = "vince"
-            login_details = self.login(client, self.login_credentials)
-            token = json.loads(login_details.data)
-            self.login_credentials["username"] = token["token"]
 
             res = self.create_shopping_list(
-                client, self.shopping_list, self.login_credentials)
+                client, self.shopping_list)
             the_list = json.loads(res.data)
 
             shopping_list_item = {'name': 'List item', "amount": 1000}
             result = self.create_shopping_list_item(
-                client, shopping_list_item, the_list['list_id'],
-                self.login_credentials)
+                client, shopping_list_item, the_list['list_id'])
 
             self.assertEqual(result.status_code, 201)
 
@@ -52,20 +33,14 @@ class ShoppingListItemTestCase(CommonRequests):
         """Test API can create a shopping list (POST request)"""
 
         with app.test_client() as client:
-            self.sign_up(client, self.sign_up_credentials)
-            self.login_credentials["username"] = "vince"
-            login_details = self.login(client, self.login_credentials)
-            token = json.loads(login_details.data)
-            self.login_credentials["username"] = token["token"]
 
             res = self.create_shopping_list(
-                client, self.shopping_list, self.login_credentials)
+                client, self.shopping_list)
             the_list = json.loads(res.data)
 
             shopping_list_item = {'name': '', "amount": 1000}
             result = self.create_shopping_list_item(
-                client, shopping_list_item, the_list['list_id'],
-                self.login_credentials)
+                client, shopping_list_item, the_list['list_id'])
 
             self.assertEqual(result.status_code, 200)
             self.assertIn("error", json.loads(result.data))
@@ -74,20 +49,14 @@ class ShoppingListItemTestCase(CommonRequests):
         """Test API can create a shopping list (POST request)"""
 
         with app.test_client() as client:
-            self.sign_up(client, self.sign_up_credentials)
-            self.login_credentials["username"] = "vince"
-            login_details = self.login(client, self.login_credentials)
-            token = json.loads(login_details.data)
-            self.login_credentials["username"] = token["token"]
 
             res = self.create_shopping_list(
-                client, self.shopping_list, self.login_credentials)
+                client, self.shopping_list)
             the_list = json.loads(res.data)
 
             shopping_list_item = {'name': 'List item', "amount": ""}
             result = self.create_shopping_list_item(
-                client, shopping_list_item, the_list['list_id'],
-                self.login_credentials)
+                client, shopping_list_item, the_list['list_id'])
 
             self.assertEqual(result.status_code, 200)
             self.assertIn("error", json.loads(result.data))
@@ -96,45 +65,34 @@ class ShoppingListItemTestCase(CommonRequests):
         """Test API can get shopping lists (GET request)."""
 
         with app.test_client() as client:
-            self.sign_up(client, self.sign_up_credentials)
-            self.login_credentials["username"] = "vince"
-            login_details = self.login(client, self.login_credentials)
-            token = json.loads(login_details.data)
-            self.login_credentials["username"] = token["token"]
 
             res = self.create_shopping_list(
-                client, self.shopping_list, self.login_credentials)
+                client, self.shopping_list)
             the_list = json.loads(res.data)
 
             res = self.get_items_under_shopping_list(
-                client, the_list['list_id'], self.login_credentials)
+                client, the_list['list_id'])
             self.assertEqual(res.status_code, 200)
 
     def test_api_can_update_shopping_list(self):
         """Test API can get a single bucketlist by using it's id."""
 
         with app.test_client() as client:
-            self.sign_up(client, self.sign_up_credentials)
-            self.login_credentials["username"] = "vince"
-            login_details = self.login(client, self.login_credentials)
-            token = json.loads(login_details.data)
-            self.login_credentials["username"] = token["token"]
 
             res = self.create_shopping_list(
-                client, self.shopping_list, self.login_credentials)
+                client, self.shopping_list)
             the_list = json.loads(res.data)
 
             shopping_list_item = {'name': 'vince', "amount": 10000}
             shopping_list_item_updated = {'name': 'vince123', "amount": 2000}
 
             the_list_item = self.create_shopping_list_item(
-                client, shopping_list_item, the_list['list_id'],
-                self.login_credentials)
+                client, shopping_list_item, the_list['list_id'])
             the_list_item = json.loads(the_list_item.data)
 
             rv = self.update_shopping_list_item(
                 client, shopping_list_item_updated, the_list['list_id'],
-                the_list_item['item_id'],  self.login_credentials)
+                the_list_item['item_id'])
 
             the_list = ShoppingListItem.query.filter_by(
                 list_id=the_list['list_id']).first()
@@ -147,24 +105,50 @@ class ShoppingListItemTestCase(CommonRequests):
             self.assertEqual(
                 the_list['amount'], shopping_list_item_updated['amount'])
 
+    def test_api_can_detect_invalid_item_id_on_update(self):
+        """Test API can get a single bucketlist by using it's id."""
+
+        with app.test_client() as client:
+
+            rv = self.update_shopping_list_item(
+                client, {}, "1", "1a")
+
+            self.assertEqual(rv.status_code, 500)
+            self.assertIn("error", json.loads(rv.data))
+
+    def test_api_can_detect_invalid_list_id_on_update(self):
+        """Test API can get a single bucketlist by using it's id."""
+
+        with app.test_client() as client:
+
+            rv = self.update_shopping_list_item(
+                client, {}, "1a", "1")
+
+            self.assertEqual(rv.status_code, 500)
+            self.assertIn("error", json.loads(rv.data))
+
+    def test_api_can_detect_non_existent_item_id_on_update(self):
+        """Test API can get a single bucketlist by using it's id."""
+
+        with app.test_client() as client:
+            rv = self.update_shopping_list_item(
+                client, {}, "1", "111")
+
+            self.assertEqual(rv.status_code, 404)
+            self.assertIn("error", json.loads(rv.data))
+
     def test_api_can_delete_shopping_list(self):
         """Test API can get a single bucketlist by using it's id."""
 
         with app.test_client() as client:
-            self.sign_up(client, self.sign_up_credentials)
-            self.login_credentials["username"] = "vince"
-            login_details = self.login(client, self.login_credentials)
-            token = json.loads(login_details.data)
-            self.login_credentials["username"] = token["token"]
 
             res = self.create_shopping_list(
-                client, self.shopping_list, self.login_credentials)
+                client, self.shopping_list)
             the_list = json.loads(res.data)
 
             shopping_list_item = {'name': 'vince', "amount": 10000}
             the_list_item = self.create_shopping_list_item(
-                client, shopping_list_item, the_list['list_id'],
-                self.login_credentials)
+                client, shopping_list_item, the_list['list_id'])
             the_list_item = json.loads(the_list_item.data)
 
             the_list = ShoppingListItem.query.filter_by(
@@ -172,16 +156,41 @@ class ShoppingListItemTestCase(CommonRequests):
             the_list = the_list.serialize
 
             result = self.delete_shopping_list_item(
-                client, the_list['list_id'], the_list_item['item_id'],
-                self.login_credentials)
+                client, the_list['list_id'], the_list_item['item_id'])
 
             self.assertEqual(result.status_code, 202)
             self.assertEqual(None, ShoppingListItem.query.filter_by(
                 item_id=the_list_item["item_id"]).first())
 
+    def test_api_can_detect_non_existent_item_id_on_delete(self):
+        """Test API can get a single bucketlist by using it's id."""
+
+        with app.test_client() as client:
+            rv = self.delete_shopping_list_item(
+                client, "1", "111")
+
+            self.assertEqual(rv.status_code, 404)
+            self.assertIn("error", json.loads(rv.data))
+
+    def test_api_can_detect_invalid_item_id_on_delete(self):
+        """Test API can get a single bucketlist by using it's id."""
+
+        with app.test_client() as client:
+            rv = self.delete_shopping_list_item(
+                client, "1", "1a")
+
+            self.assertEqual(rv.status_code, 500)
+            self.assertIn("error", json.loads(rv.data))
+
+    def test_api_can_detect_invalid_list_id_on_delete(self):
+        """Test API can get a single bucketlist by using it's id."""
+
+        with app.test_client() as client:
+            rv = self.delete_shopping_list_item(
+                client, "1a", "1")
+
+            self.assertEqual(rv.status_code, 500)
+            self.assertIn("error", json.loads(rv.data))
+
     def tearDown(self):
-        """teardown all initialized variables."""
-        with self.app.app_context():
-            # drop all tables
-            db.session.remove()
-            db.drop_all()
+        return False

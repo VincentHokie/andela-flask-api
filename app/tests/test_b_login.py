@@ -1,0 +1,50 @@
+
+from flask import json
+from app.views import app
+from app.models import db
+
+from app.tests.common_requests import CommonRequests
+
+class LoginTestCase(CommonRequests):
+    """This class represents the login test case"""
+
+    def test_login(self):
+        """Test API can create a user (POST request)"""
+
+        with app.test_client() as client:
+
+            res = self.login(client, self.login_credentials)
+
+            self.assertEqual(res.status_code, 200)
+            self.assertIn("success", json.loads(res.data))
+
+    def test_wrong_credentials_login(self):
+        """Test API can create a user (POST request)"""
+
+        with app.test_client() as client:
+
+            res = self.login(client, {'username': 'wrong', "password": "wrong"})
+
+            self.assertEqual(res.status_code, 200)
+            self.assertIn("error", json.loads(res.data))
+
+    def test_login_password_required(self):
+        """Test API can notice password is required (POST request)."""
+
+        with app.test_client() as client:
+            res = self.login(client, {'username': 'vince', "password": ""})
+
+            self.assertEqual(res.status_code, 200)
+            self.assertIn("error", json.loads(res.data))
+
+    def test_login_username_required(self):
+        """Test API can notice username is required (POST request)."""
+
+        with app.test_client() as client:
+            res = self.login(client, {'username': '', "password": "123"})
+
+            self.assertEqual(res.status_code, 200)
+            self.assertIn("error", json.loads(res.data))
+
+    def tearDown(self):
+        return False

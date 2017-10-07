@@ -36,6 +36,51 @@ If you are on Windows, then use the following commands instead:
     $ virtualenv venv
     $ venv\Scripts\activate
     (venv) $ pip install -r requirements.txt
+    
+Database Setup
+------------
+
+Once installation is complete, we need to set up the postgres database.
+
+**Postgres installation**
+
+Use the OS link that applies to you, if it's not available please go to https://www.google.com
+
+http://www.techrepublic.com/blog/diy-it-guy/diy-a-postgresql-database-server-setup-anyone-can-handle/ [any debian distribution]
+
+https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgresql-on-ubuntu-16-04 [ubuntu 16.04]
+
+https://www.digitalocean.com/community/tutorials/how-to-install-and-use-postgresql-on-ubuntu-14-04 [ubuntu 14.04]
+
+https://labkey.org/Documentation/wiki-page.view?name=installPostgreSQLWindows [windows]
+
+https://www.postgresql.org/download/windows/ [official docs windows]
+
+https://www.postgresql.org/download/macosx/ [Mac osx]
+
+If you're more comfortable with a desktop application give this a shot https://www.postgresapp.com
+
+**Database Setup**
+
+To set up the database, please follow this document https://www.codementor.io/devops/tutorial/getting-started-postgresql-server-mac-osx . 
+
+Follow the following instructions to get your database up and running. (Begin from step 3 if postgres is already installed, MacOsX users can use it to both install and set up)
+
+    1. Create role ‘Vince’ with password ‘vince’ (Step 3 A)
+    2. Give this role a privilege of CREATEDB (Step 3 A)
+    3. Create DB with name ‘andela-flask-api’ (Step 3 B)
+
+The following must be done with **ALL** the above steps completed.
+Execute these commands in the order they appear.
+
+\#4 must be run only **once**
+
+    4. python manage.py db init
+    
+\#5 and #6 must be every time you make changes to the application models
+
+    5. python manage.py db migrate
+    6. python manage.py db upgrade
 
 
 Running
@@ -91,7 +136,7 @@ The following routes are accessible publicly i.e. you don't need to log in.
     - This link is invalidated 10 minutes after sending the email.
 
 
-- POST **/auth/reset-password<some-long-identification-token>**
+- POST **/auth/reset-password/{some-long-identification-token}**
 
     Reset password endpoint.<br>
     The body must contain a JSON object that defines `password` and `password_confirm` fields.<br>
@@ -118,13 +163,15 @@ The following routes are not accessible publicly i.e. you need to log in and use
 - GET **/shoppinglists**
 
     Get all your shopping lists.<br>
+    An optional **list_id** get parameter can be used to retrieve a particular list<br>
     On success a status code 200 is returned. The body of the response contains a JSON object with all your shopping lists.<br>
     On failure status code 401 (unauthorized) is returned if the user is not logged in or the token is not sent with the request.<br>
 
 
-- GET **/shoppinglists/<id>**
+- GET **/shoppinglists/{id}**
 
-    Get all shopping list items under list with id : <id> .<br>
+    Get all shopping list items under list with id : **id** .<br>
+    An optional **item_id** get parameter can be used to retrieve a particular item <br>
     On success a status code 200 is returned. The body of the response contains a JSON object with the items under the specified list.<br>
     On failure status code<br>
       - 404 (bad request) is returned if the id provided does not belong to any existing list.<br>
@@ -133,9 +180,9 @@ The following routes are not accessible publicly i.e. you need to log in and use
       - 200 is returned with a JSON object with an 'errors' attribute.<br>
 
 
-- PUT **/shoppinglists/<id>**
+- PUT **/shoppinglists/{id}**
 
-    Update shopping list with id : <id> .<br>
+    Update shopping list with id : **id** .<br>
     The body must contain a JSON object that defines a `name` field.<br>
     On success a status code 201 is returned. The body of the response contains a JSON object with a success attribute.<br>
     On failure status code<br>
@@ -145,9 +192,9 @@ The following routes are not accessible publicly i.e. you need to log in and use
       - 200 is returned with a JSON object with an 'errors' attribute.<br>
 
 
-- DELETE **/shoppinglists/<id>**
+- DELETE **/shoppinglists/{id}**
 
-    Delete shopping list with id : <id> .<br>
+    Delete shopping list with id : **id** .<br>
     On success a status code 202 is returned. The body of the response contains a JSON object with a success attribute.<br>
     On failure status code<br>
       - 404 (bad request) is returned if the id provided does not belong to any existing list.<br>
@@ -158,7 +205,7 @@ The following routes are not accessible publicly i.e. you need to log in and use
 
 
 
-- POST **/shoppinglists/<id>/items/**
+- POST **/shoppinglists/{id}/items/**
 
     Add a new shopping list item.<br>
     The body must contain a JSON object that defines `name` and `amount` fields.<br>
@@ -172,7 +219,7 @@ The following routes are not accessible publicly i.e. you need to log in and use
 
 
 
- - PUT **/shoppinglists/<id>/items/<item_id>**
+ - PUT **/shoppinglists/{id}/items/{item_id}**
 
     Update a shopping list item.<br>
     The body must contain a JSON object that defines `name` and `amount` fields.<br>
@@ -183,7 +230,7 @@ The following routes are not accessible publicly i.e. you need to log in and use
       - 500 is returned if the id or item_id is not a valid integer.<br>
       - 200 is returned with a JSON object with an 'errors' attribute.<br>
 
- - DELETE **/shoppinglists/<id>/items/<item_id>**
+ - DELETE **/shoppinglists/{id}/items/{item_id}**
 
     Register a new user.<br>
     On success a status code 202 is returned. The body of the response contains a JSON object with a success property.<br>
@@ -193,13 +240,16 @@ The following routes are not accessible publicly i.e. you need to log in and use
       - 500 is returned if the id is not a valid integer.<br>
       - 200 is returned with a JSON object with an 'errors' attribute.<br>
 
+ - PUT **/shoppinglists/{id}/items/{item_id}/checkbox**
 
- - POST **/api/token**
-
-    Request a new authentication token.<br>
-    On success a status code 200 is returned. The body of the response contains a JSON object with the token as a property.<br>
-    On failure status code.<br>
+    Update a shopping list item bought state.<br>
+    On success a status code 200 is returned. The body of the response contains a JSON object with a success attribute.<br>
+    On failure status code<br>
+      - 404 (bad request) is returned if the id and item_id provided does not belong to any existing list or item respectively.<br>
       - 401 (unauthorized) is returned if the user is not logged in or the token is not sent with the request.<br>
+      - 500 is returned if the id or item_id is not a valid integer.<br>
+      - 200 is returned with a JSON object with an 'errors' attribute.<br>
+      
 
 
 
