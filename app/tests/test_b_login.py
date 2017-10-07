@@ -8,24 +8,6 @@ from app.tests.common_requests import CommonRequests
 class LoginTestCase(CommonRequests):
     """This class represents the login test case"""
 
-    def setUp(self):
-        """Define test variables and initialize app."""
-        self.app = app
-        self.define_db_connections(self.app)
-
-        self.client = self.app.test_client
-
-        self.sign_up_credentials = {
-            'username': 'vince',
-            "email": "vincenthokie@gmail.com",
-            "password": "123",
-            "password2": "123"}
-
-        # binds the app to the current context
-        with self.app.app_context():
-            # create all tables
-            db.create_all()
-
     def test_login(self):
         """Test API can create a user (POST request)"""
 
@@ -63,8 +45,4 @@ class LoginTestCase(CommonRequests):
             self.assertIn("error", json.loads(res.data))
 
     def tearDown(self):
-        """teardown all initialized variables."""
-        with self.app.app_context():
-            # drop all tables
-            db.session.remove()
-            db.drop_all()
+        return False

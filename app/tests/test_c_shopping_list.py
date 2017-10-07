@@ -10,24 +10,6 @@ from app.tests.common_requests import CommonRequests
 class ShoppingListTestCase(CommonRequests):
     """This class represents the shopping list test case"""
 
-    def setUp(self):
-        """Define test variables and initialize app."""
-        self.app = app
-        self.define_db_connections(self.app)
-
-        self.client = self.app.test_client
-        self.sign_up_credentials = {
-            'username': 'vince',
-            "email": "vincenthokie@gmail.com",
-            "password": "123",
-            "password2": "123"}
-        self.login_credentials = {'username': 'vince', "password": "123"}
-
-        # binds the app to the current context
-        with self.app.app_context():
-            # create all tables
-            db.create_all()
-
     def test_shopping_list_creation(self):
         """Test API can create a shopping list (POST request)"""
 
@@ -133,8 +115,4 @@ class ShoppingListTestCase(CommonRequests):
             self.assertIn("success", json.loads(result.data))
 
     def tearDown(self):
-        """teardown all initialized variables."""
-        with self.app.app_context():
-            # drop all tables
-            db.session.remove()
-            db.drop_all()
+        return False

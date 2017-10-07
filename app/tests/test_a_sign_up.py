@@ -12,23 +12,11 @@ from app.tests.common_requests import CommonRequests
 class SignUpTestCase(CommonRequests):
     """This class represents the sign up test case"""
 
-    def setUp(self):
-        """Define test variables and initialize app."""
-        self.app = app
-        self.define_db_connections(self.app)
-
-        self.client = self.app.test_client
-
-        # binds the app to the current context
-        with self.app.app_context():
-            # create all tables
-            db.create_all()
-
     def test_sign_up(self):
         """Test API can create a user (POST request)"""
 
         sign_up_credentials = {
-            'username': 'vince', "email": "vincenthokie@gmail.com",
+            'username': 'vincee', "email": "vincenthokiee@gmail.com",
             "password": "123", "password2": "123"}
 
         with app.test_client() as client:
@@ -111,10 +99,3 @@ class SignUpTestCase(CommonRequests):
                 username=sign_up_credentials["username"]).first(), None)
             self.assertEqual(res.status_code, 200)
             self.assertIn("error", json.loads(res.data))
-
-    def tearDown(self):
-        """teardown all initialized variables."""
-        with self.app.app_context():
-            # drop all tables
-            db.session.remove()
-            db.drop_all()
