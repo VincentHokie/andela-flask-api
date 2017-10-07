@@ -12,22 +12,27 @@ class LoginTestCase(CommonRequests):
         """Test API can create a user (POST request)"""
 
         with app.test_client() as client:
-            self.sign_up(client, self.sign_up_credentials)
 
-            login_credentials = {'username': 'vince', "password": "123"}
-            res = self.login(client, login_credentials)
+            res = self.login(client, self.login_credentials)
 
             self.assertEqual(res.status_code, 200)
             self.assertIn("success", json.loads(res.data))
+
+    def test_wrong_credentials_login(self):
+        """Test API can create a user (POST request)"""
+
+        with app.test_client() as client:
+
+            res = self.login(client, {'username': 'wrong', "password": "wrong"})
+
+            self.assertEqual(res.status_code, 200)
+            self.assertIn("error", json.loads(res.data))
 
     def test_login_password_required(self):
         """Test API can notice password is required (POST request)."""
 
         with app.test_client() as client:
-            self.sign_up(client, self.sign_up_credentials)
-
-            login_credentials = {'username': 'vince', "password": ""}
-            res = self.login(client, login_credentials)
+            res = self.login(client, {'username': 'vince', "password": ""})
 
             self.assertEqual(res.status_code, 200)
             self.assertIn("error", json.loads(res.data))
@@ -36,10 +41,7 @@ class LoginTestCase(CommonRequests):
         """Test API can notice username is required (POST request)."""
 
         with app.test_client() as client:
-            self.sign_up(client, self.sign_up_credentials)
-
-            login_credentials = {'username': '', "password": "123"}
-            res = self.login(client, login_credentials)
+            res = self.login(client, {'username': '', "password": "123"})
 
             self.assertEqual(res.status_code, 200)
             self.assertIn("error", json.loads(res.data))
