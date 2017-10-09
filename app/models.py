@@ -111,7 +111,7 @@ class ShoppingList(db.Model):
         }
 
     @staticmethod
-    def get_all(user_id, q, limit):
+    def get_all(user_id, q, limit=10, page=1):
         query = ShoppingList.query.filter_by(user_id=user_id)
 
         if q is not None:
@@ -119,11 +119,12 @@ class ShoppingList(db.Model):
 
         try:
             limit = int(limit)
+            page = int(page)
         except:
             limit = None
 
-        if limit is not None and isinstance(limit, int):
-            return query.limit(limit)
+        if limit is not None:
+            return query.paginate(page, limit, False).items
 
         return query.all()
 
@@ -160,7 +161,7 @@ class ShoppingListItem(db.Model):
         db.session.commit()
 
     @staticmethod
-    def get_all(list_id, q, limit):
+    def get_all(list_id, q, limit=10, page=1):
 
         query = ShoppingListItem.query.filter_by(list_id=list_id)
 
@@ -169,11 +170,12 @@ class ShoppingListItem(db.Model):
 
         try:
             limit = int(limit)
+            page = int(page)
         except:
             limit = None
 
-        if limit is not None and isinstance(limit, int):
-            return query.limit(limit)
+        if limit is not None:
+            return query.paginate(page, limit, False).items
 
         return query.all()
 

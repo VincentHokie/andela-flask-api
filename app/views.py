@@ -469,7 +469,8 @@ def shopping_lists():
                 [i.serialize for i in ShoppingList.get_all(
                     session["user"],
                     request.args.get("q"),
-                    request.args.get("limit"))])
+                    request.args.get("limit"),
+                    request.args.get("page"))])
 
         response.status_code = 200
         return response
@@ -552,7 +553,7 @@ def shopping_list_id(id):
             # retrieve and send back the needed information
             response = jsonify([
                                    i.serialize for i in ShoppingListItem.get_all(
-                    id, request.args.get("q"), request.args.get("limit"))
+                    id, request.args.get("q"), request.args.get("limit"), request.args.get("page"))
                                    ])
 
         response.status_code = 200
