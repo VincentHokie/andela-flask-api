@@ -170,6 +170,12 @@ def apply_cross_origin_header(response):
 
     return response
 
+@auth.error_handler
+def custom_401():
+    response = jsonify({"error": "You are not allowed to look at/ do this. Please log in to continue!"})
+    response.status_code = 401
+    return response
+
 @app.route("/documentation", methods=['GET'])
 def index():
     return render_template("index.html")
