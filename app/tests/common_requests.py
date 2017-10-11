@@ -11,7 +11,7 @@ class CommonRequests(unittest.TestCase):
 
     sign_up_credentials = {
         'username': 'vince',
-        "email": "vincenthokie@gmail.com",
+        "email": "andelatestmail@gmail.com",
         "password": "123",
         "password2": "123"}
 

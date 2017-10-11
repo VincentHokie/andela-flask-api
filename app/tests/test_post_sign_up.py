@@ -26,7 +26,7 @@ class PostSignUpTestCase(CommonRequests):
         """Test API can create a user (POST request)"""
 
         sign_up_credentials = {
-            'username': 'vincex', "email": "vincenthokie@gmail.com",
+            'username': 'vincex', "email": "andelatestmail@gmail.com",
             "password": "123", "password2": "123"}
 
         with app.test_client() as client:
