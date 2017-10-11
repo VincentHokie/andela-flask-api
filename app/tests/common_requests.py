@@ -133,6 +133,10 @@ class CommonRequests(unittest.TestCase):
         return client.delete('/shoppinglists/'+str(list_id)+'/items/'+
                              str(item_id), headers=self.get_auth_header())
 
+    def confirm_email_for_password_reset(self, client, email):
+        return client.post('/auth/reset-password',
+                             data=email)
+
     def tearDown(self):
         """teardown all initialized variables."""
         with self.app.app_context():
