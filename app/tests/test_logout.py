@@ -10,7 +10,8 @@ class LogoutTestCase(CommonRequests):
 
     def setUp(self):
         self.set_up_tests()
-        self.set_up_authorized_route()
+        CommonRequests.set_up_user_account(self)
+        CommonRequests.set_up_authorized_route(self)
 
     def test_logout(self):
         """Test API can create a user (POST request)"""
@@ -19,7 +20,6 @@ class LogoutTestCase(CommonRequests):
             res = self.logout(client)
             self.assertEqual(res.status_code, 200)
             self.assertIn("success", json.loads(res.data))
-
 
     def tearDown(self):
         return False

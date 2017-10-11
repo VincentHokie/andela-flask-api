@@ -1,9 +1,8 @@
 
 from flask import json
 
+import pytest
 from app.views import app
-from app.models import db, ShoppingList
-from datetime import datetime
 from app.tests.common_requests import CommonRequests
 
 
@@ -12,8 +11,8 @@ class ShoppingListTestCase(CommonRequests):
 
     def setUp(self):
         self.set_up_tests()
-        self.set_up_authorized_route()
-
+        CommonRequests.set_up_user_account(self)
+        CommonRequests.set_up_authorized_route(self)
 
     def test_shopping_list_creation(self):
         """Test API can create a shopping list (POST request)"""
@@ -26,7 +25,7 @@ class ShoppingListTestCase(CommonRequests):
 
             self.assertEqual(res.status_code, 201)
             self.assertEqual(back_data['name'], shopping_list["name"])
-            self.list_id = back_data["list_id"]
+            CommonRequests.list_id = back_data["list_id"]
 
     def test_shopping_list_name_required(self):
         """Test API can create a shopping list (POST request)"""
@@ -117,6 +116,7 @@ class ShoppingListTestCase(CommonRequests):
             self.assertEqual(result.status_code, 500)
             self.assertIn("error", json.loads(result.data))
 
+    @pytest.mark.last
     def test_api_can_recognize_non_existent_url_parameters_on_delete(self):
         """Test API can get a single bucketlist by using it's id."""
 
@@ -125,7 +125,3 @@ class ShoppingListTestCase(CommonRequests):
 
             self.assertEqual(result.status_code, 404)
             self.assertIn("error", json.loads(result.data))
-
-
-    def tearDown(self):
-        return False
