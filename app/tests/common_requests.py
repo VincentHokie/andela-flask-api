@@ -21,6 +21,8 @@ class CommonRequests(unittest.TestCase):
 
     shopping_list = {'name': 'ListThing'}
 
+    password_change = {'password': 'aa', 'password_confirm': 'aa'}
+
     token = ""
 
     list_id = ""
@@ -136,6 +138,10 @@ class CommonRequests(unittest.TestCase):
     def confirm_email_for_password_reset(self, client, email):
         return client.post('/auth/reset-password',
                              data=email)
+
+    def password_reset(self, client, token, password):
+        return client.post('/auth/reset-password/'+token,
+                             data=password)
 
     def tearDown(self):
         """teardown all initialized variables."""
