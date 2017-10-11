@@ -92,7 +92,7 @@ class ShoppingListItemTestCase(CommonRequests):
         with app.test_client() as client:
 
             rv = self.update_shopping_list_item(
-                client, {}, "1", "1a")
+                client, {}, CommonRequests.list_id, "1a")
 
             self.assertEqual(rv.status_code, 500)
             self.assertIn("error", json.loads(rv.data))
@@ -113,7 +113,7 @@ class ShoppingListItemTestCase(CommonRequests):
 
         with app.test_client() as client:
             rv = self.update_shopping_list_item(
-                client, {}, "1", "111")
+                client, {}, CommonRequests.list_id, "111")
 
             self.assertEqual(rv.status_code, 404)
             self.assertIn("error", json.loads(rv.data))
@@ -123,21 +123,17 @@ class ShoppingListItemTestCase(CommonRequests):
 
         with app.test_client() as client:
 
-            res = self.create_shopping_list(
-                client, self.shopping_list)
-            the_list = json.loads(res.data)
-
             shopping_list_item = {'name': 'vince', "amount": 10000}
             the_list_item = self.create_shopping_list_item(
-                client, shopping_list_item, the_list['list_id'])
+                client, shopping_list_item, CommonRequests.list_id)
             the_list_item = json.loads(the_list_item.data)
 
             the_list = ShoppingListItem.query.filter_by(
-                list_id=the_list['list_id']).first()
+                list_id=CommonRequests.list_id).first()
             the_list = the_list.serialize
 
             result = self.delete_shopping_list_item(
-                client, the_list['list_id'], the_list_item['item_id'])
+                client, CommonRequests.list_id, the_list_item['item_id'])
 
             self.assertEqual(result.status_code, 202)
             self.assertEqual(None, ShoppingListItem.query.filter_by(
@@ -148,7 +144,7 @@ class ShoppingListItemTestCase(CommonRequests):
 
         with app.test_client() as client:
             rv = self.delete_shopping_list_item(
-                client, "1", "111")
+                client, CommonRequests.list_id, "111")
 
             self.assertEqual(rv.status_code, 404)
             self.assertIn("error", json.loads(rv.data))
@@ -158,7 +154,7 @@ class ShoppingListItemTestCase(CommonRequests):
 
         with app.test_client() as client:
             rv = self.delete_shopping_list_item(
-                client, "1", "1a")
+                client, CommonRequests.list_id, "1a")
 
             self.assertEqual(rv.status_code, 500)
             self.assertIn("error", json.loads(rv.data))
