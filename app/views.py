@@ -297,127 +297,124 @@ def logout():
 @app.route("/auth/reset-password/<token>", methods=['POST'])
 def reset_password(token=None):
 
-    # ensure its a post request
-    if request.method == "POST":
+    # the user is trying to update the password and
+    # has submitted the passwords
+    if token is not None:
 
-        # the user is trying to update the password and
-        # has submitted the passwords
-        if token is not None:
+        s = Serializer(app.config['SECRET_KEY'])
 
-            s = Serializer(app.config['SECRET_KEY'])
+        # check if the token is a valid one and return a useful message
+        try:
+            data = s.loads(token)
+        except SignatureExpired:
+            # valid token, but expired
+            response = jsonify(
+                {
+                    "error":
+                    "Your link expired, request another and use that!"
+                })
+            response.status_code = 401
+            return response
+        except BadSignature:
+            # invalid token
+            response = jsonify({"error": "Nice try.."})
+            response.status_code = 404
+            return response
 
-            # check if the token is a valid one and return a useful message
-            try:
-                data = s.loads(token)
-            except SignatureExpired:
-                # valid token, but expired
+        # if were here, we've fount that the token is valid
+        form = PasswordResetForm()
+        email = data['email']
+
+        # the passwords have been properly filled in the form
+        if form.validate_on_submit():
+
+            # ensure the user from the token exists
+            user = User.query.filter_by(email=email).first()
+
+            # user doesnt exist for some reason
+            if user is None:
                 response = jsonify(
                     {
                         "error":
-                        "Your link expired, request another and use that!"
+                            "You're not in our pool of users!"
                     })
-                response.status_code = 401
-                return response
-            except BadSignature:
-                # invalid token
-                response = jsonify({"error": "Nice try.."})
                 response.status_code = 404
                 return response
 
-            # if were here, we've fount that the token is valid
-            form = PasswordResetForm()
-            email = data['email']
+            # user exists and we can update their password
+            user.password = user.hash_password(form.password.data)
+            db.session.commit()
 
-            # the passwords have been properly filled in the form
-            if form.validate_on_submit():
+            # send a success message back
+            response = jsonify(
+                {
+                    "success":
+                        "Your password has been successfully reset,"
+                        " you can use it to log in now"
+                })
+            response.status_code = 200
+            return response
 
-                # ensure the user from the token exists
-                user = User.query.filter_by(email=email).first()
-
-                # user doesnt exist for some reason
-                if user is None:
-                    response = jsonify(
-                        {
-                            "error":
-                                "You're not in our pool of users!"
-                        })
-                    response.status_code = 404
-                    return response
-
-                # user exists and we can update their password
-                user.password = user.hash_password(form.password.data)
-                db.session.commit()
-
-                # send a success message back
-                response = jsonify(
-                    {
-                        "success":
-                            "Your password has been successfully reset,"
-                            " you can use it to log in now"
-                    })
-                response.status_code = 200
-                return response
-
-            # the form wasnt properly submitted, return error messages
-            else:
-                response = jsonify({"error": form.errors})
-                response.status_code = 200
-                return response
-
-        # there is no token, so we should be receiving the user email
+        # the form wasnt properly submitted, return error messages
         else:
+            response = jsonify({"error": form.errors})
+            response.status_code = 200
+            return response
 
-            form = EmailForm()
+    # there is no token, so we should be receiving the user email
+    else:
 
-            # the email has been properly submitted
-            if form.validate_on_submit():
+        form = EmailForm()
 
-                # retrieve user and check if they exist
-                user = User.query.filter_by(email=form.email.data).first()
+        # the email has been properly submitted
+        if form.validate_on_submit():
 
-                # user does not exist
-                if user is None:
-                    response = jsonify(
-                        {
-                            "error":
-                                "You're not in our pool of users!"
-                        })
-                    response.status_code = 404
-                    return response
+            # retrieve user and check if they exist
+            user = User.query.filter_by(email=form.email.data).first()
 
-                # user exists, make a token from the secret key and
-                # a dictionary of the users email
-                s = Serializer(app.config['SECRET_KEY'], expires_in=600)
-                tok = s.dumps({'email': form.email.data})
-
-                # create a url and send it in the email
-                password_reset_url = \
-                    "https://andela-react-client.herokuapp.com/" \
-                    "password-reset/"+str(tok.decode("utf-8"))
-
-                email_body = "Please follow this link to reset your " \
-                             "password\n\n"+password_reset_url+"\n\n If you're " \
-                             "not the one who requested this, please ignore " \
-                             "this and contact the administrator about this."
-
-                send_email(
-                    'Password Reset Requested', [form.email.data], email_body)
-
-                # return a success message
+            # user does not exist
+            if user is None:
                 response = jsonify(
                     {
-                        "success":
-                            "An email has been sent to you with a link you "
-                            "can use to reset your password"
+                        "error":
+                            "You're not in our pool of users!"
                     })
-                response.status_code = 200
+                response.status_code = 404
                 return response
 
-            # the form was not properly submitted, return error messages
-            else:
-                response = jsonify({"error": form.errors})
-                response.status_code = 200
-                return response
+            # user exists, make a token from the secret key and
+            # a dictionary of the users email
+            s = Serializer(app.config['SECRET_KEY'], expires_in=600)
+            tok = s.dumps({'email': form.email.data})
+
+            # create a url and send it in the email
+            password_reset_url = \
+                "https://andela-react-client.herokuapp.com/" \
+                "password-reset/"+str(tok.decode("utf-8"))
+
+            email_body = "Please follow this link to reset your " \
+                         "password\n\n"+password_reset_url+"\n\n If you're " \
+                         "not the one who requested this, please ignore " \
+                         "this and contact the administrator about this."
+
+            send_email(
+                'Password Reset Requested', [form.email.data], email_body)
+
+            # return a success message
+            response = jsonify(
+                {
+                    "success":
+                        "An email has been sent to you with a link you "
+                        "can use to reset your password"
+                })
+            response.status_code = 200
+            return response
+
+        # the form was not properly submitted, return error messages
+        else:
+            response = jsonify({"error": form.errors})
+            response.status_code = 200
+            return response
 
 
 @app.route("/shoppinglists", methods=['GET', 'POST'])
