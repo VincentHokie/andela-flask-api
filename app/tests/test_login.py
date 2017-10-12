@@ -8,12 +8,16 @@ from app.tests.common_requests import CommonRequests
 class LoginTestCase(CommonRequests):
     """This class represents the login test case"""
 
+    def setUp(self):
+        self.set_up_tests()
+        CommonRequests.set_up_user_account(self)
+
     def test_login(self):
         """Test API can create a user (POST request)"""
 
         with app.test_client() as client:
 
-            res = self.login(client, self.login_credentials)
+            res = self.login(client, CommonRequests.login_credentials)
 
             self.assertEqual(res.status_code, 200)
             self.assertIn("success", json.loads(res.data))
@@ -45,6 +49,3 @@ class LoginTestCase(CommonRequests):
 
             self.assertEqual(res.status_code, 200)
             self.assertIn("error", json.loads(res.data))
-
-    def tearDown(self):
-        return False

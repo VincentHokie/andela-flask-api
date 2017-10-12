@@ -12,90 +12,71 @@ class ShoppingListItemTestCase(CommonRequests):
 
     def setUp(self):
         self.set_up_tests()
-        self.set_up_authorized_route()
+        CommonRequests.set_up_user_account(self)
+        CommonRequests.set_up_authorized_route(self)
+        CommonRequests.set_up_shopping_list(self)
 
     def test_shopping_list_item_creation(self):
         """Test API can create a shopping list (POST request)"""
 
         with app.test_client() as client:
 
-            res = self.create_shopping_list(
-                client, self.shopping_list)
-            the_list = json.loads(res.data)
-
             shopping_list_item = {'name': 'List item', "amount": 1000}
             result = self.create_shopping_list_item(
-                client, shopping_list_item, the_list['list_id'])
+                client, shopping_list_item, CommonRequests.list_id)
 
             self.assertEqual(result.status_code, 201)
 
-    def test_shopping_list_name_required(self):
+    def test_shopping_list_item_name_required(self):
         """Test API can create a shopping list (POST request)"""
 
         with app.test_client() as client:
-
-            res = self.create_shopping_list(
-                client, self.shopping_list)
-            the_list = json.loads(res.data)
 
             shopping_list_item = {'name': '', "amount": 1000}
             result = self.create_shopping_list_item(
-                client, shopping_list_item, the_list['list_id'])
+                client, shopping_list_item, CommonRequests.list_id)
 
             self.assertEqual(result.status_code, 200)
             self.assertIn("error", json.loads(result.data))
 
-    def test_shopping_list_amount_required(self):
+    def test_shopping_list_item_amount_required(self):
         """Test API can create a shopping list (POST request)"""
 
         with app.test_client() as client:
 
-            res = self.create_shopping_list(
-                client, self.shopping_list)
-            the_list = json.loads(res.data)
-
             shopping_list_item = {'name': 'List item', "amount": ""}
             result = self.create_shopping_list_item(
-                client, shopping_list_item, the_list['list_id'])
+                client, shopping_list_item, CommonRequests.list_id)
 
             self.assertEqual(result.status_code, 200)
             self.assertIn("error", json.loads(result.data))
 
-    def test_api_can_get_all_shopping_lists(self):
+    def test_api_can_get_all_shopping_list_items(self):
         """Test API can get shopping lists (GET request)."""
 
         with app.test_client() as client:
 
-            res = self.create_shopping_list(
-                client, self.shopping_list)
-            the_list = json.loads(res.data)
-
             res = self.get_items_under_shopping_list(
-                client, the_list['list_id'])
+                client, CommonRequests.list_id)
             self.assertEqual(res.status_code, 200)
 
-    def test_api_can_update_shopping_list(self):
+    def test_api_can_update_shopping_list_item(self):
         """Test API can get a single bucketlist by using it's id."""
 
         with app.test_client() as client:
 
-            res = self.create_shopping_list(
-                client, self.shopping_list)
-            the_list = json.loads(res.data)
-
-            shopping_list_item = {'name': 'vince', "amount": 10000}
             shopping_list_item_updated = {'name': 'vince123', "amount": 2000}
-
-            the_list_item = self.create_shopping_list_item(
-                client, shopping_list_item, the_list['list_id'])
-            the_list_item = json.loads(the_list_item.data)
+            shopping_list_item = {'name': 'List item', "amount": 890}
+            result = self.create_shopping_list_item(
+                client, shopping_list_item, CommonRequests.list_id)
+            shl_object = json.loads(result.data)
 
             rv = self.update_shopping_list_item(
-                client, shopping_list_item_updated, the_list['list_id'],
-                the_list_item['item_id'])
+                client, shopping_list_item_updated, CommonRequests.list_id,
+                shl_object['item_id'])
 
             the_list = ShoppingListItem.query.filter_by(
-                list_id=the_list['list_id']).first()
+                item_id=shl_object['item_id']).first()
             the_list = the_list.serialize
 
             self.assertEqual(rv.status_code, 200)
@@ -111,7 +92,7 @@ class ShoppingListItemTestCase(CommonRequests):
         with app.test_client() as client:
 
             rv = self.update_shopping_list_item(
-                client, {}, "1", "1a")
+                client, {}, CommonRequests.list_id, "1a")
 
             self.assertEqual(rv.status_code, 500)
             self.assertIn("error", json.loads(rv.data))
@@ -132,31 +113,27 @@ class ShoppingListItemTestCase(CommonRequests):
 
         with app.test_client() as client:
             rv = self.update_shopping_list_item(
-                client, {}, "1", "111")
+                client, {}, CommonRequests.list_id, "111")
 
             self.assertEqual(rv.status_code, 404)
             self.assertIn("error", json.loads(rv.data))
 
-    def test_api_can_delete_shopping_list(self):
+    def test_api_can_delete_shopping_list_item(self):
         """Test API can get a single bucketlist by using it's id."""
 
         with app.test_client() as client:
 
-            res = self.create_shopping_list(
-                client, self.shopping_list)
-            the_list = json.loads(res.data)
-
             shopping_list_item = {'name': 'vince', "amount": 10000}
             the_list_item = self.create_shopping_list_item(
-                client, shopping_list_item, the_list['list_id'])
+                client, shopping_list_item, CommonRequests.list_id)
             the_list_item = json.loads(the_list_item.data)
 
             the_list = ShoppingListItem.query.filter_by(
-                list_id=the_list['list_id']).first()
+                list_id=CommonRequests.list_id).first()
             the_list = the_list.serialize
 
             result = self.delete_shopping_list_item(
-                client, the_list['list_id'], the_list_item['item_id'])
+                client, CommonRequests.list_id, the_list_item['item_id'])
 
             self.assertEqual(result.status_code, 202)
             self.assertEqual(None, ShoppingListItem.query.filter_by(
@@ -167,7 +144,7 @@ class ShoppingListItemTestCase(CommonRequests):
 
         with app.test_client() as client:
             rv = self.delete_shopping_list_item(
-                client, "1", "111")
+                client, CommonRequests.list_id, "111")
 
             self.assertEqual(rv.status_code, 404)
             self.assertIn("error", json.loads(rv.data))
@@ -177,7 +154,7 @@ class ShoppingListItemTestCase(CommonRequests):
 
         with app.test_client() as client:
             rv = self.delete_shopping_list_item(
-                client, "1", "1a")
+                client, CommonRequests.list_id, "1a")
 
             self.assertEqual(rv.status_code, 500)
             self.assertIn("error", json.loads(rv.data))
@@ -191,6 +168,3 @@ class ShoppingListItemTestCase(CommonRequests):
 
             self.assertEqual(rv.status_code, 500)
             self.assertIn("error", json.loads(rv.data))
-
-    def tearDown(self):
-        return False
