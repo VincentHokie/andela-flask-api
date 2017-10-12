@@ -75,13 +75,13 @@ class CommonRequests(unittest.TestCase):
 
     # authentication methods
     def login(self, client,  login_credentials):
-        return client.post('/auth/login', data=login_credentials)
+        return client.post('/v1/auth/login', data=login_credentials)
 
     def sign_up(self, client, sign_up_credentials):
-        return client.post('/auth/register', data=sign_up_credentials)
+        return client.post('/v1/auth/register', data=sign_up_credentials)
 
     def logout(self, client):
-        return client.post('/auth/logout',
+        return client.post('/v1/auth/logout',
                            headers=self.get_auth_header())
 
     def get_auth_header(self):
@@ -95,53 +95,53 @@ class CommonRequests(unittest.TestCase):
     def get_all_shopping_list(self, client, list_id=None):
 
         if list_id is not None:
-            return client.get('/shoppinglists?list_id=' + list_id,
+            return client.get('/v1/shoppinglists?list_id=' + list_id,
                               headers=self.get_auth_header())
 
-        return client.get('/shoppinglists',
+        return client.get('/v1/shoppinglists',
                           headers=self.get_auth_header())
 
     def create_shopping_list(self, client,  shopping_list):
-        return client.post('/shoppinglists', data=shopping_list,
+        return client.post('/v1/shoppinglists', data=shopping_list,
                            headers=self.get_auth_header())
 
     def update_shopping_list(self, client,  shopping_list, list_id):
         headers=self.get_auth_header()
         headers["Content-Type"] = 'application/x-www-form-urlencoded'
-        return client.put('/shoppinglists/'+str(list_id),
+        return client.put('/v1/shoppinglists/'+str(list_id),
                           data=shopping_list, headers=headers)
 
     def delete_shopping_list(self, client, list_id):
         headers = self.get_auth_header()
         headers["Content-Type"] = 'application/x-www-form-urlencoded'
-        return client.delete('/shoppinglists/'+str(list_id), headers=headers)
+        return client.delete('/v1/shoppinglists/'+str(list_id), headers=headers)
 
     # crud on a shopping list items
     def get_items_under_shopping_list(self, client, list_id):
-        return client.get('/shoppinglists/'+str(list_id),
+        return client.get('/v1/shoppinglists/'+str(list_id),
                           headers=self.get_auth_header())
 
     def create_shopping_list_item(self, client, shopping_list_item, list_id):
-        return client.post('/shoppinglists/'+str(list_id)+'/items',
+        return client.post('/v1/shoppinglists/'+str(list_id)+'/items',
                            data=shopping_list_item,
                            headers=self.get_auth_header())
 
     def update_shopping_list_item(self, client, shopping_list_item, list_id,
                                   item_id):
-        return client.put('/shoppinglists/'+str(list_id)+'/items/'+str(item_id),
+        return client.put('/v1/shoppinglists/'+str(list_id)+'/items/'+str(item_id),
                           data=shopping_list_item,
                           headers=self.get_auth_header())
 
     def delete_shopping_list_item(self, client, list_id, item_id):
-        return client.delete('/shoppinglists/'+str(list_id)+'/items/'+
+        return client.delete('/v1/shoppinglists/'+str(list_id)+'/items/'+
                              str(item_id), headers=self.get_auth_header())
 
     def confirm_email_for_password_reset(self, client, email):
-        return client.post('/auth/reset-password',
+        return client.post('/v1/auth/reset-password',
                              data=email)
 
     def password_reset(self, client, token, password):
-        return client.post('/auth/reset-password/'+token,
+        return client.post('/v1/auth/reset-password/'+token,
                              data=password)
 
     def tearDown(self):
