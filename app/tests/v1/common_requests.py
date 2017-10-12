@@ -3,7 +3,7 @@ import unittest
 from base64 import b64encode
 
 from flask import json
-from app.views import app
+from app import app
 from app.models import db
 
 

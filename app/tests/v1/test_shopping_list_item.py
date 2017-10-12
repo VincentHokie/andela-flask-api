@@ -1,9 +1,8 @@
 
 from flask import json
 
-from app.views import app
-from app.models import db, ShoppingListItem, ShoppingList
-from datetime import datetime
+from app import app
+from app.models import db, ShoppingListItem
 from app.tests.v1.common_requests import CommonRequests
 
 
