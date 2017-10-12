@@ -43,18 +43,53 @@ class ShoppingListTestCase(CommonRequests):
         """Test API can get shopping lists (GET request)."""
 
         with app.test_client() as client:
+            self.create_shopping_list(client, CommonRequests.shopping_list)
+            self.create_shopping_list(client, CommonRequests.shopping_list)
+            self.create_shopping_list(client, CommonRequests.shopping_list)
+            self.create_shopping_list(client, CommonRequests.shopping_list)
+            self.create_shopping_list(client, CommonRequests.shopping_list)
+
             res = self.get_all_shopping_list(client)
+            the_lists = json.loads(res.data)
+
+            self.assertEqual(len(the_lists), 5)
             self.assertEqual(res.status_code, 200)
 
-    # def test_api_can_get_single_shopping_list(self):
-    #     """Test API can get shopping lists (GET request)."""
-    #
-    #     with app.test_client() as client:
-    #         res = self.get_all_shopping_list(client, str(self.list_id))
-    #         the_list = json.loads(res.data)
-    #         self.assertEqual(res.status_code, 200)
-    #         print( the_list )
-    #         self.assertEqual(the_list.list_id, self.list_id)
+
+    def test_api_can_get_single_shopping_list_invalid_id(self):
+        """Test API can get shopping lists (GET request)."""
+
+        with app.test_client() as client:
+
+            res = self.get_all_shopping_list(client, str("1a"))
+            the_list = json.loads(res.data)
+
+            self.assertEqual(res.status_code, 500)
+            self.assertIn("error", the_list)
+
+    def test_api_can_get_single_shopping_list_non_existent(self):
+        """Test API can get shopping lists (GET request)."""
+
+        with app.test_client() as client:
+
+            res = self.get_all_shopping_list(client, "111")
+            the_list = json.loads(res.data)
+
+            self.assertEqual(res.status_code, 404)
+            self.assertIn("error", the_list)
+
+    def test_api_can_get_single_shopping_list(self):
+        """Test API can get shopping lists (GET request)."""
+
+        with app.test_client() as client:
+            result = self.create_shopping_list(client, CommonRequests.shopping_list)
+            the_created_list = json.loads(result.data)
+
+            res = self.get_all_shopping_list(client, str(the_created_list["list_id"]))
+            the_list = json.loads(res.data)
+            print(the_list)
+            self.assertEqual(res.status_code, 200)
+            self.assertEqual(the_list["list_id"], the_created_list["list_id"])
 
     def test_api_can_update_shopping_list(self):
         """Test API can get a single bucketlist by using it's id."""
