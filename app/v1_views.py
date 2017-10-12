@@ -176,12 +176,12 @@ def custom_401():
     response.status_code = 401
     return response
 
-@app.route("/documentation", methods=['GET'])
+@app.route("/v1/documentation", methods=['GET'])
 def index():
     return render_template("index.html")
 
 
-@app.route("/auth/register", methods=['POST'])
+@app.route("/v1/auth/register", methods=['POST'])
 def register():
 
     form = SignUpForm()
@@ -250,7 +250,7 @@ def register():
         return response
 
 
-@app.route("/auth/login", methods=['POST'])
+@app.route("/v1/auth/login", methods=['POST'])
 def login():
     if request.method == "POST":
         form = LoginForm()
@@ -280,7 +280,7 @@ def login():
             return response
 
 
-@app.route("/auth/logout", methods=['POST'])
+@app.route("/v1/auth/logout", methods=['POST'])
 @auth.login_required
 def logout():
     if request.method == "POST":
@@ -293,7 +293,7 @@ def logout():
             return response
 
 
-@app.route('/auth/reset-password', methods=['POST'])
+@app.route('/v1/auth/reset-password', methods=['POST'])
 def confirm_email():
 
     form = EmailForm()
@@ -349,7 +349,7 @@ def confirm_email():
         return response
 
 
-@app.route("/auth/reset-password/<token>", methods=['POST'])
+@app.route("/v1/auth/reset-password/<token>", methods=['POST'])
 def reset_password(token=None):
 
     # the user is trying to update the password and
@@ -405,7 +405,7 @@ def reset_password(token=None):
         return response
 
 
-@app.route("/shoppinglists", methods=['GET', 'POST'])
+@app.route("/v1/shoppinglists", methods=['GET', 'POST'])
 @auth.login_required
 def shopping_lists():
 
@@ -467,7 +467,7 @@ def shopping_lists():
         return response
 
 
-@app.route("/shoppinglists/items", methods=['GET'])
+@app.route("/v1/shoppinglists/items", methods=['GET'])
 @auth.login_required
 def all_shopping_list_items():
 
@@ -504,7 +504,7 @@ def all_shopping_list_items():
     return response
 
 
-@app.route("/shoppinglists/<id>", methods=['GET', 'PUT', 'DELETE'])
+@app.route("/v1/shoppinglists/<id>", methods=['GET', 'PUT', 'DELETE'])
 @auth.login_required
 def shopping_list_id(id):
 
@@ -593,7 +593,7 @@ def shopping_list_id(id):
         return response
 
 
-@app.route("/shoppinglists/<id>/items", methods=['POST'])
+@app.route("/v1/shoppinglists/<id>/items", methods=['POST'])
 @auth.login_required
 def shopping_list_items(id):
 
@@ -635,7 +635,7 @@ def shopping_list_items(id):
             return response
 
 
-@app.route("/shoppinglists/<id>/items/<item_id>", methods=['PUT', 'DELETE'])
+@app.route("/v1/shoppinglists/<id>/items/<item_id>", methods=['PUT', 'DELETE'])
 @auth.login_required
 def shopping_list_item_update(id, item_id):
 
@@ -706,7 +706,7 @@ def shopping_list_item_update(id, item_id):
         return response
 
 
-@app.route("/shoppinglists/<id>/items/<item_id>/checkbox", methods=['PUT'])
+@app.route("/v1/shoppinglists/<id>/items/<item_id>/checkbox", methods=['PUT'])
 @auth.login_required
 def shopping_list_item_bought_update(id, item_id):
 
