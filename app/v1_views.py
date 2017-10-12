@@ -745,8 +745,3 @@ def shopping_list_item_bought_update(id, item_id):
     response = jsonify({"success": "Shopping list update successful!"})
     response.status_code = 200
     return response
-
-
-
-if __name__ == '__main__':
-    app.run(debug=True)
