@@ -1,5 +1,9 @@
 import sys
 from pathlib import Path # if you haven't already done so
+from flask import render_template, request, jsonify, session
+from app import app, auth, mail
+from flask_mail import Message
+
 file = Path(__file__).resolve()
 parent, root = file.parent, file.parents[1]
 sys.path.append(str(root))
@@ -9,9 +13,6 @@ try:
     sys.path.remove(str(parent))
 except ValueError: # Already removed
     pass
-
-from flask import render_template, request, jsonify, session
-from app import app, auth
 
 try:
     from app.models import db, User, ShoppingListItem, ShoppingList
