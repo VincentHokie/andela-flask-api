@@ -92,12 +92,13 @@ class CommonRequests(unittest.TestCase):
         }
 
     # crud on a shopping list
-    def get_all_shopping_list(self, client, list_id=""):
+    def get_all_shopping_list(self, client, list_id=None):
 
-        if list_id is not "":
-            list_id = "?list_id="+list_id
+        if list_id is not None:
+            return client.get('/shoppinglists?list_id=' + list_id,
+                              headers=self.get_auth_header())
 
-        return client.get('/shoppinglists'+list_id,
+        return client.get('/shoppinglists',
                           headers=self.get_auth_header())
 
     def create_shopping_list(self, client,  shopping_list):
