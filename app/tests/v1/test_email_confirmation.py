@@ -2,7 +2,7 @@
 from flask import json
 
 from app.views import app
-from app.tests.common_requests import CommonRequests
+from app.tests.v1.common_requests import CommonRequests
 
 
 class EmailConfirmationTestCase(CommonRequests):

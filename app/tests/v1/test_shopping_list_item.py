@@ -4,7 +4,7 @@ from flask import json
 from app.views import app
 from app.models import db, ShoppingListItem, ShoppingList
 from datetime import datetime
-from app.tests.common_requests import CommonRequests
+from app.tests.v1.common_requests import CommonRequests
 
 
 class ShoppingListItemTestCase(CommonRequests):
