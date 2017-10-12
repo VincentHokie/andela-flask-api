@@ -85,7 +85,7 @@ def check_valid_list_id(list_id):
         response = jsonify(
             {
                 "error":
-                    "Shopping list id: " + list_id + " is not a valid id!"
+                    "Shopping list id: " + str(list_id) + " is not a valid id!"
             })
         response.status_code = 500
         return response
@@ -100,7 +100,7 @@ def check_valid_item_id(item_id):
         response = jsonify(
             {
                 "error":
-                    "Shopping list item id: " + item_id + " is not a valid id!"
+                    "Shopping list item id: " + str(item_id) + " is not a valid id!"
             })
         response.status_code = 500
         return response
@@ -114,7 +114,7 @@ def check_list_exists(the_list, list_id):
         response = jsonify(
             {
                 "error":
-                    "Shopping list with id: " + list_id + " is not found!"
+                    "Shopping list with id: " + str(list_id) + " is not found!"
             })
         response.status_code = 404
         return response
@@ -128,7 +128,7 @@ def check_item_exists(the_item, item_id):
         response = jsonify(
             {
                 "error":
-                    "Shopping list item with id: " + item_id + " not found!"
+                    "Shopping list item with id: " + str(item_id) + " not found!"
             })
         response.status_code = 404
         return response
