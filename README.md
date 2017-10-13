@@ -88,11 +88,18 @@ Running
 
 To run the server use the following command:
 
-    (venv) $ python app/views.py
+    (andela-falsk-api) $ python app/views.py
      * Running on http://127.0.0.1:5000/
      * Restarting with reloader
 
 Then from a different terminal window you can send requests or an API test client like Postman.
+
+Testing
+-------
+
+To run the application tests, use the following command:
+
+    (andela-falsk-api) $ py.test --cov=app app/tests/
 
 
 API Documentation
