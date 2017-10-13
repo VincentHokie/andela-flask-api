@@ -14,14 +14,9 @@ try:
 except ValueError: # Already removed
     pass
 
-try:
-    from app.models import db, User, ShoppingListItem, ShoppingList
-    from app.forms import LoginForm, SignUpForm, ShoppingListForm, \
-        ShoppingListItemForm, EmailForm, PasswordResetForm
-except ImportError:
-    from models import db, User, ShoppingListItem, ShoppingList
-    from forms import LoginForm, SignUpForm, ShoppingListForm, \
-        ShoppingListItemForm, EmailForm, PasswordResetForm
+from app.models import db, User, ShoppingListItem, ShoppingList
+from app.forms import LoginForm, SignUpForm, ShoppingListForm, \
+    ShoppingListItemForm, EmailForm, PasswordResetForm
 
 from itsdangerous import (TimedJSONWebSignatureSerializer
                           as Serializer, BadSignature, SignatureExpired)
