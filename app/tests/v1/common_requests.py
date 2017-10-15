@@ -114,7 +114,8 @@ class CommonRequests(unittest.TestCase):
     def delete_shopping_list(self, client, list_id):
         headers = self.get_auth_header()
         headers["Content-Type"] = 'application/x-www-form-urlencoded'
-        return client.delete('/v1/shoppinglists/'+str(list_id), headers=headers)
+        return client.delete('/v1/shoppinglists/'+str(list_id), 
+                            headers=headers)
 
     # crud on a shopping list items
     def get_items_under_shopping_list(self, client, list_id):
@@ -128,12 +129,13 @@ class CommonRequests(unittest.TestCase):
 
     def update_shopping_list_item(self, client, shopping_list_item, list_id,
                                   item_id):
-        return client.put('/v1/shoppinglists/'+str(list_id)+'/items/'+str(item_id),
+        return client.put('/v1/shoppinglists/' + str(list_id) + '/items/' + 
+                            str(item_id),
                           data=shopping_list_item,
                           headers=self.get_auth_header())
 
     def delete_shopping_list_item(self, client, list_id, item_id):
-        return client.delete('/v1/shoppinglists/'+str(list_id)+'/items/'+
+        return client.delete('/v1/shoppinglists/' + str(list_id) + '/items/'+
                              str(item_id), headers=self.get_auth_header())
 
     def confirm_email_for_password_reset(self, client, email):

@@ -1,6 +1,6 @@
 import sys
-from pathlib import Path # if you haven't already done so
-from flask import render_template, request, jsonify, session
+from pathlib import Path  # if you haven't already done so
+from flask import render_template, jsonify
 from app import app, auth
 
 file = Path(__file__).resolve()
@@ -10,15 +10,8 @@ sys.path.append(str(root))
 # Additionally remove the current file's directory from sys.path
 try:
     sys.path.remove(str(parent))
-except ValueError: # Already removed
+except ValueError:  # Already removed
     pass
-
-from app.models import db, User, ShoppingListItem, ShoppingList
-from app.forms import LoginForm, SignUpForm, ShoppingListForm, \
-    ShoppingListItemForm, EmailForm, PasswordResetForm
-
-from itsdangerous import (TimedJSONWebSignatureSerializer
-                          as Serializer, BadSignature, SignatureExpired)
 
 
 @app.route("/v2/documentation", methods=['GET'])
