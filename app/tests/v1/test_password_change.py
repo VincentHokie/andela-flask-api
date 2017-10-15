@@ -1,8 +1,8 @@
 
 from flask import json
 import time
-from app.views import app
-from app.tests.common_requests import CommonRequests
+from app import app
+from app.tests.v1.common_requests import CommonRequests
 from itsdangerous import (TimedJSONWebSignatureSerializer
                           as Serializer, BadSignature, SignatureExpired)
 

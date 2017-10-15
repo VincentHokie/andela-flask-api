@@ -1,3 +1,7 @@
-exclude_paths:
-- "app/tests/"
-- "app/static/"
+engines:
+  pep8:
+    enabled: true
+
+ratings:
+   paths:
+   - "**.py"

@@ -1,73 +1,25 @@
+import sys
+from pathlib import Path  # if you haven't already done so
+from flask import render_template, request, jsonify, session
+from app import app, auth, mail
+from flask_mail import Message
 
-import os
-import base64
-from flask import Flask
-from flask import render_template, request, jsonify, session, url_for
+file = Path(__file__).resolve()
+parent, root = file.parent, file.parents[1]
+sys.path.append(str(root)) 
 
+# Additionally remove the current file's directory from sys.path
 try:
-    from .models import db, User, ShoppingListItem, ShoppingList
-    from .forms import LoginForm, SignUpForm, ShoppingListForm, \
-        ShoppingListItemForm, EmailForm, PasswordResetForm
-except ImportError:
-    from models import db, User, ShoppingListItem, ShoppingList
-    from forms import LoginForm, SignUpForm, ShoppingListForm, \
-        ShoppingListItemForm, EmailForm, PasswordResetForm
+    sys.path.remove(str(parent))
+except ValueError:  # Already removed
+    pass
+
+from app.models import db, User, ShoppingListItem, ShoppingList
+from app.forms import LoginForm, SignUpForm, ShoppingListForm, \
+    ShoppingListItemForm, EmailForm, PasswordResetForm
 
 from itsdangerous import (TimedJSONWebSignatureSerializer
                           as Serializer, BadSignature, SignatureExpired)
-
-from flask_mail import Mail, Message
-
-from flask_httpauth import HTTPBasicAuth
-auth = HTTPBasicAuth()
-
-app = Flask(__name__)
-
-basedir = os.path.abspath(os.path.dirname(__file__))
-
-app.config["DEBUG"] = True
-app.config["CSRF_ENABLED"] = True
-
-POSTGRES = {
-    'user': 'vince',
-    'pw': 'vince',
-    'db': 'andela-flask-api',
-    'host': 'localhost',
-    'port': '5432',
-}
-
-
-if os.environ.get("HEROKU_POSTGRESQL_CRIMSON_URL") is None:
-    app.config["SQLALCHEMY_DATABASE_URI"] = 'postgresql://%(user)s:\
-        %(pw)s@%(host)s:%(port)s/%(db)s' % POSTGRES
-else:
-    app.config["SQLALCHEMY_DATABASE_URI"] = \
-        os.environ['HEROKU_POSTGRESQL_CRIMSON_URL']
-
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
-
-# make wft extension consider cross-site request forgery
-app.config["WTF_CSRF_ENABLED"] = False
-
-# required when the above config is enabled, this will be used to
-# generate a scrf token..should be a string that cant be easily
-# guessed in production
-app.config["SECRET_KEY"] = 'youll-never-know-what-it-is-coz-its-secret'
-
-# email server
-app.config["MAIL_SERVER"] = 'smtp.googlemail.com'
-app.config["MAIL_PORT"] = 465
-app.config["MAIL_USE_TLS"] = False
-app.config["MAIL_USE_SSL"] = True
-app.config["MAIL_USERNAME"] = "andelatestmail"
-app.config["MAIL_PASSWORD"] = "andelatestmail1"
-app.config["MAIL_DEFAULT_SENDER"] = "andelatestmail@gmail.com"
-
-# administrator list
-ADMINS = ['your-gmail-username@gmail.com']
-
-db.init_app(app)
-mail = Mail(app)
 
 
 # helper function for sending user emails
@@ -176,12 +128,12 @@ def custom_401():
     response.status_code = 401
     return response
 
-@app.route("/documentation", methods=['GET'])
+@app.route("/v1/documentation", methods=['GET'])
 def index():
     return render_template("index.html")
 
 
-@app.route("/auth/register", methods=['POST'])
+@app.route("/v1/auth/register", methods=['POST'])
 def register():
 
     form = SignUpForm()
@@ -250,7 +202,7 @@ def register():
         return response
 
 
-@app.route("/auth/login", methods=['POST'])
+@app.route("/v1/auth/login", methods=['POST'])
 def login():
     if request.method == "POST":
         form = LoginForm()
@@ -280,7 +232,7 @@ def login():
             return response
 
 
-@app.route("/auth/logout", methods=['POST'])
+@app.route("/v1/auth/logout", methods=['POST'])
 @auth.login_required
 def logout():
     if request.method == "POST":
@@ -293,7 +245,7 @@ def logout():
             return response
 
 
-@app.route('/auth/reset-password', methods=['POST'])
+@app.route('/v1/auth/reset-password', methods=['POST'])
 def confirm_email():
 
     form = EmailForm()
@@ -349,7 +301,7 @@ def confirm_email():
         return response
 
 
-@app.route("/auth/reset-password/<token>", methods=['POST'])
+@app.route("/v1/auth/reset-password/<token>", methods=['POST'])
 def reset_password(token=None):
 
     # the user is trying to update the password and
@@ -405,7 +357,7 @@ def reset_password(token=None):
         return response
 
 
-@app.route("/shoppinglists", methods=['GET', 'POST'])
+@app.route("/v1/shoppinglists", methods=['GET', 'POST'])
 @auth.login_required
 def shopping_lists():
 
@@ -467,7 +419,7 @@ def shopping_lists():
         return response
 
 
-@app.route("/shoppinglists/items", methods=['GET'])
+@app.route("/v1/shoppinglists/items", methods=['GET'])
 @auth.login_required
 def all_shopping_list_items():
 
@@ -504,7 +456,7 @@ def all_shopping_list_items():
     return response
 
 
-@app.route("/shoppinglists/<id>", methods=['GET', 'PUT', 'DELETE'])
+@app.route("/v1/shoppinglists/<id>", methods=['GET', 'PUT', 'DELETE'])
 @auth.login_required
 def shopping_list_id(id):
 
@@ -593,7 +545,7 @@ def shopping_list_id(id):
         return response
 
 
-@app.route("/shoppinglists/<id>/items", methods=['POST'])
+@app.route("/v1/shoppinglists/<id>/items", methods=['POST'])
 @auth.login_required
 def shopping_list_items(id):
 
@@ -635,7 +587,7 @@ def shopping_list_items(id):
             return response
 
 
-@app.route("/shoppinglists/<id>/items/<item_id>", methods=['PUT', 'DELETE'])
+@app.route("/v1/shoppinglists/<id>/items/<item_id>", methods=['PUT', 'DELETE'])
 @auth.login_required
 def shopping_list_item_update(id, item_id):
 
@@ -706,7 +658,7 @@ def shopping_list_item_update(id, item_id):
         return response
 
 
-@app.route("/shoppinglists/<id>/items/<item_id>/checkbox", methods=['PUT'])
+@app.route("/v1/shoppinglists/<id>/items/<item_id>/checkbox", methods=['PUT'])
 @auth.login_required
 def shopping_list_item_bought_update(id, item_id):
 
@@ -745,8 +697,3 @@ def shopping_list_item_bought_update(id, item_id):
     response = jsonify({"success": "Shopping list update successful!"})
     response.status_code = 200
     return response
-
-
-
-if __name__ == '__main__':
-    app.run(debug=True)

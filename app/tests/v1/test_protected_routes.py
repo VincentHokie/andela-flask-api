@@ -1,9 +1,7 @@
 
-import unittest
-from app.views import app
-from app.models import db
+from app import app
 
-from app.tests.common_requests import CommonRequests
+from app.tests.v1.common_requests import CommonRequests
 
 class ProtectedRoutesTestCase(CommonRequests):
     """This class represents the sign up test case"""
