@@ -26,14 +26,27 @@ def index_v2():
     return render_template("index.html")
 
 
-@app.route("/v2/shoppinglists/<id>", methods=['GET', 'PUT', 'DELETE'])
+@app.route("/v2/shoppinglists/<list_id>", methods=['GET'])
 @auth.login_required
-def shopping_list_id_v2(id):
+def get_shopping_list_v2(list_id):
+    '''
+        route upgrade, RESTfully get a single shoppping list
+    '''
+    # ensure id is a valid integer
+    is_valid = check_valid_list_id(list_id)
+    if is_valid is not None:
+        return is_valid
 
+    # ensure our list actually exists
+    lists = check_list_exists(ShoppingList.query.filter_by(
+        list_id=list_id, user_id=session["user"]).first(), list_id)
+    if not isinstance(lists, ShoppingList):
+        return lists
+
+    # retrieve and send back the needed information
     response = jsonify(
-        {
-            "error":
-                "Something went wrong with your delete please try again"
-        })
+        ShoppingList.query.filter_by(list_id=list_id).first().serialize
+        )
+
     response.status_code = 200
     return response
