@@ -19,7 +19,7 @@ class PostSignUpTestCase(CommonRequests):
             resp = json.loads(res.data)
 
             self.assertIn("error", resp)
-            self.assertEqual(res.status_code, 200)
+            self.assertEqual(res.status_code, 422)
 
     def test_duplicate_email(self):
         """Test API can create a user (POST request)"""
@@ -33,4 +33,4 @@ class PostSignUpTestCase(CommonRequests):
             resp = json.loads(res.data)
 
             self.assertIn("error", resp)
-            self.assertEqual(res.status_code, 200)
+            self.assertEqual(res.status_code, 422)

@@ -22,7 +22,7 @@ class PasswordChangeTestCase(CommonRequests):
             result = self.password_reset(
                 client, "token", {})
 
-            self.assertEqual(result.status_code, 400)
+            self.assertEqual(result.status_code, 401)
             self.assertIn("error", json.loads(result.data))
 
     def test_valid_but_expired_token_provided(self):
@@ -53,7 +53,7 @@ class PasswordChangeTestCase(CommonRequests):
             result = self.password_reset(
                 client, str(tok.decode("utf-8")), self.password_change)
 
-            self.assertEqual(result.status_code, 200)
+            self.assertEqual(result.status_code, 422)
             self.assertIn("error", json.loads(result.data))
 
     def test_valid_token_provided_password_confirm_required(self):
@@ -67,7 +67,7 @@ class PasswordChangeTestCase(CommonRequests):
             result = self.password_reset(
                 client, str(tok.decode("utf-8")), self.password_change)
 
-            self.assertEqual(result.status_code, 200)
+            self.assertEqual(result.status_code, 422)
             self.assertIn("error", json.loads(result.data))
 
 

@@ -36,7 +36,7 @@ class ShoppingListTestCase(CommonRequests):
             res = self.create_shopping_list(client, shopping_list)
             back_data = json.loads(res.data)
 
-            self.assertEqual(res.status_code, 200)
+            self.assertEqual(res.status_code, 422)
             self.assertIn("error", back_data)
 
     def test_api_can_get_all_shopping_lists(self):
@@ -64,7 +64,7 @@ class ShoppingListTestCase(CommonRequests):
             res = self.get_all_shopping_list(client, str("1a"))
             the_list = json.loads(res.data)
 
-            self.assertEqual(res.status_code, 500)
+            self.assertEqual(res.status_code, 422)
             self.assertIn("error", the_list)
 
     def test_api_can_get_single_shopping_list_non_existent(self):
@@ -115,7 +115,7 @@ class ShoppingListTestCase(CommonRequests):
             res = self.update_shopping_list(client, {}, "1a")
             the_list = json.loads(res.data)
 
-            self.assertEqual(res.status_code, 500)
+            self.assertEqual(res.status_code, 422)
             self.assertIn("error", the_list)
 
     def test_api_can_recognize_non_existent_url_parameters_on_update(self):
@@ -148,7 +148,7 @@ class ShoppingListTestCase(CommonRequests):
         with app.test_client() as client:
             result = self.delete_shopping_list(client, "1a")
 
-            self.assertEqual(result.status_code, 500)
+            self.assertEqual(result.status_code, 422)
             self.assertIn("error", json.loads(result.data))
 
     @pytest.mark.last

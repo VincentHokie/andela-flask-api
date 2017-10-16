@@ -28,7 +28,7 @@ class LoginTestCase(CommonRequests):
 
             res = self.login(client, {'username': 'wrong', "password": "wrong"})
 
-            self.assertEqual(res.status_code, 200)
+            self.assertEqual(res.status_code, 401)
             self.assertIn("error", json.loads(res.data))
 
     def test_login_password_required(self):
@@ -37,7 +37,7 @@ class LoginTestCase(CommonRequests):
         with app.test_client() as client:
             res = self.login(client, {'username': 'vince', "password": ""})
 
-            self.assertEqual(res.status_code, 200)
+            self.assertEqual(res.status_code, 422)
             self.assertIn("error", json.loads(res.data))
 
     def test_login_username_required(self):
@@ -46,5 +46,5 @@ class LoginTestCase(CommonRequests):
         with app.test_client() as client:
             res = self.login(client, {'username': '', "password": "123"})
 
-            self.assertEqual(res.status_code, 200)
+            self.assertEqual(res.status_code, 422)
             self.assertIn("error", json.loads(res.data))

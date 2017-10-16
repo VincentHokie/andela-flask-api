@@ -30,7 +30,7 @@ class SignUpTestCase(CommonRequests):
 
             self.assertEqual(User.query.filter_by(
                 username=sign_up_credentials["username"]).first(), None)
-            self.assertEqual(res.status_code, 200)
+            self.assertEqual(res.status_code, 422)
             self.assertIn("error", json.loads(res.data))
 
     def test_sign_up_email_required(self):
@@ -44,7 +44,7 @@ class SignUpTestCase(CommonRequests):
 
             self.assertEqual(User.query.filter_by(
                 username=sign_up_credentials["username"]).first(), None)
-            self.assertEqual(res.status_code, 200)
+            self.assertEqual(res.status_code, 422)
             self.assertIn("error", json.loads(res.data))
 
     def test_sign_up_password_required(self):
@@ -59,7 +59,7 @@ class SignUpTestCase(CommonRequests):
 
             self.assertEqual(User.query.filter_by(
                 username=sign_up_credentials["username"]).first(), None)
-            self.assertEqual(res.status_code, 200)
+            self.assertEqual(res.status_code, 422)
             self.assertIn("error", json.loads(res.data))
 
     def test_sign_up_username_required(self):
@@ -74,7 +74,7 @@ class SignUpTestCase(CommonRequests):
 
             self.assertEqual(User.query.filter_by(
                 email=sign_up_credentials["email"]).first(), None)
-            self.assertEqual(res.status_code, 200)
+            self.assertEqual(res.status_code, 422)
             self.assertIn("error", json.loads(res.data))
 
     def test_sign_up_password_confirm_required(self):
@@ -89,5 +89,5 @@ class SignUpTestCase(CommonRequests):
 
             self.assertEqual(User.query.filter_by(
                 username=sign_up_credentials["username"]).first(), None)
-            self.assertEqual(res.status_code, 200)
+            self.assertEqual(res.status_code, 422)
             self.assertIn("error", json.loads(res.data))

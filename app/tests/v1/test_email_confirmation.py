@@ -21,7 +21,7 @@ class EmailConfirmationTestCase(CommonRequests):
             result = self.confirm_email_for_password_reset(
                 client, email_object)
 
-            self.assertEqual(result.status_code, 200)
+            self.assertEqual(result.status_code, 422)
             self.assertIn("error", json.loads(result.data))
 
     def test_invalid_email_submitted(self):
@@ -32,7 +32,7 @@ class EmailConfirmationTestCase(CommonRequests):
             result = self.confirm_email_for_password_reset(
                 client, email_object)
 
-            self.assertEqual(result.status_code, 200)
+            self.assertEqual(result.status_code, 422)
             self.assertIn("error", json.loads(result.data))
 
     def test_email_not_belonging_to_user(self):

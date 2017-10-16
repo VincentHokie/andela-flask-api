@@ -35,7 +35,7 @@ class ShoppingListItemTestCase(CommonRequests):
             result = self.create_shopping_list_item(
                 client, shopping_list_item, CommonRequests.list_id)
 
-            self.assertEqual(result.status_code, 200)
+            self.assertEqual(result.status_code, 422)
             self.assertIn("error", json.loads(result.data))
 
     def test_shopping_list_item_amount_required(self):
@@ -47,7 +47,7 @@ class ShoppingListItemTestCase(CommonRequests):
             result = self.create_shopping_list_item(
                 client, shopping_list_item, CommonRequests.list_id)
 
-            self.assertEqual(result.status_code, 200)
+            self.assertEqual(result.status_code, 422)
             self.assertIn("error", json.loads(result.data))
 
     def test_api_can_get_all_shopping_list_items(self):
@@ -93,7 +93,7 @@ class ShoppingListItemTestCase(CommonRequests):
             rv = self.update_shopping_list_item(
                 client, {}, CommonRequests.list_id, "1a")
 
-            self.assertEqual(rv.status_code, 500)
+            self.assertEqual(rv.status_code, 422)
             self.assertIn("error", json.loads(rv.data))
 
     def test_api_can_detect_invalid_list_id_on_update(self):
@@ -104,7 +104,7 @@ class ShoppingListItemTestCase(CommonRequests):
             rv = self.update_shopping_list_item(
                 client, {}, "1a", "1")
 
-            self.assertEqual(rv.status_code, 500)
+            self.assertEqual(rv.status_code, 422)
             self.assertIn("error", json.loads(rv.data))
 
     def test_api_can_detect_non_existent_item_id_on_update(self):
@@ -155,7 +155,7 @@ class ShoppingListItemTestCase(CommonRequests):
             rv = self.delete_shopping_list_item(
                 client, CommonRequests.list_id, "1a")
 
-            self.assertEqual(rv.status_code, 500)
+            self.assertEqual(rv.status_code, 422)
             self.assertIn("error", json.loads(rv.data))
 
     def test_api_can_detect_invalid_list_id_on_delete(self):
@@ -165,5 +165,5 @@ class ShoppingListItemTestCase(CommonRequests):
             rv = self.delete_shopping_list_item(
                 client, "1a", "1")
 
-            self.assertEqual(rv.status_code, 500)
+            self.assertEqual(rv.status_code, 422)
             self.assertIn("error", json.loads(rv.data))
