@@ -135,7 +135,7 @@ class CommonRequests(unittest.TestCase):
                           headers=self.get_auth_header())
 
     def delete_shopping_list_item(self, client, list_id, item_id):
-        return client.delete('/v1/shoppinglists/' + str(list_id) + '/items/'+
+        return client.delete('/v1/shoppinglists/' + str(list_id) + '/items/' +
                              str(item_id), headers=self.get_auth_header())
 
     def confirm_email_for_password_reset(self, client, email):
