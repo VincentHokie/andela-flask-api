@@ -107,7 +107,7 @@ class ShoppingList(db.Model):
         return {
             'list_id': self.list_id,
             'name': self.name,
-            'date': dump_datetime(self.date)
+            'date_time': dump_datetime(self.date)
         }
 
     @staticmethod
@@ -193,7 +193,7 @@ class ShoppingListItem(db.Model):
             'item_id': self.item_id,
             'list_id': self.list_id,
             'name': self.name,
-            'date': dump_datetime(self.date),
+            'date_time': dump_datetime(self.date),
             'amount': self.amount,
             'bought': self.bought,
         }

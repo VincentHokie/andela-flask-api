@@ -4,22 +4,22 @@ from flask import render_template, request, jsonify, session
 from app import app, auth, mail
 from flask_mail import Message
 
-file = Path(__file__).resolve()
-parent, root = file.parent, file.parents[1]
-sys.path.append(str(root))
-
-# Additionally remove the current file's directory from sys.path
-try:
-    sys.path.remove(str(parent))
-except ValueError:  # Already removed
-    pass
-
 from app.models import db, User, ShoppingListItem, ShoppingList
 from app.forms import LoginForm, SignUpForm, ShoppingListForm, \
     ShoppingListItemForm, EmailForm, PasswordResetForm
 
 from itsdangerous import (TimedJSONWebSignatureSerializer
                           as Serializer, BadSignature, SignatureExpired)
+
+FILE = Path(__file__).resolve()
+PARENT, ROOT = FILE.parent, FILE.parents[1]
+sys.path.append(str(ROOT))
+
+# Additionally remove the current file's directory from sys.path
+try:
+    sys.path.remove(str(PARENT))
+except ValueError:  # Already removed
+    pass
 
 
 # helper function for sending user emails
@@ -241,14 +241,13 @@ def login():
 @app.route("/v1/auth/logout", methods=['POST'])
 @auth.login_required
 def logout():
-    if request.method == "POST":
-        user = User.query.filter_by(user_id=session["user"]).first()
-        if user is not None:
-            user.invalidate_token()
-            session.pop('user', None)
-            response = jsonify({"success": "You have successfully logged out!"})
-            response.status_code = 200
-            return response
+    user = User.query.filter_by(user_id=session["user"]).first()
+    if user is not None:
+        user.invalidate_token()
+        session.pop('user', None)
+        response = jsonify({"success": "You have successfully logged out!"})
+        response.status_code = 200
+        return response
 
 
 @app.route('/v1/auth/reset-password', methods=['POST'])
