@@ -6,7 +6,7 @@ from flask_mail import Message
 
 file = Path(__file__).resolve()
 parent, root = file.parent, file.parents[1]
-sys.path.append(str(root)) 
+sys.path.append(str(root))
 
 # Additionally remove the current file's directory from sys.path
 try:
@@ -52,7 +52,8 @@ def check_valid_item_id(item_id):
         response = jsonify(
             {
                 "error":
-                    "Shopping list item id: " + str(item_id) + " is not a valid id!"
+                    "Shopping list item id: " + str(item_id) +
+                    " is not a valid id!"
             })
         response.status_code = 500
         return response
@@ -80,7 +81,8 @@ def check_item_exists(the_item, item_id):
         response = jsonify(
             {
                 "error":
-                    "Shopping list item with id: " + str(item_id) + " not found!"
+                    "Shopping list item with id: " + str(item_id) +
+                    " not found!"
             })
         response.status_code = 404
         return response
@@ -115,18 +117,21 @@ def apply_cross_origin_header(response):
     response.headers["Access-Control-Allow-Credentials"] = "true"
     response.headers["Access-Control-Allow-Methods"] = "GET,HEAD,OPTIONS," \
                                                        "POST,PUT,DELETE"
-    response.headers["Access-Control-Allow-Headers"] = "Access-Control-Allow-" \
+    response.headers["Access-Control-Allow-Headers"] = "Access-Control-Allow-"\
         "Headers, Origin,Accept, X-Requested-With, Content-Type, " \
         "Access-Control-Request-Method, Access-Control-Request-Headers," \
         "Access-Control-Allow-Origin, Authorization"
 
     return response
 
+
 @auth.error_handler
 def custom_401():
-    response = jsonify({"error": "You are not allowed to look at/ do this. Please log in to continue!"})
+    response = jsonify({"error": "You are not allowed to look at/ do this. \
+    Please log in to continue!"})
     response.status_code = 401
     return response
+
 
 @app.route("/v1/documentation", methods=['GET'])
 def index():
@@ -276,10 +281,11 @@ def confirm_email():
             "https://andela-react-client.herokuapp.com/" \
             "password-reset/" + str(tok.decode("utf-8"))
 
-        email_body = "Please follow this link to reset your " \
-                     "password\n\n" + password_reset_url + "\n\n If you're " \
-                                                           "not the one who requested this, please ignore " \
-                                                           "this and contact the administrator about this."
+        email_body = \
+            "Please follow this link to reset your " \
+            "password\n\n" + password_reset_url + "\n\n If you're " \
+            "not the one who requested this, please ignore " \
+            "this and contact the administrator about this."
 
         send_email(
             'Password Reset Requested', [form.email.data], email_body)
@@ -495,8 +501,10 @@ def shopping_list_id(id):
         else:
             # retrieve and send back the needed information
             response = jsonify([
-                                   i.serialize for i in ShoppingListItem.get_all(
-                    id, request.args.get("q"), request.args.get("limit"), request.args.get("page"))
+                i.serialize for i in ShoppingListItem.get_all(
+                    id, request.args.get("q"),
+                    request.args.get("limit"),
+                    request.args.get("page"))
                                    ])
 
         response.status_code = 200
@@ -534,7 +542,8 @@ def shopping_list_id(id):
             response = jsonify(
                 {
                     "error":
-                        "Something went wrong with your delete please try again"
+                        "Something went wrong with your \
+                         delete please try again"
                 })
             response.status_code = 200
             return response
@@ -576,7 +585,7 @@ def shopping_list_items(id):
                 name=form.name.data, list_id=id, amount=form.amount.data
             ).first()
 
-            response = jsonify( list.serialize )
+            response = jsonify(list.serialize)
             response.status_code = 201
             return response
 
@@ -648,7 +657,8 @@ def shopping_list_item_update(id, item_id):
             response = jsonify(
                 {
                     "error":
-                        "Something went wrong with your delete please try again"
+                        "Something went wrong with your \
+                         delete please try again"
                 })
             response.status_code = 200
             return response
