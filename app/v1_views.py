@@ -4,22 +4,22 @@ from flask import render_template, request, jsonify, session
 from app import app, auth, mail
 from flask_mail import Message
 
-file = Path(__file__).resolve()
-parent, root = file.parent, file.parents[1]
-sys.path.append(str(root))
-
-# Additionally remove the current file's directory from sys.path
-try:
-    sys.path.remove(str(parent))
-except ValueError:  # Already removed
-    pass
-
 from app.models import db, User, ShoppingListItem, ShoppingList
 from app.forms import LoginForm, SignUpForm, ShoppingListForm, \
     ShoppingListItemForm, EmailForm, PasswordResetForm
 
 from itsdangerous import (TimedJSONWebSignatureSerializer
                           as Serializer, BadSignature, SignatureExpired)
+
+FILE = Path(__file__).resolve()
+PARENT, ROOT = FILE.parent, FILE.parents[1]
+sys.path.append(str(ROOT))
+
+# Additionally remove the current file's directory from sys.path
+try:
+    sys.path.remove(str(PARENT))
+except ValueError:  # Already removed
+    pass
 
 
 # helper function for sending user emails
