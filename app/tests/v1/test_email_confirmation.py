@@ -50,7 +50,9 @@ class EmailConfirmationTestCase(CommonRequests):
         """Test API can create a shopping list (POST request)"""
 
         with app.test_client() as client:
-            email_object = {'email': CommonRequests.sign_up_credentials["email"]}
+            email_object = {
+                'email': CommonRequests.sign_up_credentials["email"]
+                }
 
             try:
                 result = self.confirm_email_for_password_reset(

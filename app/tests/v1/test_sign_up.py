@@ -5,6 +5,7 @@ from app.models import User
 
 from app.tests.v1.common_requests import CommonRequests
 
+
 class SignUpTestCase(CommonRequests):
     """This class represents the sign up test case"""
 
@@ -15,11 +16,15 @@ class SignUpTestCase(CommonRequests):
             res = self.sign_up(client, CommonRequests.sign_up_credentials)
 
             self.assertNotEqual(User.query.filter_by(
-                username=CommonRequests.sign_up_credentials["username"]).first(), None)
+                username=CommonRequests.sign_up_credentials["username"]
+                ).first(), None)
             self.assertEqual(res.status_code, 201)
 
     def test_sign_up_password_confirmation(self):
-        """Test API can notice incorrect password confirmation (POST request)"""
+        """
+        Test API can notice incorrect password
+        confirmation (POST request)
+        """
 
         sign_up_credentials = {
             'username': 'vince2', "email": "vincenthokiee@gmail.com",

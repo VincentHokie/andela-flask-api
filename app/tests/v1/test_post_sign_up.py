@@ -4,6 +4,7 @@ from app import app
 
 from app.tests.v1.common_requests import CommonRequests
 
+
 class PostSignUpTestCase(CommonRequests):
     """This class represents the sign up test case"""
 

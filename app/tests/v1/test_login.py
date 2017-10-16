@@ -4,6 +4,7 @@ from app import app
 
 from app.tests.v1.common_requests import CommonRequests
 
+
 class LoginTestCase(CommonRequests):
     """This class represents the login test case"""
 
@@ -26,7 +27,9 @@ class LoginTestCase(CommonRequests):
 
         with app.test_client() as client:
 
-            res = self.login(client, {'username': 'wrong', "password": "wrong"})
+            res = self.login(client, {
+                'username': 'wrong', "password": "wrong"
+                })
 
             self.assertEqual(res.status_code, 401)
             self.assertIn("error", json.loads(res.data))
