@@ -39,7 +39,6 @@ class CommonRequests(unittest.TestCase):
         app.config["SQLALCHEMY_DATABASE_URI"] = \
             'postgresql://%(user)s:%(pw)s@%(host)s:%(port)s/%(db)s' % POSTGRES
 
-
     def setUp(self):
         self.set_up_tests()
 
@@ -69,7 +68,8 @@ class CommonRequests(unittest.TestCase):
     @staticmethod
     def set_up_shopping_list(self):
         with app.test_client() as client:
-            res = self.create_shopping_list(client, CommonRequests.shopping_list)
+            res = self.create_shopping_list(
+                client, CommonRequests.shopping_list)
             sh_object = json.loads(res.data)
             CommonRequests.list_id = sh_object["list_id"]
 
@@ -106,7 +106,7 @@ class CommonRequests(unittest.TestCase):
                            headers=self.get_auth_header())
 
     def update_shopping_list(self, client,  shopping_list, list_id):
-        headers=self.get_auth_header()
+        headers = self.get_auth_header()
         headers["Content-Type"] = 'application/x-www-form-urlencoded'
         return client.put('/v1/shoppinglists/'+str(list_id),
                           data=shopping_list, headers=headers)
@@ -114,8 +114,8 @@ class CommonRequests(unittest.TestCase):
     def delete_shopping_list(self, client, list_id):
         headers = self.get_auth_header()
         headers["Content-Type"] = 'application/x-www-form-urlencoded'
-        return client.delete('/v1/shoppinglists/'+str(list_id), 
-                            headers=headers)
+        return client.delete(
+            '/v1/shoppinglists/'+str(list_id), headers=headers)
 
     # crud on a shopping list items
     def get_items_under_shopping_list(self, client, list_id):
@@ -129,7 +129,7 @@ class CommonRequests(unittest.TestCase):
 
     def update_shopping_list_item(self, client, shopping_list_item, list_id,
                                   item_id):
-        return client.put('/v1/shoppinglists/' + str(list_id) + '/items/' + 
+        return client.put('/v1/shoppinglists/' + str(list_id) + '/items/' +
                             str(item_id),
                           data=shopping_list_item,
                           headers=self.get_auth_header())
@@ -139,12 +139,12 @@ class CommonRequests(unittest.TestCase):
                              str(item_id), headers=self.get_auth_header())
 
     def confirm_email_for_password_reset(self, client, email):
-        return client.post('/v1/auth/reset-password',
-                             data=email)
+        return client.post(
+            '/v1/auth/reset-password', data=email)
 
     def password_reset(self, client, token, password):
-        return client.post('/v1/auth/reset-password/'+token,
-                             data=password)
+        return client.post(
+            '/v1/auth/reset-password/'+token, data=password)
 
     def tearDown(self):
         """teardown all initialized variables."""
