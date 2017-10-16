@@ -39,7 +39,7 @@ def check_valid_list_id(list_id):
                 "error":
                     "Shopping list id: " + str(list_id) + " is not a valid id!"
             })
-        response.status_code = 500
+        response.status_code = 422
         return response
 
     return None
@@ -55,7 +55,7 @@ def check_valid_item_id(item_id):
                     "Shopping list item id: " + str(item_id) +
                     " is not a valid id!"
             })
-        response.status_code = 500
+        response.status_code = 422
         return response
 
     return None
