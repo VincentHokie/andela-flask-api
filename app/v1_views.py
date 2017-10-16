@@ -241,14 +241,13 @@ def login():
 @app.route("/v1/auth/logout", methods=['POST'])
 @auth.login_required
 def logout():
-    if request.method == "POST":
-        user = User.query.filter_by(user_id=session["user"]).first()
-        if user is not None:
-            user.invalidate_token()
-            session.pop('user', None)
-            response = jsonify({"success": "You have successfully logged out!"})
-            response.status_code = 200
-            return response
+    user = User.query.filter_by(user_id=session["user"]).first()
+    if user is not None:
+        user.invalidate_token()
+        session.pop('user', None)
+        response = jsonify({"success": "You have successfully logged out!"})
+        response.status_code = 200
+        return response
 
 
 @app.route('/v1/auth/reset-password', methods=['POST'])
