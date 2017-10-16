@@ -162,7 +162,7 @@ def register():
                                          "select another"]
                         }
                 })
-            response.status_code = 200
+            response.status_code = 422
             return response
 
         # ensure the email is unique, otherwise return an error
@@ -178,7 +178,7 @@ def register():
                                 ]
                         }
                 })
-            response.status_code = 200
+            response.status_code = 422
             return response
 
         # try and save the user, if anything goes wrong..
@@ -191,7 +191,7 @@ def register():
                     "error":
                         "Something went wrong, please try again"
                 })
-            response.status_code = 200
+            response.status_code = 412
             return response
 
         # if were here, the save worked..return a success message
@@ -203,7 +203,7 @@ def register():
     # the form was not properly filled
     else:
         response = jsonify({"error": form.errors})
-        response.status_code = 200
+        response.status_code = 422
         return response
 
 
@@ -214,27 +214,28 @@ def login():
         if form.validate_on_submit():
             user = User.query.filter_by(username=form.username.data).first()
 
-            take_back = {"success": "You have successfully logged in"}
-
             if not user or not user.verify_password(form.password.data):
-                take_back = {
+                response = jsonify({
                     "error":
                     "Login failed! Your credentials don't match our records"
-                }
+                })
+                response.status_code = 401
             else:
                 token = user.generate_auth_token()
-                take_back['token'] = token.decode('ascii')
                 user.save_token(token.decode('ascii'))
                 session["user"] = user.user_id
 
-            response = jsonify(take_back)
-            response.status_code = 200
-            return response
+                response = jsonify({
+                    "token": token.decode('ascii'),
+                    "success": "You have successfully logged in"
+                })
+                response.status_code = 200
 
         else:
             response = jsonify({"error": form.errors})
-            response.status_code = 200
-            return response
+            response.status_code = 422
+
+        return response
 
 
 @app.route("/v1/auth/logout", methods=['POST'])
@@ -303,7 +304,7 @@ def confirm_email():
     # the form was not properly submitted, return error messages
     else:
         response = jsonify({"error": form.errors})
-        response.status_code = 200
+        response.status_code = 422
         return response
 
 
@@ -329,7 +330,7 @@ def reset_password(token=None):
     except BadSignature:
         # invalid token
         response = jsonify({"error": "Nice try.."})
-        response.status_code = 400
+        response.status_code = 401
         return response
 
     # if were here, we've fount that the token is valid
@@ -359,7 +360,7 @@ def reset_password(token=None):
     # the form wasnt properly submitted, return error messages
     else:
         response = jsonify({"error": form.errors})
-        response.status_code = 200
+        response.status_code = 422
         return response
 
 
@@ -388,7 +389,7 @@ def shopping_lists():
         # the form was not properly filled, return an error message
         else:
             response = jsonify({"error": form.errors})
-            response.status_code = 200
+            response.status_code = 422
             return response
 
     # we want to see all the shopping lists
@@ -529,7 +530,7 @@ def shopping_list_id(id):
         # the form was not properly filled
         else:
             response = jsonify({"error": form.errors})
-            response.status_code = 200
+            response.status_code = 422
             return response
 
     # were deleting a shopping list
@@ -545,7 +546,7 @@ def shopping_list_id(id):
                         "Something went wrong with your \
                          delete please try again"
                 })
-            response.status_code = 200
+            response.status_code = 412
             return response
 
         # if all went well, send back a success message
@@ -592,7 +593,7 @@ def shopping_list_items(id):
         # there were form errors, return them to the user
         else:
             response = jsonify({"error": form.errors})
-            response.status_code = 200
+            response.status_code = 422
             return response
 
 
@@ -641,7 +642,7 @@ def shopping_list_item_update(id, item_id):
         # the form submitted had some validation errors
         else:
             response = jsonify({"error": form.errors})
-            response.status_code = 200
+            response.status_code = 422
             return response
 
     # were deleting a shopping list item
@@ -660,7 +661,7 @@ def shopping_list_item_update(id, item_id):
                         "Something went wrong with your \
                          delete please try again"
                 })
-            response.status_code = 200
+            response.status_code = 412
             return response
 
         response = jsonify({"success": "Shopping list delete successful!"})
