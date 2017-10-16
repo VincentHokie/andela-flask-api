@@ -1,21 +1,28 @@
+'''
+    This module is version 2 of the v1_views routes containing API ugrades
+'''
 import sys
 from pathlib import Path  # if you haven't already done so
-from flask import render_template, jsonify
+from flask import render_template, jsonify, session
 from app import app, auth
+from app.v1_views import check_list_exists, check_valid_list_id, ShoppingList
 
-file = Path(__file__).resolve()
-parent, root = file.parent, file.parents[1]
-sys.path.append(str(root))
+FILE = Path(__file__).resolve()
+PARENT, ROOT = FILE.parent, FILE.parents[1]
+sys.path.append(str(ROOT))
 
 # Additionally remove the current file's directory from sys.path
 try:
-    sys.path.remove(str(parent))
+    sys.path.remove(str(PARENT))
 except ValueError:  # Already removed
     pass
 
 
 @app.route("/v2/documentation", methods=['GET'])
 def index_v2():
+    '''
+        get the documentation of the new features implemented in v2 of the API
+    '''
     return render_template("index.html")
 
 
