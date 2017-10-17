@@ -69,12 +69,16 @@ def shopping_list_items_v2(list_id):
         return lists
 
     # retrieve and send back the needed information
-    response = jsonify([
-        i.serialize for i in ShoppingListItem.get_all(
-            list_id, request.args.get("q"),
-            request.args.get("limit"),
-            request.args.get("page"))
-    ])
+    response = jsonify({
+        "items": [
+            i.serialize for i in ShoppingListItem.get_all(
+                list_id, request.args.get("q"),
+                request.args.get("limit"),
+                request.args.get("page"))
+            ],
+        "count": ShoppingListItem.query.filter_by(
+            list_id=list_id).count()
+    })
 
     response.status_code = 200
     return response
