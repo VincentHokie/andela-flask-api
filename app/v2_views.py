@@ -58,7 +58,7 @@ def get_shopping_list_v2(list_id):
 def shopping_list_items_v2(list_id):
 
     # ensure id is a valid integer
-    is_valid = check_valid_list_id(id)
+    is_valid = check_valid_list_id(list_id)
     if is_valid is not None:
         return is_valid
 
