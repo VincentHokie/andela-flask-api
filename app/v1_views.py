@@ -413,13 +413,15 @@ def shopping_lists():
             response = jsonify(gotten_list.serialize)
 
         else:
-            # get all the lists and send them to the user
-            response = jsonify(
-                [i.serialize for i in ShoppingList.get_all(
+            # get all the lists and send them to the user            
+            response = jsonify({
+                "lists": [i.serialize for i in ShoppingList.get_all(
                     session["user"],
                     request.args.get("q"),
                     request.args.get("limit"),
-                    request.args.get("page"))])
+                    request.args.get("page"))],
+                "count": db.session.query(ShoppingList).count()
+            })
 
         response.status_code = 200
         return response
