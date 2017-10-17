@@ -420,7 +420,8 @@ def shopping_lists():
                     request.args.get("q"),
                     request.args.get("limit"),
                     request.args.get("page"))],
-                "count": db.session.query(ShoppingList).count()
+                "count": ShoppingList.query.filter_by(
+                    user_id=session["user"]).count()
             })
 
         response.status_code = 200
