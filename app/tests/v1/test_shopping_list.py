@@ -52,7 +52,7 @@ class ShoppingListTestCase(CommonRequests):
             res = self.get_all_shopping_list(client)
             the_lists = json.loads(res.data)
 
-            self.assertEqual(len(the_lists), 5)
+            self.assertEqual(len(the_lists["lists"]), 5)
             self.assertEqual(res.status_code, 200)
 
     def test_api_can_get_single_shopping_list_invalid_id(self):
