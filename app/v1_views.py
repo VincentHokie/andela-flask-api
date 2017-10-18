@@ -394,35 +394,24 @@ def shopping_lists():
     # we want to see all the shopping lists
     elif request.method == "GET":
 
-        list_id = request.args.get("list_id")
-        if list_id is not None:
+        count = ShoppingList.query.filter_by(
+            user_id=session["user"]).count()
 
-            # ensure id is a valid integer
-            is_valid = check_valid_list_id(list_id)
-            if is_valid is not None:
-                return is_valid
+        if request.args.get("q"):
+            count = ShoppingList.query.filter_by(
+                user_id=session["user"]).filter(
+                    ShoppingList.name.like(
+                        "%"+request.args.get("q").strip()+"%")).count()
 
-            gotten_list = ShoppingList.query.filter_by(
-                list_id=list_id, user_id=session["user"]).first()
-
-            gotten_list = check_list_exists(gotten_list, id)
-            if not isinstance(gotten_list, ShoppingList):
-                return gotten_list
-
-            # get the list requested for only
-            response = jsonify(gotten_list.serialize)
-
-        else:
-            # get all the lists and send them to the user            
-            response = jsonify({
-                "lists": [i.serialize for i in ShoppingList.get_all(
-                    session["user"],
-                    request.args.get("q"),
-                    request.args.get("limit"),
-                    request.args.get("page"))],
-                "count": ShoppingList.query.filter_by(
-                    user_id=session["user"]).count()
-            })
+        # get all the lists and send them to the user
+        response = jsonify({
+            "lists": [i.serialize for i in ShoppingList.get_all(
+                session["user"],
+                request.args.get("q"),
+                request.args.get("limit"),
+                request.args.get("page"))],
+            "count": count
+        })
 
         response.status_code = 200
         return response
@@ -483,32 +472,13 @@ def shopping_list_id(id):
     # we want all the items under the list with the given id
     if request.method == "GET":
 
-        item_id = request.args.get("item_id")
-        if item_id is not None:
-
-            # ensure id is a valid integer
-            is_valid = check_valid_item_id(item_id)
-            if is_valid is not None:
-                return is_valid
-
-            gotten_item = ShoppingListItem.query.filter_by(
-                list_id=id, item_id=item_id).first()
-
-            gotten_item = check_item_exists(gotten_item, id)
-            if not isinstance(gotten_item, ShoppingListItem):
-                return gotten_item
-
-            # get the item requested for only
-            response = jsonify(gotten_item.serialize)
-
-        else:
-            # retrieve and send back the needed information
-            response = jsonify([
-                i.serialize for i in ShoppingListItem.get_all(
-                    id, request.args.get("q"),
-                    request.args.get("limit"),
-                    request.args.get("page"))
-                                   ])
+        # retrieve and send back the needed information
+        response = jsonify([
+            i.serialize for i in ShoppingListItem.get_all(
+                id, request.args.get("q"),
+                request.args.get("limit"),
+                request.args.get("page"))
+                                ])
 
         response.status_code = 200
         return response
