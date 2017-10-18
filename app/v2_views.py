@@ -6,7 +6,7 @@ from pathlib import Path  # if you haven't already done so
 from flask import render_template, jsonify, session, request
 from app import app, auth
 from app.v1_views import check_list_exists, check_valid_list_id, \
-    ShoppingList, ShoppingListItem
+    ShoppingList, ShoppingListItem, check_item_exists, check_valid_item_id
 
 FILE = Path(__file__).resolve()
 PARENT, ROOT = FILE.parent, FILE.parents[1]
@@ -69,6 +69,15 @@ def shopping_list_items_v2(list_id):
         return lists
 
     # retrieve and send back the needed information
+    count = ShoppingListItem.query.filter_by(
+                list_id=list_id).count()
+
+    if request.args.get("q"):
+        count = ShoppingListItem.query.filter_by(
+            list_id=list_id).filter(
+                ShoppingListItem.name.like(
+                    "%"+request.args.get("q").strip()+"%")).count()
+
     response = jsonify({
         "items": [
             i.serialize for i in ShoppingListItem.get_all(
@@ -76,8 +85,7 @@ def shopping_list_items_v2(list_id):
                 request.args.get("limit"),
                 request.args.get("page"))
             ],
-        "count": ShoppingListItem.query.filter_by(
-            list_id=list_id).count()
+        "count": count
     })
 
     response.status_code = 200
