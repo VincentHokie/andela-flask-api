@@ -82,3 +82,38 @@ def shopping_list_items_v2(list_id):
 
     response.status_code = 200
     return response
+
+
+@app.route("/v2/shoppinglists/<list_id>/items/<item_id>", methods=['GET'])
+@auth.login_required
+def single_shopping_list_item_v2(list_id, item_id):
+
+    # ensure id is a valid integer
+    is_valid = check_valid_list_id(list_id)
+    if is_valid is not None:
+        return is_valid
+
+    # ensure our list actually exists
+    lists = check_list_exists(ShoppingList.query.filter_by(
+        list_id=list_id, user_id=session["user"]).first(), list_id)
+    if not isinstance(lists, ShoppingList):
+        return lists
+
+    # check if the shopping list item id is indeed a valid integer
+    is_valid = check_valid_item_id(item_id)
+    if is_valid is not None:
+        return is_valid
+
+    # ensure the shopping list item in question exists
+    lists = ShoppingListItem.query.filter_by(
+        item_id=item_id, list_id=list_id).first()
+
+    lists = check_item_exists(lists, item_id)
+    if not isinstance(lists, ShoppingListItem):
+        return lists
+
+    # retrieve and send back the needed information
+    response = jsonify(lists.serialize)
+
+    response.status_code = 200
+    return response
