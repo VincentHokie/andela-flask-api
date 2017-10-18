@@ -21,11 +21,15 @@ class CommonRequests(unittest.TestCase):
 
     shopping_list = {'name': 'ListThing'}
 
+    shopping_list_item = {'name': 'ItemThing', "amount": 1000}
+
     password_change = {'password': 'aa', 'password_confirm': 'aa'}
 
     token = ""
 
     list_id = ""
+
+    item_id = ""
 
     def define_db_connections(self, app):
         POSTGRES = {
@@ -73,6 +77,14 @@ class CommonRequests(unittest.TestCase):
             sh_object = json.loads(res.data)
             CommonRequests.list_id = sh_object["list_id"]
 
+    @staticmethod
+    def set_up_shopping_list_item(self):
+        with app.test_client() as client:
+            res = self.create_shopping_list_item(
+                client, CommonRequests.shopping_list_item, CommonRequests.list_id)
+            sh_object = json.loads(res.data)
+            CommonRequests.item_id = sh_object["item_id"]
+
     # authentication methods
     def login(self, client,  login_credentials):
         return client.post('/v1/auth/login', data=login_credentials)
@@ -93,10 +105,6 @@ class CommonRequests(unittest.TestCase):
 
     # crud on a shopping list
     def get_all_shopping_list(self, client, list_id=None):
-
-        if list_id is not None:
-            return client.get('/v1/shoppinglists?list_id=' + list_id,
-                              headers=self.get_auth_header())
 
         return client.get('/v1/shoppinglists',
                           headers=self.get_auth_header())
@@ -132,6 +140,12 @@ class CommonRequests(unittest.TestCase):
         return client.put('/v1/shoppinglists/' + str(list_id) + '/items/' +
                             str(item_id),
                           data=shopping_list_item,
+                          headers=self.get_auth_header())
+    
+    def update_shopping_list_item_bought_status(self, client, list_id,
+                                  item_id):
+        return client.put('/v1/shoppinglists/' + str(list_id) + '/items/' +
+                            str(item_id) + "/checkbox",
                           headers=self.get_auth_header())
 
     def delete_shopping_list_item(self, client, list_id, item_id):

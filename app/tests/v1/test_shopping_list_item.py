@@ -26,6 +26,30 @@ class ShoppingListItemTestCase(CommonRequests):
 
             self.assertEqual(result.status_code, 201)
 
+    def test_shopping_list_item_creation_invalid_list(self):
+        """Test API can create a shopping list (POST request)"""
+
+        with app.test_client() as client:
+
+            shopping_list_item = {'name': 'List item', "amount": 1000}
+            result = self.create_shopping_list_item(
+                client, shopping_list_item, "1a")
+
+            self.assertEqual(result.status_code, 422)
+            self.assertIn("error", json.loads(result.data))
+
+    def test_shopping_list_item_creation_nonexistent_list(self):
+        """Test API can create a shopping list (POST request)"""
+
+        with app.test_client() as client:
+
+            shopping_list_item = {'name': 'List item', "amount": 1000}
+            result = self.create_shopping_list_item(
+                client, shopping_list_item, 111)
+
+            self.assertEqual(result.status_code, 404)
+            self.assertIn("error", json.loads(result.data))
+
     def test_shopping_list_item_name_required(self):
         """Test API can create a shopping list (POST request)"""
 
@@ -85,6 +109,28 @@ class ShoppingListItemTestCase(CommonRequests):
             self.assertEqual(
                 the_list['amount'], shopping_list_item_updated['amount'])
 
+    def test_api_can_update_shopping_list_item_invalid_form(self):
+        """Test API can get a single bucketlist by using it's id."""
+
+        with app.test_client() as client:
+
+            shopping_list_item_updated = {'name': '', "amount": 2000}
+            shopping_list_item = {'name': 'List item', "amount": 890}
+            result = self.create_shopping_list_item(
+                client, shopping_list_item, CommonRequests.list_id)
+            shl_object = json.loads(result.data)
+
+            rv = self.update_shopping_list_item(
+                client, shopping_list_item_updated, CommonRequests.list_id,
+                shl_object['item_id'])
+
+            the_list = ShoppingListItem.query.filter_by(
+                item_id=shl_object['item_id']).first()
+            the_list = the_list.serialize
+
+            self.assertEqual(rv.status_code, 422)
+            self.assertIn("error", json.loads(rv.data))
+
     def test_api_can_detect_invalid_item_id_on_update(self):
         """Test API can get a single bucketlist by using it's id."""
 
@@ -113,6 +159,78 @@ class ShoppingListItemTestCase(CommonRequests):
         with app.test_client() as client:
             rv = self.update_shopping_list_item(
                 client, {}, CommonRequests.list_id, "111")
+
+            self.assertEqual(rv.status_code, 404)
+            self.assertIn("error", json.loads(rv.data))
+
+    def test_api_can_detect_non_existent_list_id_on_update(self):
+        """Test API can get a single bucketlist by using it's id."""
+
+        with app.test_client() as client:
+            rv = self.update_shopping_list_item(
+                client, {}, 111, "1")
+
+            self.assertEqual(rv.status_code, 404)
+            self.assertIn("error", json.loads(rv.data))
+
+    def test_api_can_update_shopping_list_item_bought_status(self):
+        """Test API can get a single bucketlist by using it's id."""
+
+        with app.test_client() as client:
+
+            shopping_list_item = {'name': 'List item', "amount": 890}
+            result = self.create_shopping_list_item(
+                client, shopping_list_item, CommonRequests.list_id)
+            shl_object = json.loads(result.data)
+
+            rv = self.update_shopping_list_item_bought_status(
+                client, CommonRequests.list_id, shl_object["item_id"])
+
+            the_list = ShoppingListItem.query.filter_by(
+                item_id=shl_object['item_id']).first()
+            the_list = the_list.serialize
+
+            self.assertEqual(rv.status_code, 200)
+            self.assertIn("success", json.loads(rv.data))
+
+    def test_api_can_detect_invalid_item_id_on_update_bought_status(self):
+        """Test API can get a single bucketlist by using it's id."""
+
+        with app.test_client() as client:
+
+            rv = self.update_shopping_list_item_bought_status(
+                client, CommonRequests.list_id, "1a")
+
+            self.assertEqual(rv.status_code, 422)
+            self.assertIn("error", json.loads(rv.data))
+
+    def test_api_can_detect_invalid_list_id_on_update_bought_status(self):
+        """Test API can get a single bucketlist by using it's id."""
+
+        with app.test_client() as client:
+
+            rv = self.update_shopping_list_item_bought_status(
+                client, "1a", "1")
+
+            self.assertEqual(rv.status_code, 422)
+            self.assertIn("error", json.loads(rv.data))
+
+    def test_api_can_detect_non_existent_item_id_on_update_bought_status(self):
+        """Test API can get a single bucketlist by using it's id."""
+
+        with app.test_client() as client:
+            rv = self.update_shopping_list_item_bought_status(
+                client, CommonRequests.list_id, "111")
+
+            self.assertEqual(rv.status_code, 404)
+            self.assertIn("error", json.loads(rv.data))
+
+    def test_api_can_detect_non_existent_list_id_on_update_bought_status(self):
+        """Test API can get a single bucketlist by using it's id."""
+
+        with app.test_client() as client:
+            rv = self.update_shopping_list_item_bought_status(
+                client, 111, "1")
 
             self.assertEqual(rv.status_code, 404)
             self.assertIn("error", json.loads(rv.data))
