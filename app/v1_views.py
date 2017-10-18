@@ -417,43 +417,6 @@ def shopping_lists():
         return response
 
 
-@app.route("/v1/shoppinglists/items", methods=['GET'])
-@auth.login_required
-def all_shopping_list_items():
-
-    item_id = request.args.get("item_id")
-    if item_id is not None:
-
-        # ensure id is a valid integer
-        is_valid = check_valid_item_id(item_id)
-        if is_valid is not None:
-            return is_valid
-
-        gotten_item = ShoppingListItem.query\
-            .join(ShoppingList)\
-            .filter(ShoppingList.user_id == session["user"])\
-            .filter(ShoppingListItem.item_id == item_id)\
-            .first()
-
-        gotten_item = check_item_exists(gotten_item, id)
-        if not isinstance(gotten_item, ShoppingListItem):
-            return gotten_item
-
-        # get the list requested for only
-        response = jsonify(gotten_item.serialize)
-
-    else:
-        # get all the list items and send them to the user
-        response = jsonify(
-            [
-                i.serialize for i in ShoppingListItem.
-                get_all_despite_list(session["user"])
-            ])
-
-    response.status_code = 200
-    return response
-
-
 @app.route("/v1/shoppinglists/<id>", methods=['GET', 'PUT', 'DELETE'])
 @auth.login_required
 def shopping_list_id(id):
