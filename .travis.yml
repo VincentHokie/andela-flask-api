@@ -17,15 +17,12 @@ before_script:
   - psql -c 'create database testdb;' -U postgres
   
 # command to run tests
-script: source .env && py.test --cov=app app/tests/
+script: py.test --cov=app app/tests/
 
 after_success:
     - coveralls
 
 env:
-  - DB=postgres
-  - SH=bash
-  - PACKAGE_VERSION="1.0.*"
   - DEBUG=True
   - CSRF_ENABLED=True
   - SQLALCHEMY_TRACK_MODIFICATIONS=False
