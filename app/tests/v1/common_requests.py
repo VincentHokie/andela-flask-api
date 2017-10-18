@@ -141,6 +141,12 @@ class CommonRequests(unittest.TestCase):
                             str(item_id),
                           data=shopping_list_item,
                           headers=self.get_auth_header())
+    
+    def update_shopping_list_item_bought_status(self, client, list_id,
+                                  item_id):
+        return client.put('/v1/shoppinglists/' + str(list_id) + '/items/' +
+                            str(item_id) + "/checkbox",
+                          headers=self.get_auth_header())
 
     def delete_shopping_list_item(self, client, list_id, item_id):
         return client.delete('/v1/shoppinglists/' + str(list_id) + '/items/' +
