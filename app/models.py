@@ -1,5 +1,6 @@
 
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import func
 
 from passlib.apps import custom_app_context as pwd_context
 
@@ -115,7 +116,8 @@ class ShoppingList(db.Model):
         query = ShoppingList.query.filter_by(user_id=user_id)
 
         if q is not None:
-            query = query.filter(ShoppingList.name.like("%"+q.strip()+"%"))
+            query = query.filter(
+                func.lower(ShoppingList.name).like("%"+q.lower().strip()+"%"))
 
         try:
             limit = int(limit)
@@ -166,7 +168,8 @@ class ShoppingListItem(db.Model):
         query = ShoppingListItem.query.filter_by(list_id=list_id)
 
         if q is not None:
-            query = query.filter(ShoppingListItem.name.like("%"+q.strip()+"%"))
+            query = query.filter(
+                func.lower(ShoppingListItem.name).like("%"+q.lower().strip()+"%"))
 
         try:
             limit = int(limit)
