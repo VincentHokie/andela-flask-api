@@ -132,8 +132,8 @@ class ShoppingListItemTestCase(CommonRequests):
             self.create_shopping_list_item(
                 client, shopping_list_item, CommonRequests.list_id)
             
-            shopping_list_item_updated = {'name': 'vince123', "amount": 2000}
-            shopping_list_item = {'name': 'List item', "amount": 890}
+            shopping_list_item_updated = {'name': 'List item', "amount": 2000}
+            shopping_list_item = {'name': 'vince123', "amount": 890}
             result = self.create_shopping_list_item(
                 client, shopping_list_item, CommonRequests.list_id)
             shl_object = json.loads(result.data)
