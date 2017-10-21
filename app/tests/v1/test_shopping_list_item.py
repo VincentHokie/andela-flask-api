@@ -26,6 +26,20 @@ class ShoppingListItemTestCase(CommonRequests):
 
             self.assertEqual(result.status_code, 201)
 
+    def test_shopping_list_item_duplicates_rejected(self):
+        """Test API can create a shopping list (POST request)"""
+
+        with app.test_client() as client:
+
+            shopping_list_item = {'name': 'List item', "amount": 1000}
+            self.create_shopping_list_item(
+                client, shopping_list_item, CommonRequests.list_id)
+            result = self.create_shopping_list_item(
+                client, shopping_list_item, CommonRequests.list_id)
+            
+            self.assertIn("error", json.loads(result.data))
+            self.assertEqual(result.status_code, 406)
+
     def test_shopping_list_item_creation_invalid_list(self):
         """Test API can create a shopping list (POST request)"""
 
@@ -108,6 +122,30 @@ class ShoppingListItemTestCase(CommonRequests):
                 the_list['name'], shopping_list_item_updated['name'])
             self.assertEqual(
                 the_list['amount'], shopping_list_item_updated['amount'])
+
+    def test_shopping_list_item_update_duplicates_rejected(self):
+        """Test API can create a shopping list (POST request)"""
+
+        with app.test_client() as client:
+
+            shopping_list_item = {'name': 'List item', "amount": 1000}
+            self.create_shopping_list_item(
+                client, shopping_list_item, CommonRequests.list_id)
+            
+            shopping_list_item_updated = {'name': 'List item', "amount": 2000}
+            shopping_list_item = {'name': 'vince123', "amount": 890}
+            result = self.create_shopping_list_item(
+                client, shopping_list_item, CommonRequests.list_id)
+            shl_object = json.loads(result.data)
+
+            rv = self.update_shopping_list_item(
+                client, shopping_list_item_updated, CommonRequests.list_id,
+                shl_object['item_id'])
+
+            self.assertIn("error", json.loads(rv.data))
+            self.assertEqual(rv.status_code, 406)
+
+
 
     def test_api_can_update_shopping_list_item_invalid_form(self):
         """Test API can get a single bucketlist by using it's id."""
