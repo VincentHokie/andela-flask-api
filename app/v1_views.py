@@ -3,6 +3,7 @@ from pathlib import Path  # if you haven't already done so
 from flask import render_template, request, jsonify, session
 from app import app, auth, mail
 from flask_mail import Message
+from sqlalchemy import exc
 
 from app.models import db, User, ShoppingListItem, ShoppingList
 from app.forms import LoginForm, SignUpForm, ShoppingListForm, \
@@ -376,13 +377,25 @@ def shopping_lists():
 
             # create the list
             list = ShoppingList(form.name.data, session["user"])
-            list.save()
 
-            # retrieve the list and send it back to the user
-            list = ShoppingList.query.filter_by(
-                name=form.name.data, user_id=session["user"]).first()
-            response = jsonify(list.serialize)
-            response.status_code = 201
+            try:
+                list.save()
+
+                # retrieve the list and send it back to the user
+                list = ShoppingList.query.filter_by(
+                    name=form.name.data, user_id=session["user"]).first()
+                response = jsonify(list.serialize)
+                response.status_code = 201
+
+            except exc.IntegrityError:
+                response = jsonify(
+                    {
+                        "error":
+                        "The list : '" + form.name.data +
+                        "' already exists, please change the name"
+                    })
+                response.status_code = 406
+
             return response
 
         # the form was not properly filled, return an error message
@@ -455,11 +468,24 @@ def shopping_list_id(id):
 
             # update the list
             lists.name = form.name.data
-            db.session.commit()
 
-            # send the user a meaningful response
-            response = jsonify({"success": "Shopping list update successful!"})
-            response.status_code = 200
+            try:
+                db.session.commit()
+
+                # send the user a meaningful response
+                response = jsonify(
+                    {"success": "Shopping list update successful!"})
+                response.status_code = 200
+
+            except exc.IntegrityError:
+                response = jsonify(
+                    {
+                        "error":
+                        "The list : '" + form.name.data +
+                        "' already exists, please change the name"
+                    })
+                response.status_code = 406
+
             return response
 
         # the form was not properly filled
@@ -514,15 +540,27 @@ def shopping_list_items(id):
 
             # the shopping list exists, create an item object and save it
             list = ShoppingListItem(form.name.data, id, form.amount.data)
-            list.save()
 
-            # get the added item and return it to the user
-            list = ShoppingListItem.query.filter_by(
-                name=form.name.data, list_id=id, amount=form.amount.data
-            ).first()
+            try:
+                list.save()
 
-            response = jsonify(list.serialize)
-            response.status_code = 201
+                # get the added item and return it to the user
+                list = ShoppingListItem.query.filter_by(
+                    name=form.name.data, list_id=id, amount=form.amount.data
+                ).first()
+
+                response = jsonify(list.serialize)
+                response.status_code = 201
+
+            except exc.IntegrityError:
+                response = jsonify(
+                    {
+                        "error":
+                        "The item : '" + form.name.data +
+                        "' already exists, please change the name"
+                    })
+                response.status_code = 422
+
             return response
 
         # there were form errors, return them to the user
@@ -568,10 +606,22 @@ def shopping_list_item_update(id, item_id):
             lists.name = form.name.data
             lists.amount = form.amount.data
 
-            db.session.commit()
+            try:
+                db.session.commit()
 
-            response = jsonify({"success": "Shopping list update successful!"})
-            response.status_code = 200
+                response = jsonify(
+                    {"success": "Shopping list item update successful!"})
+                response.status_code = 200
+
+            except exc.IntegrityError:
+                response = jsonify(
+                    {
+                        "error":
+                        "The item : '" + form.name.data +
+                        "' already exists, please change the name"
+                    })
+                response.status_code = 406
+
             return response
 
         # the form submitted had some validation errors
