@@ -92,6 +92,8 @@ class ShoppingList(db.Model):
     date = db.Column(db.DateTime, nullable=False)
     user_id = db.Column(db.Integer, db.ForeignKey(
         'user.user_id', ondelete='CASCADE'), nullable=False)
+    __table_args__ = (db.UniqueConstraint(
+        'name', 'user_id', name='_list_user_unique_column'),)
 
     def __init__(self, name, user_id):
         self.name = name
@@ -150,6 +152,8 @@ class ShoppingListItem(db.Model):
     amount = db.Column(db.Integer, nullable=False)
     list_id = db.Column(db.Integer, db.ForeignKey(
         'shopping_list.list_id', ondelete='CASCADE'), nullable=False)
+    __table_args__ = (db.UniqueConstraint(
+        'name', 'list_id', name='_item_list_unique_column'),)
 
     def __init__(self, name, list_id, amount):
         self.name = name
