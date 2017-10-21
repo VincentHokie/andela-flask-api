@@ -4,6 +4,8 @@ from flask import render_template, request, jsonify, session
 from app import app, auth, mail
 from flask_mail import Message
 from sqlalchemy import exc
+from werkzeug.exceptions import HTTPException
+from functools import wraps
 
 from app.models import db, User, ShoppingListItem, ShoppingList
 from app.forms import LoginForm, SignUpForm, ShoppingListForm, \
@@ -132,6 +134,19 @@ def custom_401():
     Please log in to continue!"})
     response.status_code = 401
     return response
+
+
+def get_http_exception_handler(app):
+    """Overrides the default http exception handler to return JSON."""
+    handle_http_exception = app.handle_http_exception
+    @wraps(handle_http_exception)
+    def ret_val(exception):
+        exc = handle_http_exception(exception)    
+        return jsonify({'error': str(exc.code) + ": " + exc.description}), exc.code
+    return ret_val
+
+# Override the HTTP exception handler.
+app.handle_http_exception = get_http_exception_handler(app)
 
 
 @app.route("/v1/documentation", methods=['GET'])
