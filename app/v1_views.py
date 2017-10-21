@@ -574,7 +574,7 @@ def shopping_list_items(id):
                         "The item : '" + form.name.data +
                         "' already exists, please change the name"
                     })
-                response.status_code = 422
+                response.status_code = 406
 
             return response
 
