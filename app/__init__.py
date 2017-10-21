@@ -28,8 +28,8 @@ app.config["SECRET_KEY"] = os.environ['SECRET_KEY']
 # email server
 app.config["MAIL_SERVER"] = os.environ['MAIL_SERVER']
 app.config["MAIL_PORT"] = os.environ['MAIL_PORT']
-app.config["MAIL_USE_TLS"] = os.environ['MAIL_USE_TLS']
-app.config["MAIL_USE_SSL"] = os.environ['MAIL_USE_SSL']
+app.config["MAIL_USE_TLS"] = False
+app.config["MAIL_USE_SSL"] = True
 app.config["MAIL_USERNAME"] = os.environ['MAIL_USERNAME']
 app.config["MAIL_PASSWORD"] = os.environ['MAIL_PASSWORD']
 app.config["MAIL_DEFAULT_SENDER"] = os.environ['MAIL_DEFAULT_SENDER']
