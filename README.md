@@ -1,6 +1,10 @@
 # Andela Shopping List API
 ====================================
 
+[![Build Status](https://travis-ci.org/VincentHokie/andela-flask-api.svg?branch=master)](https://travis-ci.org/VincentHokie/andela-flask-api)
+[![Coverage Status](https://coveralls.io/repos/github/VincentHokie/andela-flask-api/badge.svg?branch=master)](https://coveralls.io/github/VincentHokie/andela-flask-api?branch=master)
+[![Code Climate](https://codeclimate.com/github/VincentHokie/andela-flask-api.svg)](https://codeclimate.com/github/VincentHokie/andela-flask-api)
+
 The andela shopping list api that allows users plan shopping experiences.
 
 
@@ -260,17 +264,5 @@ The following routes are not accessible publicly i.e. you need to log in and use
       - 401 (unauthorized) is returned if the user is not logged in or the token is not sent with the request.<br>
       - 500 is returned if the id or item_id is not a valid integer.<br>
       - 200 is returned with a JSON object with an 'errors' attribute.<br>
-      
-
-
-
-### TravisCI
-[![Build Status](https://travis-ci.org/VincentHokie/andela-flask-api.svg?branch=master)](https://travis-ci.org/VincentHokie/andela-flask-api)
-
-### Coveralls
-[![Coverage Status](https://coveralls.io/repos/github/VincentHokie/andela-flask-api/badge.svg?branch=master)](https://coveralls.io/github/VincentHokie/andela-flask-api?branch=master)
-
-### Code Climate
-[![Code Climate](https://codeclimate.com/github/VincentHokie/andela-flask-api.svg)](https://codeclimate.com/github/VincentHokie/andela-flask-api)
 
 ## Enjoy
