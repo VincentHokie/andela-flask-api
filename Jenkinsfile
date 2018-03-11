@@ -8,7 +8,7 @@ pipeline {
         }
         stage('Test'){
             steps {
-                echo 'testing...'
+                echo 'testingggg...'
                 sh 'py.test --cov=app app/tests/'
             }
         }
