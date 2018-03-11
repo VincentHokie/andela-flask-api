@@ -4,4 +4,4 @@ engines:
 
 ratings:
    paths:
-   - "**.py"
+   - "**.py" 
