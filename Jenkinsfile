@@ -31,9 +31,6 @@ pipeline {
         stage('Build') { 
             steps {
                 sh 'cd ~'
-
-                sh 'virtualenv --python=python3 .'
-                sh 'source bin/activate'
                 sh 'pip install -r requirements.txt'
             }
         }
@@ -41,7 +38,6 @@ pipeline {
             steps {
                 echo 'testingggg...ggg'
                 sh 'cd ~'
-                sh 'source bin/activate'
                 sh 'py.test --cov=app app/tests/'
             }
         }
