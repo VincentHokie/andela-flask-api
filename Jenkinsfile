@@ -2,7 +2,7 @@ pipeline {
     agent {
         docker {
             image 'ubuntu:16.04'
-            args '-u root:root'
+            args '-u root:root -p 5433:5433'
         }
     }
     environment {
@@ -32,6 +32,7 @@ pipeline {
             steps {
                 sh 'cd ~'
 
+                sh 'apt-get install -y python python-pip python-virtualenv'
                 sh 'pip install virtualenv'
 
                 sh 'virtualenv --python=python3 .'
