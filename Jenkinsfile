@@ -30,11 +30,7 @@ pipeline {
     stages {
         stage('Build') { 
             steps {
-                checkout scm
                 sh 'cd ~'
-                // sh 'git clone https://github.com/VincentHokie/andela-flask-api'
-                sh 'ls -al'
-                sh '~/andela-flak-api'
 
                 sh 'sudo apt-get install -y python python-pip python-virtualenv'
                 sh 'sudo pip install virtualenv'
@@ -47,7 +43,7 @@ pipeline {
         stage('Test'){
             steps {
                 echo 'testingggg...ggg'
-                sh '~/andela-flak-api'
+                sh 'cd ~'
                 sh 'source bin/activate'
                 sh 'py.test --cov=app app/tests/'
             }
