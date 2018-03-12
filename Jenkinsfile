@@ -32,7 +32,8 @@ pipeline {
             steps {
                 checkout scm
                 sh 'cd ~'
-                sh 'git clone https://github.com/VincentHokie/andela-flask-api'
+                // sh 'git clone https://github.com/VincentHokie/andela-flask-api'
+                sh 'ls -al'
                 sh '~/andela-flak-api'
 
                 sh 'sudo apt-get install -y python python-pip python-virtualenv'
