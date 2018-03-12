@@ -8,7 +8,7 @@ pipeline {
     stages {
         stage('Build') { 
             steps { 
-                echo 'Building...'
+                echo 'Buildinggggg...'
                 sh 'git clone https://github.com/VincentHokie/andela-flask-api'
             }
         }
