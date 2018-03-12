@@ -31,7 +31,7 @@ pipeline {
         stage('Build') { 
             steps {
                 sh 'cd ~'
-
+                sh 'uname -a'
                 sh 'apt-get install -y python python-pip python-virtualenv'
                 sh 'pip install virtualenv'
 
