@@ -31,7 +31,7 @@ pipeline {
         stage('Build') { 
             steps {
                 sh 'cd ~'
-                sh 'pip install -r requirements.txt'
+                sh '/usr/bin/pip install -r requirements.txt'
             }
         }
         stage('Test'){
