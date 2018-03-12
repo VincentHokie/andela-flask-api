@@ -1,11 +1,10 @@
 pipeline {
-    agent any
-    // agent {
-    //     docker {
-    //         image 'python:3.5.5-alpine3.4'
-    //         args '-p 5000:5000'
-    //     }
-    // }
+    agent {
+        docker {
+            image 'python:3.5.5-alpine3.4'
+            args '-p 5000:5000'
+        }
+    }
     stages {
         stage('Build') { 
             steps {
