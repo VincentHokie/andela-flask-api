@@ -2,7 +2,7 @@ pipeline {
     agent {
         docker {
             image 'ubuntu:16.04'
-            args '-u root:root -p 5433:5433'
+            args '-u root:root'
         }
     }
     environment {
