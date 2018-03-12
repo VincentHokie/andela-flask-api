@@ -31,8 +31,8 @@ pipeline {
             steps {
                 sh 'cd ~'
 
-                sh 'sudo apt-get install -y python python-pip python-virtualenv'
-                sh 'sudo pip install virtualenv'
+                sh 'apt-get install -y python python-pip python-virtualenv'
+                sh 'pip install virtualenv'
 
                 sh 'virtualenv --python=python3 .'
                 sh 'source bin/activate'
