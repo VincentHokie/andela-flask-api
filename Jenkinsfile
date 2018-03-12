@@ -1,8 +1,7 @@
 pipeline {
     agent {
         docker {
-            image 'python:3.5.5-alpine3.4'
-            args '-p 5000:5000'
+            image 'ubuntu:16.04'
         }
     }
     environment {
@@ -31,9 +30,9 @@ pipeline {
         stage('Build') { 
             steps {
                 sh 'cd ~'
-                sh 'uname -a'
-                sh 'apt-get install -y python python-pip python-virtualenv'
-                sh 'pip install virtualenv'
+
+                sh 'sudo apt-get install -y python python-pip python-virtualenv'
+                sh 'sudo pip install virtualenv'
 
                 sh 'virtualenv --python=python3 .'
                 sh 'source bin/activate'
