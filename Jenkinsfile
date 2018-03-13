@@ -1,10 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image 'python:3.5-onbuild'
-            args '-u root:root -p 5433:5433'
-        }
-    }
+    agent any
     environment {
         DEBUG='True'
         CSRF_ENABLED='True'
@@ -29,8 +24,10 @@ pipeline {
         stage('Build') { 
             steps {
                 sh 'sudo apt-get install -y python python-pip python-virtualenv gunicorn nginx'
+                sh 'sudo pip install virtualenv'
+                sh 'virtualenv --python=python3 .'
+                sh 'source bin/activate'
                 sh 'pip install -r requirements.txt'
-                sh 'python -V'
             }
         }
         stage('Test'){
