@@ -18,3 +18,5 @@ USER root
 RUN mkdir /.local && chmod 777 /.local
 RUN usermod -aG sudo jenkins
 RUN usermod -aG sudo postgres
+
+USER jenkins
