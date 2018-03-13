@@ -23,14 +23,13 @@ pipeline {
     stages {
         stage('Build') { 
             steps {
-                // sh 'env' 
-                sh 'pip3 install --no-cache-dir -r requirements.txt'
+                // sh 'pip3 install --no-cache-dir -r requirements.txt'
             }
         }
         stage('Test'){
             steps {
                 echo 'testingggg...ggg'
-                sh 'whoami'
+                // sh 'whoami'
                 sh 'cat /etc/passwd | grep 115'
                 sh 'strace -f -F -o whoami whoami'
                 sh 'grep etc whoami'
