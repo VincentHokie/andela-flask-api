@@ -23,13 +23,14 @@ pipeline {
     stages {
         stage('Build') { 
             steps {
-                sh 'env'
+                // sh 'env' 
                 sh 'pip3 install --no-cache-dir -r requirements.txt'
             }
         }
         stage('Test'){
             steps {
                 echo 'testingggg...ggg'
+                sh 'whoami'
                 sh 'strace -f -F -o whoami whoami'
                 sh 'grep etc whoami'
                 sh 'sudo service postgresql start'
