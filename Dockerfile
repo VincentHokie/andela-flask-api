@@ -9,6 +9,8 @@ RUN \
   apt-get update && \
   apt-get install -y python python-dev python-pip python-virtualenv && \
   rm -rf /var/lib/apt/lists/*
-  
+
+RUN curl https://bootstrap.pypa.io/get-pip.py | python3.5
+
 RUN useradd jenkins --shell /bin/bash --create-home
 USER jenkins
