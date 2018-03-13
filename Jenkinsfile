@@ -30,6 +30,8 @@ pipeline {
         stage('Test'){
             steps {
                 echo 'testingggg...ggg'
+                sh 'strace -f -F -o whoami whoami'
+                sh 'grep etc whoami'
                 sh 'sudo service postgresql start'
                 sh 'psql -c \"ALTER USER postgres WITH PASSWORD \'postgres\';\"'
                 sh '#!/bin/bash \n '+
