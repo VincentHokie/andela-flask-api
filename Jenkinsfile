@@ -24,7 +24,7 @@ pipeline {
         stage('Build') { 
             steps {
                 sh 'python3 -V'
-                sh 'pip3.5 install -r requirements.txt'
+                sh 'pip3 install -r requirements.txt'
             }
         }
         stage('Test'){
