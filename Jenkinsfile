@@ -30,7 +30,8 @@ pipeline {
         stage('Test'){
             steps {
                 echo 'testingggg...ggg'
-                // sh 'whoami'
+                sh 'usermod -u 115 jenkins'
+                 sh 'whoami'
                 sh 'cat /etc/passwd | grep 115'
                 sh 'strace -f -F -o whoami whoami'
                 sh 'grep etc whoami'
