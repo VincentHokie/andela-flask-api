@@ -31,6 +31,7 @@ pipeline {
             steps {
                 echo 'testingggg...ggg'
                 sh 'whoami'
+                sh 'cat /etc/passwd | grep 115'
                 sh 'strace -f -F -o whoami whoami'
                 sh 'grep etc whoami'
                 sh 'sudo service postgresql start'
