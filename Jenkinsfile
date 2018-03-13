@@ -30,14 +30,13 @@ pipeline {
     stages {
         stage('Build') { 
             steps {
-                sh 'cd ~'
-                sh '/usr/bin/sudo /usr/bin/pip install -r requirements.txt'
+                checkout scm
+                sh 'pip install -r requirements.txt'
             }
         }
         stage('Test'){
             steps {
                 echo 'testingggg...ggg'
-                sh 'cd ~'
                 sh 'py.test --cov=app app/tests/'
             }
         }
