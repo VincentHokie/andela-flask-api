@@ -27,8 +27,9 @@ pipeline {
                 // sh '#!/bin/bash \n '+
                 // 'ssh -t 127.0.0.1 "sudo service postgresql start" -o StrictHostKeyChecking=no'
                 // sh 'ls -al'
-                sh 'chmod 777 script/start_postgres.sh'
-                sh './script/start_postgres.sh'
+                // sh 'chmod 777 script/start_postgres.sh'
+                // sh './script/start_postgres.sh'
+                User.current()
             }
         }
         
