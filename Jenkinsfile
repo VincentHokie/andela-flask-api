@@ -23,8 +23,7 @@ pipeline {
     stages {
         stage('Build') { 
             steps {
-                sh 'pwd'
-                sh 'pip3 install --user --no-cache-dir -r requirements.txt'
+                sh 'sudo pip3 install --no-cache-dir -r requirements.txt'
             }
         }
         stage('Test'){
