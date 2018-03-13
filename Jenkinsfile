@@ -1,5 +1,10 @@
 pipeline {
-    agent { dockerfile true }
+    agent { 
+        dockerfile {
+            filename 'Dockerfile'
+            additionalBuildArgs  '--u root:root'
+        }
+    }
     environment {
         DEBUG='True'
         CSRF_ENABLED='True'
