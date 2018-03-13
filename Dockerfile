@@ -16,5 +16,5 @@ RUN \
 RUN useradd jenkins --shell /bin/bash --create-home
 USER root
 RUN mkdir /.local && chmod 777 /.local
-
-USER jenkins
+RUN usermod -aG sudo jenkins
+RUN usermod -aG sudo postgres

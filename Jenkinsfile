@@ -29,9 +29,8 @@ pipeline {
         stage('Test'){
             steps {
                 echo 'testingggg...ggg'
-                sh 'su jenkins'
                 sh 'echo ${USER}'
-                // sh 'service postgresql start'
+                sh 'service postgresql start'
                 sh 'psql -c \"ALTER USER postgres WITH PASSWORD \'postgres\';\"'
                 sh '#!/bin/bash \n '+
                 'python3 -m pytest --cov=app app/tests/'
