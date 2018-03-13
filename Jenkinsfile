@@ -28,7 +28,7 @@ pipeline {
     stages {
         stage('Build') { 
             steps {
-                sh 'sudo apt-get install -y python python-pip python-virtualenv gunicorn nginx'
+                sh 'apt-get install -y python python-pip python-virtualenv gunicorn nginx'
                 sh 'pip install virtualenv'
                 sh 'virtualenv --python=python3 .'
                 sh '#!/bin/bash \n' +
