@@ -23,7 +23,7 @@ pipeline {
     stages {
         stage('Start postgres') {
             steps {
-                sh 'echo ${USER}'
+                // sh 'echo ${USER}'
                 // checkout scm
                 // sh '#!/bin/bash \n '+
                 // 'ssh -t 127.0.0.1 "sudo service postgresql start" -o StrictHostKeyChecking=no'
