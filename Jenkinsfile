@@ -23,7 +23,7 @@ pipeline {
     stages {
         stage('Build') { 
             steps {
-                sh 'pip install -r requirements.txt'
+                sh 'pip3.5 install -r requirements.txt'
             }
         }
         stage('Test'){
