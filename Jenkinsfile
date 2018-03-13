@@ -27,9 +27,8 @@ pipeline {
                 sh 'sudo apt-get install -y python python-pip python-virtualenv gunicorn nginx'
                 sh 'pip install virtualenv'
                 sh 'virtualenv --python=python3 .'
-                sh '
-                #!/bin/bash
-                source bin/activate'
+                sh '#!/bin/bash' +
+                'source bin/activate'
                 sh 'pip install -r requirements.txt'
             }
         }
