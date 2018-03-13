@@ -15,3 +15,4 @@ RUN \
 
 RUN useradd jenkins --shell /bin/bash --create-home
 USER jenkins
+RUN mkdir /.local
