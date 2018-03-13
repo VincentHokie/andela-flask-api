@@ -23,13 +23,13 @@ pipeline {
     stages {
         stage('Build') { 
             steps {
+                sh 'who -H'
                 sh 'pip3 install --no-cache-dir -r requirements.txt'
             }
         }
         stage('Test'){
             steps {
                 echo 'testingggg...ggg'
-                sh 'echo ${USER}'
                 sh 'service postgresql start'
                 sh 'psql -c \"ALTER USER postgres WITH PASSWORD \'postgres\';\"'
                 sh '#!/bin/bash \n '+
