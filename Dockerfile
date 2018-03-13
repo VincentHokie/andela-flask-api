@@ -5,5 +5,10 @@ FROM ubuntu:latest
 RUN apt-get -y update && apt-get install postgresql postgresql-contrib -y
 RUN /etc/init.d/postgresql start
 
+RUN \
+  apt-get update && \
+  apt-get install -y python python-dev python-pip python-virtualenv && \
+  rm -rf /var/lib/apt/lists/*
+  
 RUN useradd jenkins --shell /bin/bash --create-home
 USER jenkins
