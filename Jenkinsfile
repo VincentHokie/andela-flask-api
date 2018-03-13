@@ -29,6 +29,7 @@ pipeline {
         stage('Test'){
             steps {
                 echo 'testingggg...ggg'
+                sh 'service postgresql start'
                 sh '#!/bin/bash \n '+
                 'python3 -m pytest --cov=app app/tests/'
             }
