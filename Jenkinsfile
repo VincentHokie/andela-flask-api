@@ -1,22 +1,15 @@
 pipeline {
-    agent {
-        docker {
-            image 'ubuntu:16.04'
-            args '-u root:root'
-        }
-    }
+    agent any
     environment {
         DEBUG='True'
         CSRF_ENABLED='True'
         SQLALCHEMY_TRACK_MODIFICATIONS='False'
-
         DB='andela-flask-api'
         USER='postgres'
         PASSWORD='postgres'
         HOST='localhost'
         PORT=5432
         HEROKU_POSTGRESQL_CRIMSON_URL="postgresql://postgres:postgres@127.0.0.1:5432/andela-flask-api"
-
         WTF_CSRF_ENABLED='False'
         SECRET_KEY='youll-never-know-what-it-is-coz-its-secret'
         MAIL_SERVER='smtp.googlemail.com'
@@ -30,7 +23,6 @@ pipeline {
     stages {
         stage('Build') { 
             steps {
-                checkout scm
                 sh 'pip install -r requirements.txt'
             }
         }
