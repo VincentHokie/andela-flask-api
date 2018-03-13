@@ -24,7 +24,8 @@ pipeline {
         stage('Start postgres') {
             steps {
                 // sh 'ssh -t 127.0.0.1 "sudo service postgresql start" -o StrictHostKeyChecking=no'
-                sh 'chmod 777 ./scripts/start_postgres.sh'
+                sh 'ls'
+                sh 'chmod 777 scripts/start_postgres.sh'
                 sh './scripts/start_postgres.sh'
             }
         }
