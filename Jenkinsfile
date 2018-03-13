@@ -29,6 +29,7 @@ pipeline {
         stage('Build') { 
             steps {
                 sh 'pip3 install -r requirements.txt'
+                sh 'apt-get install postgresql postgresql-contrib'
                 sh 'psql postgres -c "CREATE DATABASE andela-flask-api"'
                 sh 'python3 manage.py db init'
                 sh 'python3 manage.py db upgrade'
