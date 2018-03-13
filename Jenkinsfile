@@ -21,19 +21,6 @@ pipeline {
         MAIL_DEFAULT_SENDER="andelatestmail@gmail.com"
     }
     stages {
-        stage('Start postgres') {
-            steps {
-                // sh 'echo ${USER}'
-                // checkout scm
-                // sh '#!/bin/bash \n '+
-                // 'ssh -t 127.0.0.1 "sudo service postgresql start" -o StrictHostKeyChecking=no'
-                // sh 'ls -al'
-                // sh 'chmod 777 script/start_postgres.sh'
-                // sh './script/start_postgres.sh'
-                // User.current()
-            }
-        }
-        
         stage('Build') { 
             steps {
                 sh 'env'
