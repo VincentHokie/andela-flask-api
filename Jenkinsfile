@@ -29,7 +29,7 @@ pipeline {
         stage('Test'){
             steps {
                 echo 'testingggg...ggg'
-                sh 'service postgresql start'
+                sh 'echo ${USER}'
                 sh 'psql -c "ALTER USER postgres WITH PASSWORD \'postgres\';" -U postgres'
                 sh '#!/bin/bash \n '+
                 'python3 -m pytest --cov=app app/tests/'
