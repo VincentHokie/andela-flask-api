@@ -12,7 +12,5 @@ RUN \
   apt-get upgrade -y && \
   rm -rf /var/lib/apt/lists/*
 
-RUN ls /usr/bin | grep pip
-
 RUN useradd jenkins --shell /bin/bash --create-home
 USER jenkins
