@@ -1,5 +1,5 @@
 # Lets not just use any old version but pick one
-FROM ubuntu:latest
+FROM jenkins:latest
 
 USER root
 # This is needed for flow, and the weirdos that built it in ocaml:
@@ -14,7 +14,7 @@ RUN \
   rm -rf /var/lib/apt/lists/*
 
 
-RUN useradd jenkins --shell /bin/bash --create-home
+# RUN useradd jenkins --shell /bin/bash --create-home
 RUN echo "jenkins ALL=NOPASSWD: ALL" >> /etc/sudoers
 RUN mkdir /.local && chmod 777 /.local
 
