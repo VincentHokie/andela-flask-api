@@ -4,9 +4,6 @@ FROM ubuntu:latest
 # This is needed for flow, and the weirdos that built it in ocaml:
 RUN apt-get -y update && apt-get install postgresql postgresql-contrib -y
 RUN /etc/init.d/postgresql start
-RUN service postgresql start
-
-RUN psql -c "ALTER USER postgres WITH PASSWORD 'postgres';" -U postgres
 
 RUN \
   apt-get update -y && \
