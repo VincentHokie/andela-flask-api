@@ -21,6 +21,12 @@ pipeline {
         MAIL_DEFAULT_SENDER="andelatestmail@gmail.com"
     }
     stages {
+        stage('Start postgres') {
+            steps {
+                sh './scripts/start_postgres.sh'
+            }
+        }
+        
         stage('Build') { 
             steps {
                 sh 'env'
