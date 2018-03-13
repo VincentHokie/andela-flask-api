@@ -23,15 +23,13 @@ pipeline {
     stages {
         stage('Build') { 
             steps {
-                sh 'env'
-                // sh 'pip3 install --no-cache-dir -r requirements.txt'
+                sh 'pip3 install --no-cache-dir -r requirements.txt'
             }
         }
         stage('Test'){
             steps {
                 echo 'testingggg...ggg'
                 sh 'sudo service postgresql start'
-                sh 'sudo service postgresql status'
                 // sh 'sudo psql -c \"ALTER USER postgres WITH PASSWORD \'postgres\';\"'
                 sh '#!/bin/bash \n '+
                 'python3 -m pytest --cov=app app/tests/'
