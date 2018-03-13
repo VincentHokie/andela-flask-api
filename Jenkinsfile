@@ -29,8 +29,8 @@ pipeline {
         stage('Test'){
             steps {
                 echo 'testingggg...ggg'
-                sh 'ls'
-                sh 'py.test --cov=app app/tests/'
+                sh '#!/bin/bash \n '+
+                'py.test --cov=app app/tests/'
             }
         }
         stage('Deploy') {
