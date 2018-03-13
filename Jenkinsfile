@@ -6,7 +6,7 @@ pipeline {
         SQLALCHEMY_TRACK_MODIFICATIONS='False'
         DB='andela-flask-api'
         USER='postgres'
-        PASSWORD='postgres'
+        PASSWORD=''
         HOST='localhost'
         PORT=5432
         HEROKU_POSTGRESQL_CRIMSON_URL="postgresql://${USER}:${PASSWORD}@${HOST}:5432/${DB}" 
