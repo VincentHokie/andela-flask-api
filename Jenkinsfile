@@ -14,7 +14,7 @@ pipeline {
         PASSWORD='postgres'
         HOST='172.17.0.1'
         PORT=5432
-        HEROKU_POSTGRESQL_CRIMSON_URL="postgresql://postgres:postgres@172.17.0.1:5432/andela-flask-api"
+        HEROKU_POSTGRESQL_CRIMSON_URL="postgresql://${USER}:${PASSWORD}@${HOST}:5432/${DB}" 
         WTF_CSRF_ENABLED='False'
         SECRET_KEY='youll-never-know-what-it-is-coz-its-secret'
         MAIL_SERVER='smtp.googlemail.com'
