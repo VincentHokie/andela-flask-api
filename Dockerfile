@@ -12,5 +12,7 @@ RUN \
   apt-get upgrade -y && \
   rm -rf /var/lib/apt/lists/*
 
+
 RUN useradd jenkins --shell /bin/bash --create-home && usermod -aG sudo jenkins
+RUN chmod 777 /.local
 USER jenkins
