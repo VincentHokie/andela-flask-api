@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-sudo -u postgres psql -c 'ALTER USER postgres WITH PASSWORD postgres;'
+echo '' | sudo -S -u postgres psql -c 'ALTER USER postgres WITH PASSWORD postgres;'
