@@ -10,7 +10,7 @@ RUN \
   apt-get install -y python python-dev python-pip python-virtualenv && \
   rm -rf /var/lib/apt/lists/*
 
-RUN cat /usr/bin | grep pip
+RUN ls /usr/bin | grep pip
 
 RUN useradd jenkins --shell /bin/bash --create-home
 USER jenkins
