@@ -23,7 +23,7 @@ pipeline {
     stages {
         stage('Build') { 
             steps {
-                sh '#!/usr/bin/env bash \n' +
+                sh '#!/usr/bin \n' +
                 'sudo pip3 install --no-cache-dir -r requirements.txt'
             }
         }
