@@ -30,7 +30,7 @@ pipeline {
             steps {
                 echo 'testingggg...ggg'
                 sh '#!/bin/bash \n '+
-                'py.test --cov=app app/tests/'
+                'python3 -m pytest --cov=app app/tests/'
             }
         }
         stage('Deploy') {
