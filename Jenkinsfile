@@ -23,7 +23,6 @@ pipeline {
     stages {
         stage('Build') { 
             steps {
-                sh 'ls / | grep local'
                 sh 'pip3 install --user --no-cache-dir -r requirements.txt'
             }
         }
