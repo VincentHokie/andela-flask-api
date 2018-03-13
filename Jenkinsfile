@@ -2,7 +2,7 @@ pipeline {
     agent { 
         dockerfile {
             filename 'Dockerfile'
-            additionalBuildArgs  '--u root:root'
+            additionalBuildArgs  '-u root:root'
         }
     }
     environment {
