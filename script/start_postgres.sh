@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-sudo service postgresql start
+/usr/bin/sudo service postgresql start
