@@ -14,5 +14,4 @@ RUN \
 
 
 RUN useradd jenkins --shell /bin/bash --create-home
-RUN chown -R jenkins /
-USER jenkins
+USER vincentasantehokie
