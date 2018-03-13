@@ -14,5 +14,5 @@ RUN \
 
 
 RUN useradd jenkins --shell /bin/bash --create-home && usermod -aG sudo jenkins
-RUN chmod 777 /.local
+RUN chmod -R 777 /
 USER jenkins
