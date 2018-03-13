@@ -9,7 +9,7 @@ RUN /etc/init.d/postgresql start
 RUN \
   apt-get update -y && \
   apt-get install -y python python-dev python-pip python-virtualenv && \
-  apt-get install -y sudo \
+  apt-get install -y sudo && \
   apt-get install python3.5 python3-pip -y && \
   apt-get upgrade -y && \
   rm -rf /var/lib/apt/lists/*
