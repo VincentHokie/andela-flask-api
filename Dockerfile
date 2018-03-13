@@ -9,8 +9,6 @@ RUN \
   apt-get update && \
   apt-get install -y python python-dev python-pip python-virtualenv && \
   rm -rf /var/lib/apt/lists/*
-
-RUN apt-get install python3-setuptools && easy_install3 pip
-
+  
 RUN useradd jenkins --shell /bin/bash --create-home
 USER jenkins
