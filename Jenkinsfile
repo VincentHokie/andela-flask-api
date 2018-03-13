@@ -5,7 +5,7 @@ pipeline {
         CSRF_ENABLED='True'
         SQLALCHEMY_TRACK_MODIFICATIONS='False'
         DB='andela-flask-api'
-        // USER='postgres'
+        USER='postgres'
         PASSWORD=''
         HOST='localhost'
         PORT=5432
@@ -32,7 +32,7 @@ pipeline {
                 echo 'testingggg...ggg'
                 sh 'sudo service postgresql start'
                 sh 'sudo service postgresql status'
-                sh 'sudo psql -c \"ALTER USER postgres WITH PASSWORD \'postgres\';\"'
+                // sh 'sudo psql -c \"ALTER USER postgres WITH PASSWORD \'postgres\';\"'
                 sh '#!/bin/bash \n '+
                 'python3 -m pytest --cov=app app/tests/'
             }
