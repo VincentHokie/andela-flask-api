@@ -5,6 +5,8 @@ FROM ubuntu:latest
 RUN apt-get -y update && apt-get install postgresql postgresql-contrib -y
 RUN /etc/init.d/postgresql start
 
+RUN psql -c "ALTER USER postgres WITH PASSWORD 'postgres';" -U postgres
+
 RUN \
   apt-get update -y && \
   apt-get install -y python python-dev python-pip python-virtualenv && \
