@@ -28,8 +28,9 @@ pipeline {
     stages {
         stage('Build') { 
             steps {
-                sh 'env'
                 sh 'pip3 install -r requirements.txt'
+                sh 'psql postgres -c "CREATE DATABASE andela-flask-api'
+                sh 'python3 manage.py db init && python3 manage.py db upgrade'
             }
         }
         stage('Test'){
