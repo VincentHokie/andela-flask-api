@@ -28,7 +28,7 @@ pipeline {
     stages {
         stage('Build') { 
             steps {
-                sh 'ip a'
+                sh 'env'
                 sh 'pip3 install -r requirements.txt'
             }
         }
