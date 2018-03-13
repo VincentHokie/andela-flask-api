@@ -15,7 +15,5 @@ RUN \
 
 RUN useradd jenkins --shell /bin/bash --create-home
 USER root
-RUN mkdir /.local && chmod 777 /.local /var/run/postgresql
+RUN mkdir /.local && chmod 777 /.local
 RUN service postgresql start
-
-USER jenkins
