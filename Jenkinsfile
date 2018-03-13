@@ -5,7 +5,7 @@ pipeline {
         CSRF_ENABLED='True'
         SQLALCHEMY_TRACK_MODIFICATIONS='False'
         DB='andela-flask-api'
-        USER='postgres'
+        // USER='postgres'
         PASSWORD=''
         HOST='localhost'
         PORT=5432
@@ -23,13 +23,14 @@ pipeline {
     stages {
         stage('Start postgres') {
             steps {
+                sh 'echo ${USER}'
                 // checkout scm
                 // sh '#!/bin/bash \n '+
                 // 'ssh -t 127.0.0.1 "sudo service postgresql start" -o StrictHostKeyChecking=no'
                 // sh 'ls -al'
                 // sh 'chmod 777 script/start_postgres.sh'
                 // sh './script/start_postgres.sh'
-                User.current()
+                // User.current()
             }
         }
         
