@@ -21,11 +21,11 @@ pipeline {
         MAIL_DEFAULT_SENDER="andelatestmail@gmail.com"
     }
     stages {
-        stage('Build') { 
-            steps {
-                // sh 'pip3 install --no-cache-dir -r requirements.txt'
-            }
-        }
+        // stage('Build') { 
+        //     steps {
+        //         sh 'pip3 install --no-cache-dir -r requirements.txt'
+        //     }
+        // }
         stage('Test'){
             steps {
                 echo 'testingggg...ggg'
