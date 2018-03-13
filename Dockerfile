@@ -13,4 +13,4 @@ RUN \
 RUN curl https://bootstrap.pypa.io/get-pip.py | python3.5
 
 RUN useradd jenkins --shell /bin/bash --create-home
-USER jenkins
+USER root
