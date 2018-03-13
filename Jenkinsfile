@@ -25,6 +25,7 @@ pipeline {
             steps {
                 sh 'sudo apt-get install -y python python-pip python-virtualenv gunicorn nginx'
                 sh 'pip install -r requirements.txt'
+                sh 'python -V'
             }
         }
         stage('Test'){
