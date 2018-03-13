@@ -30,7 +30,8 @@ pipeline {
             steps {
                 echo 'testingggg...ggg'
                 sh 'sudo service postgresql start'
-                sh "sudo -u postgres psql -c \"ALTER USER postgres WITH PASSWORD 'postgres';\""
+                sh 'chmod 777 ./script/start_postgres.sh'
+                sh './script/start_postgres.sh'
                 sh '#!/bin/bash \n '+
                 'python3 -m pytest --cov=app app/tests/'
             }
