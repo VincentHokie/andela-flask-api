@@ -32,7 +32,7 @@ pipeline {
                 sh 'sudo service postgresql start'
                 sh 'chmod 777 ./script/start_postgres.sh'
                 sh 'sudo su - postgres'
-                sh 'sudo -u postgres psql -h 127.0.0.1 -c \'ALTER USER postgres WITH PASSWORD \'postgres\';\''
+                sh 'echo \'\' | sudo -S -u postgres psql -h 127.0.0.1 -c \'ALTER USER postgres WITH PASSWORD \'postgres\';\''
                 sh 'exit'
                 sh '#!/bin/bash \n '+
                 'python3 -m pytest --cov=app app/tests/'
