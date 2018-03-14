@@ -29,6 +29,7 @@ pipeline {
         stage('Test'){
             steps {
                 echo 'testingggg...ggg'
+                sh 'ls etc/postgresql-*'
                 sh 'sudo cat /etc/postgresql-9.6/pg_hba.conf'
                 sh 'sudo service postgresql start'
                 sh 'chmod 777 ./script/start_postgres.sh'
