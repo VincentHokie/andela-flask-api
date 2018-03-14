@@ -1,10 +1,12 @@
 #!/usr/bin/env bash
 
+# stop postgres to create a copy of the confif file and remove it
 sudo /etc/init.d/postgresql stop
 
 sudo cp /etc/postgresql/9.5/main/pg_hba.conf /etc/postgresql/9.5/main/pg_hba_copy.conf
 sudo chmod 777 /etc/postgresql/9.5/main/pg_hba.conf && sudo rm /etc/postgresql/9.5/main/pg_hba.conf
 
+# populate a new pgconfig file with permissions that allow login without a password (momentarily)
 echo "
 # PostgreSQL Client Authentication Configuration File
 # ===================================================
@@ -106,12 +108,15 @@ host    all             all             ::1/128                 md5
 #host    replication     postgres        127.0.0.1/32            md5
 #host    replication     postgres        ::1/128                 md5" > pg_hba.conf
 
+# make the above config the one postgres uses and restart the service
 sudo mv pg_hba.conf /etc/postgresql/9.5/main/pg_hba.conf
 sudo /etc/init.d/postgresql start
 
+# change postgres' password to a known value and create the test database
 echo '' | psql --username=postgres --command="ALTER USER postgres WITH PASSWORD 'postgres';"
 echo '' | psql --username=postgres --command="create database testdb;"
 
+# stop the service, return to the original config file ans start the service again
 sudo /etc/init.d/postgresql stop
 sudo rm /etc/postgresql/9.5/main/pg_hba.conf
 sudo mv /etc/postgresql/9.5/main/pg_hba_copy.conf /etc/postgresql/9.5/main/pg_hba.conf
