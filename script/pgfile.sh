@@ -2,7 +2,7 @@
 
 sudo /etc/init.d/postgresql stop
 
-sudo rm /etc/postgresql/9.5/main/pg_hba.conf
+sudo chmod 77 /etc/postgresql/9.5/main/pg_hba.conf && sudo rm /etc/postgresql/9.5/main/pg_hba.conf
 
 sudo echo "
 # PostgreSQL Client Authentication Configuration File
