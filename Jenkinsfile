@@ -29,12 +29,21 @@ pipeline {
         stage('Test'){
             steps {
                 echo 'testingggg...ggg'
-                sh 'sudo cat /etc/postgresql/9.5/main/pg_hba.conf'
-                sh 'sudo service postgresql start'
-                sh 'chmod 777 ./script/start_postgres.sh'
-                sh 'sudo su - postgres'
-                sh 'echo \'\' | sudo -S -u postgres psql -h 127.0.0.1 -c \'ALTER USER postgres WITH PASSWORD \'postgres\';\''
-                sh 'exit'
+                sh 'sudo cp /etc/postgresql/9.5/main/pg_hba.conf /etc/postgresql/9.5/main/pg_hba_copy.conf'
+                sh 'chmod 777 ./script/pgfile.sh'
+                sh './script/pgfile.sh'
+                // sh 'sudo service postgresql start'
+                // sh 'chmod 777 ./script/start_postgres.sh'
+
+                sh 'sudo rm /etc/postgresql/9.5/main/pg_hba_copy.conf'
+                sh 'sudo mv /etc/postgresql/9.5/main/pg_hba_copy.conf /etc/postgresql/9.5/main/pg_hba.conf'
+                sh 'sudo /etc/init.d/postgresql restart'
+
+                sh 'sudo psql -U postgres -h 127.0.0.1 -c \'ALTER USER postgres WITH PASSWORD \'postgres\';\''
+
+                // sh 'sudo su - postgres'
+                // sh 'echo \'\' | sudo -S -u postgres psql -h 127.0.0.1 -c \'ALTER USER postgres WITH PASSWORD \'postgres\';\''
+                // sh 'exit'
                 sh '#!/bin/bash \n '+
                 'python3 -m pytest --cov=app app/tests/'
             }
