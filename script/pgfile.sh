@@ -108,3 +108,8 @@ host    all             all             ::1/128                 md5
 
 sudo mv pg_hba.conf /etc/postgresql/9.5/main/pg_hba.conf
 sudo /etc/init.d/postgresql start
+
+sudo psql -U postgres -h 127.0.0.1 -c "ALTER USER postgres WITH PASSWORD 'postgres';"
+
+sudo mv /etc/postgresql/9.5/main/pg_hba_copy.conf /etc/postgresql/9.5/main/pg_hba.conf
+sudo /etc/init.d/postgresql restart
