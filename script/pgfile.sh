@@ -2,6 +2,7 @@
 
 sudo /etc/init.d/postgresql stop
 
+sudo cp /etc/postgresql/9.5/main/pg_hba.conf /etc/postgresql/9.5/main/pg_hba_copy.conf
 sudo chmod 777 /etc/postgresql/9.5/main/pg_hba.conf && sudo rm /etc/postgresql/9.5/main/pg_hba.conf
 
 echo "
