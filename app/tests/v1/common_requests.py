@@ -34,7 +34,7 @@ class CommonRequests(unittest.TestCase):
     def define_db_connections(self, app):
         POSTGRES = {
             'user': 'postgres',
-            'pw': '',
+            'pw': 'postgres',
             'db': 'testdb',
             'host': 'localhost',
             'port': '5432',
