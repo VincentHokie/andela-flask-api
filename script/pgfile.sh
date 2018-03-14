@@ -114,5 +114,6 @@ echo '' | psql --username=postgres --command="ALTER USER postgres WITH PASSWORD 
 sudo /etc/init.d/postgresql stop
 sudo rm /etc/postgresql/9.5/main/pg_hba.conf
 sudo mv /etc/postgresql/9.5/main/pg_hba_copy.conf /etc/postgresql/9.5/main/pg_hba.conf
+sudo chown -R postgres:postgres /etc/postgresql/9.5/main/pg_hba.conf
 sudo ls -al /etc/postgresql/9.5/main/
 sudo /etc/init.d/postgresql start
