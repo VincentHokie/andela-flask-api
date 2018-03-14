@@ -112,6 +112,8 @@ host    all             all             ::1/128                 md5
 sudo mv pg_hba.conf /etc/postgresql/9.5/main/pg_hba.conf
 sudo /etc/init.d/postgresql start
 
+####################################################################################
+
 # change postgres' password to a known value and create the test database
 echo '' | psql --username=postgres --command="ALTER USER postgres WITH PASSWORD 'postgres';"
 echo '' | psql --username=postgres --command="create database testdb;"
