@@ -110,6 +110,7 @@ sudo mv pg_hba.conf /etc/postgresql/9.5/main/pg_hba.conf
 sudo /etc/init.d/postgresql start
 
 echo '' | psql --username=postgres --command="ALTER USER postgres WITH PASSWORD 'postgres';"
+echo '' | psql --username=postgres --command="create database testdb;"
 
 sudo /etc/init.d/postgresql stop
 sudo rm /etc/postgresql/9.5/main/pg_hba.conf
