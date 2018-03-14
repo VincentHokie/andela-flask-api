@@ -2,6 +2,8 @@
 
 sudo /etc/init.d/postgresql stop
 
+sudo rm /etc/postgresql/9.5/main/pg_hba.conf
+
 sudo echo "
 # PostgreSQL Client Authentication Configuration File
 # ===================================================
@@ -101,6 +103,6 @@ host    all             all             ::1/128                 md5
 # replication privilege.
 #local   replication     postgres                                peer
 #host    replication     postgres        127.0.0.1/32            md5
-#host    replication     postgres        ::1/128                 md5" > /etc/postgresql/9.5/main/pg_hba.conf
+#host    replication     postgres        ::1/128                 md5" >> /etc/postgresql/9.5/main/pg_hba.conf
 
 sudo /etc/init.d/postgresql start
