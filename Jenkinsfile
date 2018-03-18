@@ -21,25 +21,25 @@ pipeline {
         MAIL_DEFAULT_SENDER=credentials("MAIL_DEFAULT_SENDER")
     }
     stages {
-        stage('Build') { 
-            steps {
-                sh 'pip3 install --no-cache-dir -r requirements.txt'
-            }
-        }
-        stage('Test'){
-            steps {
-                echo 'testingggg...ggg'
-                sh 'chmod 777 ./script/pgfile.sh'
-                sh './script/pgfile.sh'
-                sh '#!/bin/bash \n '+
-                'python3 -m pytest --cov=app app/tests/'
-            }
-        }
+        // stage('Build') { 
+        //     steps {
+        //         sh 'pip3 install --no-cache-dir -r requirements.txt'
+        //     }
+        // }
+        // stage('Test'){
+        //     steps {
+        //         echo 'testingggg...ggg'
+        //         sh 'chmod 777 ./script/pgfile.sh'
+        //         sh './script/pgfile.sh'
+        //         sh '#!/bin/bash \n '+
+        //         'python3 -m pytest --cov=app app/tests/'
+        //     }
+        // }
         stage('Deploy') {
             steps {
                 echo 'deploying...'
                 sh 'touch ~/account.json'
-                sh' echo credentials("SERVICE_ACCOUNT") > ~/account.json'
+                echo credentials("SERVICE_ACCOUNT") > ~/account.json
                 sh 'chmod 777 ./script/deploy.sh'
                 sh './script/deploy.sh'
             }
