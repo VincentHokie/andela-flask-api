@@ -19,8 +19,6 @@ RUN wget https://releases.hashicorp.com/packer/0.12.0/packer_0.12.0_linux_amd64.
   sudo mv packer /usr/local/ && \
   export PATH="$PATH:/usr/local/packer"
 
-RUN curl https://sdk.cloud.google.com | bash
-
 RUN useradd jenkins --shell /bin/bash --create-home
 RUN echo "jenkins ALL=NOPASSWD: ALL" >> /etc/sudoers
 
@@ -30,3 +28,4 @@ RUN mkdir /.local && chmod 777 /.local
 RUN usermod -u 115 jenkins
 
 USER jenkins
+RUN curl https://sdk.cloud.google.com | bash
