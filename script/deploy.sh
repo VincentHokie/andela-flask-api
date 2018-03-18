@@ -1,7 +1,10 @@
+touch ~/account.json
+echo ${SERVICE_ACCOUNT} > ~/account.json
+
 if gcloud auth activate-service-account --key-file=~/account.json; then
     timestamp=$( date +%T )
     source /etc/environment
-    
+
     echo "Deleting existing image..."
     gcloud compute images delete "application-ubuntu-flask-api" --project "checkpoint-project"
 

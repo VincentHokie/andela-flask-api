@@ -19,6 +19,7 @@ pipeline {
         MAIL_USERNAME=credentials("MAIL_USERNAME")
         MAIL_PASSWORD=credentials("MAIL_PASSWORD")
         MAIL_DEFAULT_SENDER=credentials("MAIL_DEFAULT_SENDER")
+        SERVICE_ACCOUNT=credentials("SERVICE_ACCOUNT")
     }
     stages {
         // stage('Build') { 
@@ -38,8 +39,6 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo 'deploying...'
-                sh 'touch ~/account.json'
-                echo credentials("SERVICE_ACCOUNT") > ~/account.json
                 sh 'chmod 777 ./script/deploy.sh'
                 sh './script/deploy.sh'
             }
