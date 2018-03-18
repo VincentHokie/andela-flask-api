@@ -6,7 +6,8 @@
 # sudo cp /etc/postgresql/9.5/main/pg_hba.conf /etc/postgresql/9.5/main/pg_hba_copy.conf
 # sudo chmod 777 /etc/postgresql/9.5/main/pg_hba.conf && sudo rm /etc/postgresql/9.5/main/pg_hba.conf
 
-sudo sed -i 's/local   all             all                                     peer/local  all   all   trust/g' /etc/postgresql/9.5/main/pg_hba.conf
+sudo su postrges
+sudo sed -i 's/peer/trust/g' /etc/postgresql/9.5/main/pg_hba.conf
 
 # populate a new pgconfig file with permissions that allow login without a password (momentarily)
 # echo "
@@ -120,7 +121,7 @@ echo '' | psql --username=postgres --command="create database testdb;"
 
 # stop the service, return to the original config file ans start the service again
 
-sudo sed -i 's/local  all   all   trust/local   all             all                                     peer/g' /etc/postgresql/9.5/main/pg_hba.conf
+sudo sed -i 's/trust/peer/g' /etc/postgresql/9.5/main/pg_hba.conf
 
 # sudo /etc/init.d/postgresql stop
 # sudo rm /etc/postgresql/9.5/main/pg_hba.conf
