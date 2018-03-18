@@ -19,7 +19,7 @@ pipeline {
         MAIL_USERNAME=credentials("MAIL_USERNAME")
         MAIL_PASSWORD=credentials("MAIL_PASSWORD")
         MAIL_DEFAULT_SENDER=credentials("MAIL_DEFAULT_SENDER")
-        SERVICE_ACCOUNT=credentials("SERVICE_ACCOUNT")
+        SERVICE_ACCOUNT=credentials("account.json")
     }
     stages {
         // stage('Build') { 
