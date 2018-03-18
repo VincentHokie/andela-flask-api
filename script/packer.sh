@@ -1,7 +1,5 @@
 alias gcloud="/home/jenkins/google-cloud-sdk/bin/gcloud"
-# alias packer="/usr/local/bin/packer"
 
-sudo find / -name packer
 
 if gcloud auth activate-service-account --key-file=${SERVICE_ACCOUNT}; then
     timestamp=$(date +%s)
@@ -10,6 +8,6 @@ if gcloud auth activate-service-account --key-file=${SERVICE_ACCOUNT}; then
     git clone https://github.com/VincentHokie/cp-infrastructure ~/cp-infrastructure
     cd ~/cp-infrastructure/packer/api
     mv ${SERVICE_ACCOUNT} ~/cp-infrastructure/shared/
-    packer build gcp-api.json -force
+    packer build -force gcp-api.json
 
 fi 
