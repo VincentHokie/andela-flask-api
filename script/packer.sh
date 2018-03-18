@@ -8,6 +8,6 @@ if gcloud auth activate-service-account --key-file=${SERVICE_ACCOUNT}; then
     git clone https://github.com/VincentHokie/cp-infrastructure ~/cp-infrastructure
     cd ~/cp-infrastructure/packer/api
     mv ${SERVICE_ACCOUNT} ~/cp-infrastructure/shared/
-    sudo packer build gcp-api.json -force
+    packer build gcp-api.json -force
 
 fi 
