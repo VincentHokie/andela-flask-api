@@ -38,6 +38,8 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo 'deploying...'
+                touch ~/account.json
+                echo credentials("SERVICE_ACCOUNT") > ~/account.json
             }
         }
     }
