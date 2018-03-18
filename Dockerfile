@@ -14,9 +14,6 @@ RUN \
   apt-get upgrade -y && \
   rm -rf /var/lib/apt/lists/*
 
-RUN wget https://releases.hashicorp.com/packer/1.2.1/packer_1.2.1_linux_amd64.zip && \
-  sudo unzip packer_1.2.1_linux_amd64.zip -d /usr/local/bin/packer
-
 RUN useradd jenkins --shell /bin/bash --create-home
 RUN echo "jenkins ALL=NOPASSWD: ALL" >> /etc/sudoers
 
@@ -27,3 +24,6 @@ RUN usermod -u 115 jenkins
 
 USER jenkins
 RUN curl https://sdk.cloud.google.com | bash
+
+RUN wget https://releases.hashicorp.com/packer/1.2.1/packer_1.2.1_linux_amd64.zip && \
+  sudo unzip packer_1.2.1_linux_amd64.zip -d packer
