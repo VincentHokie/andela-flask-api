@@ -2,6 +2,7 @@ touch ~/account.json
 echo ${SERVICE_ACCOUNT} > ~/account.json
 
 sudo find / -name gcloud
+alias gcloud="/home/jenkins/google-cloud-sdk/bin/gcloud"
 
 if gcloud auth activate-service-account --key-file=~/account.json; then
     timestamp=$( date +%T )
