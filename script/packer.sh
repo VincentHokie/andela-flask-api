@@ -1,7 +1,7 @@
 alias gcloud="/home/jenkins/google-cloud-sdk/bin/gcloud"
-alias packer="/usr/local/packer"
+# alias packer="/usr/local/packer"
 
-sudo chown jenkins:jenkins /usr/local/packer
+# sudo chown jenkins:jenkins /usr/local/bin/packer
 
 if gcloud auth activate-service-account --key-file=${SERVICE_ACCOUNT}; then
     timestamp=$(date +%s)
