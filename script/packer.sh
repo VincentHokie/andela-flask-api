@@ -1,8 +1,7 @@
 alias gcloud="/home/jenkins/google-cloud-sdk/bin/gcloud"
 # alias packer="/usr/local/packer"
 
-# sudo chown jenkins:jenkins /usr/local/bin/packer
-
+sudo chown jenkins:jenkins /usr/local/bin/packer
 sudo ls -al /usr/local/bin | grep packer
 sudo ls -al /usr/local/bin | grep cd
 
