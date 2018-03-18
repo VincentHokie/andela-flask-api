@@ -1,10 +1,10 @@
 touch /home/jenkins/account.json
-echo ${SERVICE_ACCOUNT} > /home/jenkins/account.json
-cat account.json
+# echo ${SERVICE_ACCOUNT} > /home/jenkins/account.json
+# cat account.json
 
 alias gcloud="/home/jenkins/google-cloud-sdk/bin/gcloud"
 
-if gcloud auth activate-service-account --key-file=/home/jenkins/account.json; then
+if gcloud auth activate-service-account --key-file=${SERVICE_ACCOUNT}; then
     timestamp=$( date +%T )
     source /etc/environment
 
