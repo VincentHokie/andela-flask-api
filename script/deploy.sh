@@ -1,6 +1,6 @@
 touch /home/jenkins/account.json
 echo ${SERVICE_ACCOUNT} > /home/jenkins/account.json
-cat /home/jenkins/account.json
+cat account.json
 
 alias gcloud="/home/jenkins/google-cloud-sdk/bin/gcloud"
 
