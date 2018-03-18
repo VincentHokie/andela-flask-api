@@ -1,6 +1,6 @@
 alias gcloud="/home/jenkins/google-cloud-sdk/bin/gcloud"
 
-if gcloud auth activate-service-account --key-file=${SERVICE_ACCOUNT}; then
+# if gcloud auth activate-service-account --key-file=${SERVICE_ACCOUNT}; then
     timestamp=$(date +%s)
 
     # echo "Deleting existing image..."
@@ -13,4 +13,4 @@ if gcloud auth activate-service-account --key-file=${SERVICE_ACCOUNT}; then
         --zone "us-east1-b" \
         --tags="http-server","https-server" \
         --project "checkpoint-project"
-fi 
+# fi 
