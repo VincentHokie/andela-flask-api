@@ -2,10 +2,10 @@ touch /home/jenkins/account.json
 sudo find / -name packer
 
 alias gcloud="/home/jenkins/google-cloud-sdk/bin/gcloud"
+alias packer="/usr/local/packer"
 
 if gcloud auth activate-service-account --key-file=${SERVICE_ACCOUNT}; then
     timestamp=$( date +%T )
-    source /etc/environment
 
     # echo "Deleting existing image..."
     # gcloud compute images delete "application-ubuntu-flask-api" --project "checkpoint-project"
@@ -13,7 +13,7 @@ if gcloud auth activate-service-account --key-file=${SERVICE_ACCOUNT}; then
     echo "Building new packer image..."
     git clone https://github.com/VincentHokie/cp-infrastructure ~/cp-infrastructure
     cd ~/cp-infrastructure/packer/api
-    mv ~/account.json ~/cp-infrastructure/shared/
+    mv ${SERVICE_ACCOUNT} ~/cp-infrastructure/shared/
     packer build gcp-api.json -force
 
     echo "Creating fresh instance..."
