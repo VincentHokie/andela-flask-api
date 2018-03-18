@@ -17,8 +17,7 @@ RUN \
 RUN wget https://releases.hashicorp.com/packer/0.12.0/packer_0.12.0_linux_amd64.zip && \
   unzip packer_0.12.0_linux_amd64.zip -d packer && \
   sudo mv packer /usr/local/ && \
-  export PATH="$PATH:/usr/local/packer" && \
-  source /etc/environment
+  export PATH="$PATH:/usr/local/packer"
 
 RUN curl https://sdk.cloud.google.com | bash
 
