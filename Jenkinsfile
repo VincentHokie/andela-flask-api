@@ -36,6 +36,14 @@ pipeline {
         //         'python3 -m pytest --cov=app app/tests/'
         //     }
         // }
+        stage('Image Build') {
+            steps {
+                echo 'building base image...'
+                sh 'chmod 777 ./script/packer.sh'
+                sh './script/packer.sh'
+            }
+        }
+
         stage('Deploy') {
             steps {
                 echo 'deploying...'
