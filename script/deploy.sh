@@ -1,5 +1,3 @@
-alias gcloud="/home/jenkins/google-cloud-sdk/bin/gcloud"
-
 if gcloud auth activate-service-account --key-file=${SERVICE_ACCOUNT}; then
     timestamp=$(date +%s)
 

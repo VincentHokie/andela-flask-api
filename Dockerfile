@@ -14,9 +14,8 @@ RUN \
   apt-get upgrade -y && \
   rm -rf /var/lib/apt/lists/*
 
-RUN wget https://releases.hashicorp.com/packer/0.12.0/packer_0.12.0_linux_amd64.zip && \
-  unzip packer_0.12.0_linux_amd64.zip -d packer && \
-  sudo mv packer /usr/local/bin
+RUN wget https://releases.hashicorp.com/packer/1.2.1/packer_1.2.1_linux_amd64.zip && \
+  sudo unzip packer_1.2.1_linux_amd64.zip -d /usr/local/bin/packer
 
 RUN useradd jenkins --shell /bin/bash --create-home
 RUN echo "jenkins ALL=NOPASSWD: ALL" >> /etc/sudoers
