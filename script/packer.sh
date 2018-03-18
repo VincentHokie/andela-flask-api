@@ -5,7 +5,7 @@ if gcloud auth activate-service-account --key-file=${SERVICE_ACCOUNT}; then
     echo "Building new packer image..."
     git clone https://github.com/VincentHokie/cp-infrastructure ~/cp-infrastructure
     cd ~/cp-infrastructure/packer/api
-    mv ${SERVICE_ACCOUNT} ~/cp-infrastructure/shared/
+    mv ${SERVICE_ACCOUNT} ~/cp-infrastructure/shared/account.json
     packer build -force gcp-api.json
 
 fi 
