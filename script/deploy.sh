@@ -7,7 +7,7 @@ alias gcloud="/home/jenkins/google-cloud-sdk/bin/gcloud"
     # gcloud compute images delete "application-ubuntu-flask-api" --project "checkpoint-project"
 
     echo "Creating fresh instance..."
-    gcloud compute instances create NAME flask-api-${timestamp} \
+    gcloud compute instances create flask-api-${timestamp} \
         --image "application-ubuntu-flask-api" \
         --machine-type "n1-standard-1" \
         --zone "us-east1-b" \
