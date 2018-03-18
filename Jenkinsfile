@@ -38,8 +38,8 @@ pipeline {
         stage('Deploy') {
             steps {
                 echo 'deploying...'
-                touch ~/account.json
-                echo credentials("SERVICE_ACCOUNT") > ~/account.json
+                sh 'touch ~/account.json'
+                sh' echo credentials("SERVICE_ACCOUNT") > ~/account.json'
                 sh 'chmod 777 ./script/deploy.sh'
                 sh './script/deploy.sh'
             }
