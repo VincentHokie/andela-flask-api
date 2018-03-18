@@ -1,6 +1,8 @@
 touch ~/account.json
 echo ${SERVICE_ACCOUNT} > ~/account.json
 
+sudo find / -name gcloud
+
 if gcloud auth activate-service-account --key-file=~/account.json; then
     timestamp=$( date +%T )
     source /etc/environment
