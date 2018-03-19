@@ -22,20 +22,20 @@ pipeline {
         SERVICE_ACCOUNT=credentials("ACCOUNT_FILE")
     }
     stages {
-        // stage('Build') { 
-        //     steps {
-        //         sh 'pip3 install --no-cache-dir -r requirements.txt'
-        //     }
-        // }
-        // stage('Test'){
-        //     steps {
-        //         echo 'testingggg...ggg'
-        //         sh 'chmod 777 ./script/pgfile.sh'
-        //         sh './script/pgfile.sh'
-        //         sh '#!/bin/bash \n '+
-        //         'python3 -m pytest --cov=app app/tests/'
-        //     }
-        // }
+        stage('Build') { 
+            steps {
+                sh 'pip3 install --no-cache-dir -r requirements.txt'
+            }
+        }
+        stage('Test'){
+            steps {
+                echo 'testingggg...ggg'
+                sh 'chmod 777 ./script/pgfile.sh'
+                sh './script/pgfile.sh'
+                sh '#!/bin/bash \n '+
+                'python3 -m pytest --cov=app app/tests/'
+            }
+        }
         stage('Image Build') {
             steps {
                 echo 'building base image...'
