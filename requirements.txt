@@ -20,7 +20,7 @@ Mako==1.0.7
 MarkupSafe==1.0
 passlib==1.7.1
 psycopg2==2.7.3
-py==1.4.34
+py==1.10.0
 pytest==3.2.1
 pytest-cov==2.5.1
 pytest-ordering==0.5
